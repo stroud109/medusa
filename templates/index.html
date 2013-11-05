@@ -1,13 +1,11 @@
-{% extends 'master.html' %}
+{% extends 'base.html' %}
 {% block body %}
-<h1>Welcome to Bookworm</h1>
-<img src="http://placekitten.com/g/500/500"/>
-
-<a href="{{url_for("view_all_users")}}"><h1>Users</h1></a>
-<a href="{{url_for("view_all_books")}}"><h1>Books</h1></a>
-
-{% if session.get("user_id") %}
-<a href="{{url_for("view_user_ratings", user_id = session.get("user_id") )}}"><h1>Your Library</h1></a>
-{% endif %}
-
+{% for book in books %}
+<div class="container">
+    <h2><a href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a></h2>
+</div>
+{% else %}
+No books here!
+<a href="{{url_for("new_book")}}">New book</a>
+{% endfor %}
 {% endblock %}
