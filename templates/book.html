@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<h2><a href="{{url_for("view_book", id=book.id)}}>{{book.title}}</a></h2>
+{% endblock %}

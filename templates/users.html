@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block body %}
+<h2>Users</h2>
+{% for user in users %}
+<div class="container">
+    <h2><a href="{{url_for("view_library", id=user.id)}}">{{user.username}}</a></h2>
+</div>
+{% else %}
+No users here!
+<a href="{{url_for("register")}}">Register</a>
+{% endfor %}
+{% endblock %}

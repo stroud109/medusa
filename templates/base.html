@@ -10,14 +10,17 @@
             <div class="navbar-inner">
                 <div class="container">
                     <ul class="nav">
-                        <li><a href="{{url_for("index")}}">A Library</a></li>
+                        <li><a href="{{url_for("index")}}">Bookworms</a></li>
+                        <li><a href="{{url_for("add_book")}}">Add Book</a></li>
+                        <li><a href="{{url_for("view_users")}}">Users</a></li>
+                        <li><a href="{{url_for("register")}}">Register</a></li>
                         <li><a href="{{url_for("login")}}">Login</a></li>
                     </ul>
                 </div>
             </div>
         </div>
         <div class="container">
-            <h1>A Library</h1>
+            <h1>Bookworms</h1>
             <ul>
             {% for message in get_flashed_messages() %}
             <li>{{message}}</li>

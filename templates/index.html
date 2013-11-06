@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 {% block body %}
+<h2>Books</h2>
 {% for book in books %}
 <div class="container">
     <h2><a href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a></h2>
 </div>
 {% else %}
 No books here!
-<a href="{{url_for("new_book")}}">New book</a>
+<a href="{{url_for("new_book")}}">Add a new book</a>
 {% endfor %}
 {% endblock %}

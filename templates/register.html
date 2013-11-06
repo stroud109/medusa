@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block body %}
+            <form class="signin" method="POST">
+                <h2 class="signin-heading">Register a new account</h2>
+                <input type="text" class="form-control" placeholder="Username" name="username"><br>
+                <input type="text" name="email" placeholder="Email"><br>
+                <input type="password" class="form-control" placeholder="Password" name="password"><br>
+                <input type="password" class="form-control" placeholder="Verify Password" name="password"><br>
+                <input type="submit" class="btn btn-lg btn-primary btn-block" value="Submit">
+            </form>
+{% endblock %}
