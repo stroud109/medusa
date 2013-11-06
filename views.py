@@ -126,8 +126,9 @@ def authenticate():
 @app.route("/logout", methods=["POST"])  # not working
 @login_required
 def logout():
+    session.pop('user_id', None)
     flash("Logged out")
-    return render_template("index.html")
+    return redirect(url_for("index"))
 
 
 @app.route("/register")

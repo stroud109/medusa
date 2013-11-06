@@ -14,7 +14,13 @@
                         <li><a href="{{url_for("add_book")}}">Add Book</a></li>
                         <li><a href="{{url_for("view_users")}}">Users</a></li>
                         <li><a href="{{url_for("register")}}">Register</a></li>
-                        <li><a href="{{url_for("login")}}">Login</a></li>
+                        <li>
+                            {% if session.get("user_id") == None %}
+                                <form method="post" action="{{url_for("login")}}"><input type="submit" value="Login" class="btn btn-link"/></form>
+                            {% else %}
+                                <form method="post" action="{{url_for("logout")}}"><input type="submit" value="Logout" class="btn btn-link"/></form>
+                            {% endif %}
+                        </li>
                     </ul>
                 </div>
             </div>
