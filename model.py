@@ -63,6 +63,7 @@ class Book(Base):
     owner_id = Column(Integer(), nullable=False)
 
     # user = relationship("User", uselist=True)
+    # user = relationship("User")
     borrow_history = relationship("BorrowHistory", uselist=True)
 
 
@@ -73,6 +74,7 @@ class BorrowHistory(Base):
     borrower_id = Column(Integer(), ForeignKey('users.id'), nullable=True)
     timestamp = Column(DateTime, nullable=False, default=datetime.now)
     # unix seconds since 1/1/70
+    # need a timestamp for checking out and checking back in
 
     books = relationship("Book")
 
@@ -90,22 +92,27 @@ class BorrowHistory(Base):
 #     user = relationship("User")
 
 
-def create_tables():
-    Base.metadata.create_all(engine)
-    u = User(email="test@test.com", username="test")
-    u.set_password("unicorn")
-    session.add(u)
-    u2 = User(email="test2@test2.com", username="test2")
-    u2.set_password("unicorn")
-    session.add(u2)
-    b = Book(title="Test Book", amazon_url="test url", owner_id=1)
-    session.add(b)
-    b_h = BorrowHistory(book_id=1, borrower_id=2)
-    # p = Post(title="test post", body="body of a test post.")
-    #u.posts.append(p)
-    session.add(b)
-    b.borrow_history.append(b_h)
+def register_book(new_book):
+    session.add(new_book)
     session.commit()
 
-if __name__ == "__main__":
-    create_tables()
+
+# def create_tables():
+#     Base.metadata.create_all(engine)
+#     u = User(email="test@test.com", username="test")
+#     u.set_password("unicorn")
+#     session.add(u)
+#     u2 = User(email="test2@test2.com", username="test2")
+#     u2.set_password("unicorn")
+#     session.add(u2)
+#     b = Book(title="Test Book", amazon_url="test url", owner_id=1)
+#     session.add(b)
+#     b_h = BorrowHistory(book_id=1, borrower_id=2)
+#     # p = Post(title="test post", body="body of a test post.")
+#     #u.posts.append(p)
+#     session.add(b)
+#     b.borrow_history.append(b_h)
+#     session.commit()
+
+# if __name__ == "__main__":
+#     create_tables()

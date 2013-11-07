@@ -12,13 +12,14 @@ from model import (
     User,
     Book,
     # BorrowHistory,
+    register_book,
     session as db_session,
 )
 from flask.ext.login import (
     LoginManager,
     login_required,
     login_user,
-    current_user,
+    # current_user,
 )
 from flaskext.markdown import Markdown
 import config
@@ -80,17 +81,40 @@ def new_book():
 @login_required
 def add_book():
     form = forms.NewBookForm(request.form)
+    print form.title.data
+    print form.amazon_url.data
+    print "form validation", form.validate()
     if not form.validate():
         flash("Error, all fields are required")
-        return render_template("new_post.html")
+        return render_template("new_book.html")
 
-    book = Book(title=form.title.data, amazon_url=form.amazon_url.data)
-    current_user.books.append(book)
+    new_book = Book(
+        title=form.title.data,
+        amazon_url=form.amazon_url.data,
+        owner_id=session.get("user_id"),
+    )
+    register_book(new_book)
+    # print "current user:", current_user
+    # current_user.books.append(new_book)
 
     model.session.commit()
-    model.session.refresh(book)
+    model.session.refresh(new_book)
 
-    return redirect(url_for("view_book", id=book.id))
+    return redirect(url_for("view_book", id=new_book.id))
+
+
+@app.route("/borrower_history")
+def borrower_history(id):
+    # borrower = db_session.query(BookHistory).filter_by(borrower_id=id).all()
+    # return render_template("library.html", books=book_id)
+    pass
+
+
+@app.route("/book_history")
+def book_history():
+    # books = db_session.query(BookHistory).filter_by(book_id=id).all()
+    # return render_template("library.html", books=owner_books)
+    pass
 
 
 @app.route("/login")  # needs work
@@ -105,14 +129,21 @@ def login():
 @app.route("/login", methods=["POST"])
 def authenticate():
     form = forms.LoginForm(request.form)
+    # print "Login form validation:", form.validate()
+    # print request.method
+
     if not form.validate():
-        flash("Incorrect username or password")
+    # if method not "POST" not form.validate():
+        flash("Please input a valid email or password")
         return render_template("master.html")
 
     email = form.email.data
     password = form.password.data
+    print "email", email
+    print "password", password
 
     user = User.query.filter_by(email=email).first()
+    # when i fix database, change this to one()
 
     if not user or not user.authenticate(password):
         flash("Incorrect username or password")
@@ -123,7 +154,7 @@ def authenticate():
     return redirect(request.args.get("next", url_for("index")))
 
 
-@app.route("/logout", methods=["POST"])  # not working
+@app.route("/logout", methods=["POST"])
 @login_required
 def logout():
     session.pop('user_id', None)

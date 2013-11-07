@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<h2><a href="{{url_for("view_book", id=book.id)}}>{{book.title}}</a></h2>
+<h2><a href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a></h2>
+
+<h2>Book details go here</h2>
+
+<h2>Book history goes here</h2>
 {% endblock %}
+

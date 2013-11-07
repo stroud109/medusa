@@ -1,11 +1,16 @@
 {% extends "base.html" %}
 
 {% block body %}
+
+{% if session.get("user_id") %}
+
 <form method="post">
 
-    <input type="text" name="title" placeholder="Post Title"><br>
-    <input type="url" name="amazon_URL" placeholder="Amazon URL"><br>
-    <textarea name="body"></textarea><br>
+    <input type="text" name="title" placeholder="Title"><br>
+    <input type="text" name="amazon_url" placeholder="Amazon URL"><br>
     <input type="submit">
 </form>
+
+{% endif %}
+
 {% endblock %}
