@@ -1,8 +1,23 @@
 {% extends "base.html" %}
 {% block body %}
+
 <form method="post">
+{% for field in form %}
+{{field.label}}
+{{field}}
+{% for error in field.errors %}
+{{ error }}
+{% endfor %}
+<br>
+
+{% endfor %}
+
+    <input type="submit">
+</form>
+
+<!-- <form method="post">
     <input type="text" name="email" placeholder="Email"><br>
     <input type="password" name="password" placeholder="Password"><br>
     <input type="submit">
-</form>
+</form> -->
 {% endblock %}

@@ -52,7 +52,7 @@ def index():
     return render_template("index.html", books=books)
 
 
-@app.route("/books/<int:id>")
+@app.route("/books/<int:id>")  # should show borrow history of book
 def view_book(id):
     book = Book.query.get(id)
     return render_template("book.html", book=book)
@@ -66,7 +66,7 @@ def view_users():
 
 @app.route("/users/<int:id>")
 @login_required
-def view_library(id):
+def view_library(id):  # should show what books are checked out/in/borrowed
     owner_books = db_session.query(Book).filter_by(owner_id=id).all()
     return render_template("library.html", books=owner_books)
 
@@ -74,19 +74,21 @@ def view_library(id):
 @app.route("/add_book")
 @login_required
 def new_book():
-    return render_template("new_book.html")
+    form = forms.NewBookForm()
+    return render_template("new_book.html", form=form)
 
 
 @app.route("/add_book", methods=["POST"])
 @login_required
 def add_book():
     form = forms.NewBookForm(request.form)
+    print "form validation", form.validate()
     print form.title.data
     print form.amazon_url.data
-    print "form validation", form.validate()
+
     if not form.validate():
         flash("Error, all fields are required")
-        return render_template("new_book.html")
+        return render_template("new_book.html", form=form)
 
     new_book = Book(
         title=form.title.data,
@@ -103,27 +105,28 @@ def add_book():
     return redirect(url_for("view_book", id=new_book.id))
 
 
-@app.route("/borrower_history")  # make sure I query Books and BorrowHistory
-def borrower_history(id):
-    # borrower = db_session.query(BookHistory).filter_by(borrower_id=id).all()
-    # return render_template("library.html", books=book_id)
-    pass
+# @app.route("/borrower_history")  # make sure I query Books and BorrowHistory
+# def borrower_history(id):
+#     # borrower = db_session.query(BookHistory).filter_by(borrower_id=id).all()
+#     # return render_template("library.html", books=book_id)
+#     pass
 
 
-@app.route("/book_history")  # make sure I query Books and BorrowHistory
-def book_history():
-    # books = db_session.query(BookHistory).filter_by(book_id=id).all()
-    # return render_template("library.html", books=owner_books)
-    pass
+# @app.route("/book_history")  # make sure I query Books and BorrowHistory
+# def book_history():
+#     # books = db_session.query(BookHistory).filter_by(book_id=id).all()
+#     # return render_template("library.html", books=owner_books)
+#     pass
 
 
-@app.route("/login")  # needs work
+@app.route("/login")
 def login():
     if session.get("user_id"):
         flash("You're already logged in!")
         return render_template("master.html")
     else:
-        return render_template("master.html")
+        form = forms.LoginForm()
+        return render_template("master.html", form=form)
 
 
 @app.route("/login", methods=["POST"])
@@ -135,7 +138,7 @@ def authenticate():
     if not form.validate():
     # if method not "POST" not form.validate():
         flash("Please input a valid email or password")
-        return render_template("master.html")
+        return render_template("master.html", form=form)
 
     email = form.email.data
     password = form.password.data
@@ -147,7 +150,7 @@ def authenticate():
 
     if not user or not user.authenticate(password):
         flash("Incorrect username or password")
-        return render_template("master.html")
+        return render_template("master.html", form=form)
 
     login_user(user)
     flash("logged in")
@@ -168,37 +171,44 @@ def register():
         flash("You already have an account!")
         return redirect(url_for("index", user_id=session.get("user_id")))
     else:
-        return render_template("register.html")
-    pass
+        form = forms.NewUserForm()
+        return render_template("register.html", form=form)
+        # return render_template("register.html")
 
 
 @app.route("/register", methods=["POST"])
 def create_account():
-    if session.get("user_id"):
-        flash("Your account already exists!")
-        return redirect(url_for("index"))
+    # if session.get("user_id"):
+    #     flash("Your account already exists!")
+    #     return redirect(url_for("index"))
 
-    else:
-        form = forms.NewUserForm(request.form)
-        print "form validation", form.validate()
-        if not form.validate():
-            flash("Error, all fields are required")
-            return render_template("register.html")
+    form = forms.NewUserForm(request.form)
+    print "form validation", form.validate()
+    if not form.validate():
+        flash("Error, all fields are required")
+        return render_template("register.html", form=form)
 
-        new_user = User(
-            username=request.form.get("username"),
-            email=request.form.get("email"),
-        )
-        new_user.set_password(request.form.get("password"))
+    email = form.email.data
+    user = User.query.filter_by(email=email).first()
 
-        register_user(new_user)
+    if user:
+        flash("Looks like you already have an account")
+        return render_template("login.html")
 
-        model.session.commit()
-        model.session.refresh(new_user)
-        login_user(new_user)
+    new_user = User(
+        username=request.form.get("username"),
+        email=request.form.get("email"),
+    )
+    new_user.set_password(request.form.get("password"))
 
-        flash("You successfully created your account!")
-        return redirect(url_for("index", id=new_user.id))
+    register_user(new_user)
+
+    model.session.commit()
+    model.session.refresh(new_user)
+    login_user(new_user)
+
+    flash("You successfully created your account!")
+    return redirect(url_for("index", id=new_user.id))
 
 
 @app.route("/deactivate", methods=["POST"])

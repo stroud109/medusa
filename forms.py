@@ -16,12 +16,12 @@ class LoginForm(Form):
 class NewBookForm(Form):
     title = TextField("Title", [validators.Required()])
     # amazon_url = TextField("amazon_URL", [validators.Required(), validators.URL()])
-    amazon_url = TextField("amazon_url", [validators.Required(), validators.URL()])
+    amazon_url = TextField("Amazon Url", [validators.Required(), validators.URL()])
     # amazon_url = validators.URL(require_tld=True, message=u'Invalid URL.')
     # body = TextAreaField("body", [validators.Required()])
 
 
 class NewUserForm(Form):
-    username = TextField("username", [validators.Required()])
+    username = TextField("Username", [validators.Required()])
     email = TextField("Email", [validators.Required(), validators.Email()])
     password = PasswordField("Password", [validators.Required()])

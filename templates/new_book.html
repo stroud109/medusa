@@ -5,12 +5,18 @@
 {% if session.get("user_id") %}
 
 <form method="post">
+{% for field in form %}
+{{field.label}}
+{{field}}
+{% for error in field.errors %}
+{{ error }}
+{% endfor %}
+<br>
 
-    <input type="text" name="title" placeholder="Title"><br>
-    <input type="text" name="amazon_url" placeholder="Amazon URL"><br>
+{% endfor %}
+
     <input type="submit">
 </form>
-
 {% endif %}
 
 {% endblock %}
