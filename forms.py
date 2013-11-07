@@ -19,3 +19,9 @@ class NewBookForm(Form):
     amazon_url = TextField("amazon_url", [validators.Required(), validators.URL()])
     # amazon_url = validators.URL(require_tld=True, message=u'Invalid URL.')
     # body = TextAreaField("body", [validators.Required()])
+
+
+class NewUserForm(Form):
+    username = TextField("username", [validators.Required()])
+    email = TextField("Email", [validators.Required(), validators.Email()])
+    password = PasswordField("Password", [validators.Required()])

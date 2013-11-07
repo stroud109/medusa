@@ -61,6 +61,7 @@ class Book(Base):
     title = Column(String(100), nullable=False)
     amazon_url = Column(String(100), nullable=True)
     owner_id = Column(Integer(), nullable=False)
+    # current_borrower = Column(Integer(), nullable=True)
 
     # user = relationship("User", uselist=True)
     # user = relationship("User")
@@ -72,9 +73,10 @@ class BorrowHistory(Base):
     id = Column(Integer, primary_key=True)
     book_id = Column(Integer(), ForeignKey('books.id'), nullable=False)
     borrower_id = Column(Integer(), ForeignKey('users.id'), nullable=True)
-    timestamp = Column(DateTime, nullable=False, default=datetime.now)
+    timestamp = Column(DateTime, nullable=False, default=datetime.now)  # date_borrowed
+    # date_returned = Column(DateTime, nullable=False, default=datetime.now)
+    ## new column for checking out and checking back in
     # unix seconds since 1/1/70
-    # need a timestamp for checking out and checking back in
 
     books = relationship("Book")
 
@@ -94,6 +96,11 @@ class BorrowHistory(Base):
 
 def register_book(new_book):
     session.add(new_book)
+    session.commit()
+
+
+def register_user(new_user):
+    session.add(new_user)
     session.commit()
 
 

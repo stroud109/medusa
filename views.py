@@ -13,6 +13,7 @@ from model import (
     Book,
     # BorrowHistory,
     register_book,
+    register_user,
     session as db_session,
 )
 from flask.ext.login import (
@@ -55,7 +56,6 @@ def index():
 def view_book(id):
     book = Book.query.get(id)
     return render_template("book.html", book=book)
-    # need to make a book.html, perhaps in place of post.html
 
 
 @app.route("/users")
@@ -103,14 +103,14 @@ def add_book():
     return redirect(url_for("view_book", id=new_book.id))
 
 
-@app.route("/borrower_history")
+@app.route("/borrower_history")  # make sure I query Books and BorrowHistory
 def borrower_history(id):
     # borrower = db_session.query(BookHistory).filter_by(borrower_id=id).all()
     # return render_template("library.html", books=book_id)
     pass
 
 
-@app.route("/book_history")
+@app.route("/book_history")  # make sure I query Books and BorrowHistory
 def book_history():
     # books = db_session.query(BookHistory).filter_by(book_id=id).all()
     # return render_template("library.html", books=owner_books)
@@ -174,18 +174,31 @@ def register():
 
 @app.route("/register", methods=["POST"])
 def create_account():
-    username = request.form.get("username")
-    email = request.form.get("email")
-    password = request.form.get("password")
-
-    if model.get_user_by_name(username):
+    if session.get("user_id"):
         flash("Your account already exists!")
         return redirect(url_for("index"))
+
     else:
-        model.create_user(username, email, password)
+        form = forms.NewUserForm(request.form)
+        print "form validation", form.validate()
+        if not form.validate():
+            flash("Error, all fields are required")
+            return render_template("register.html")
+
+        new_user = User(
+            username=request.form.get("username"),
+            email=request.form.get("email"),
+        )
+        new_user.set_password(request.form.get("password"))
+
+        register_user(new_user)
+
+        model.session.commit()
+        model.session.refresh(new_user)
+        login_user(new_user)
+
         flash("You successfully created your account!")
-        return redirect("/")
-    pass
+        return redirect(url_for("index", id=new_user.id))
 
 
 @app.route("/deactivate", methods=["POST"])
