@@ -95,6 +95,16 @@ def add_book():
         amazon_url=form.amazon_url.data,
         owner_id=session.get("user_id"),
     )
+
+    book = db_session.query(Book).filter_by(
+        owner_id=new_book.owner_id,
+        title=new_book.title
+    ).all()
+
+    if book:
+        flash("Looks like you already have this book in your library")
+        return redirect(url_for("index"))
+
     register_book(new_book)
     # print "current user:", current_user
     # current_user.books.append(new_book)
