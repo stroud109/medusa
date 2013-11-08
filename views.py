@@ -155,7 +155,7 @@ def authenticate():
     print "email", email
     print "password", password
 
-    user = User.query.filter_by(email=email).first()
+    user = User.query.filter_by(email=email).one()
     # when i fix database, change this to one()
 
     if not user or not user.authenticate(password):
@@ -199,11 +199,12 @@ def create_account():
         return render_template("register.html", form=form)
 
     email = form.email.data
-    user = User.query.filter_by(email=email).first()
+    user = User.query.filter_by(email=email).one()
+    # changed this from first to one
 
     if user:
         flash("Looks like you already have an account")
-        return render_template("login.html")
+        return redirect(url_for("login"))
 
     new_user = User(
         username=request.form.get("username"),
