@@ -90,6 +90,20 @@ def register_user(new_user):
     session.add(new_user)
     session.commit()
 
+# adding new code here
+
+
+def request_book(book):
+    session.add(book)
+    session.commit()
+
+
+def book_availability(book):
+    session.add(book)
+    session.commit()
+
+# end of new code
+
 
 def create_tables():
     Base.metadata.create_all(engine)

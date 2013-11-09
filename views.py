@@ -14,6 +14,8 @@ from model import (
     # BorrowHistory,
     register_book,
     register_user,
+    request_book,
+    book_availability,
     session as db_session,
 )
 from flask.ext.login import (
@@ -56,6 +58,70 @@ def index():
 def view_book(id):
     book = Book.query.get(id)
     return render_template("book.html", book=book)
+
+
+# adding this section
+
+# ACCOUNT FOR BORROW HISTORY
+
+
+@app.route("/borrow_book/<int:id>", methods=["POST"])
+@login_required
+def borrow_book(id):
+    book = Book.query.get(id)
+    # borrow_history = BorrowHistory.query.get(date_borrowed, date_returned)
+    # book_owner = db_session.query(Book).filter_by(
+    #     id=book.id,
+    #     owner_id=book.owner_id,
+    # ).all()
+    user_id = session.get("user_id")
+
+    #if book_owner.id == user_id:
+    if book.owner_id == user_id:
+        if not book.current_borrower:
+            book_availability(book)
+            flash("Your book is now avaialable for users to borrow.")
+        else:
+            flash("Your book is currently checked out.")
+        return redirect(url_for("book"))
+
+    else:
+        if not book.current_borrower:
+            request_book(book)
+            flash("You've successfully requested to borrow this book.")
+        else:
+            flash("This book is currently checked out.")
+        return redirect(url_for("book"))
+
+    model.session.commit()
+    model.session.refresh(book)
+
+
+@app.route("/return_book/<int:id>", methods=["POST"])
+@login_required
+def return_book(id):
+    book = Book.query.get(id)
+    user_id = session.get("user_id")
+
+    if book.owner_id == user_id:
+        if book.current_borrower:
+            book_availability(book)
+        else:
+            pass
+        return redirect(url_for("book"))
+
+    else:
+        if book.current_borrower:
+            request_book(book)
+            pass
+        else:
+            pass
+        return redirect(url_for("book"))
+
+    model.session.commit()
+    model.session.refresh(book)
+
+# end of new section of code
 
 
 @app.route("/users")
@@ -113,20 +179,6 @@ def add_book():
     model.session.refresh(new_book)
 
     return redirect(url_for("view_book", id=new_book.id))
-
-
-# @app.route("/borrower_history")  # make sure I query Books and BorrowHistory
-# def borrower_history(id):
-#     # borrower = db_session.query(BookHistory).filter_by(borrower_id=id).all()
-#     # return render_template("library.html", books=book_id)
-#     pass
-
-
-# @app.route("/book_history")  # make sure I query Books and BorrowHistory
-# def book_history():
-#     # books = db_session.query(BookHistory).filter_by(book_id=id).all()
-#     # return render_template("library.html", books=owner_books)
-#     pass
 
 
 @app.route("/login")
