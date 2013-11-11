@@ -38,9 +38,6 @@ class User(Base, UserMixin):
     password = Column(String(64), nullable=False)
     salt = Column(String(64), nullable=False)
 
-    # books = relationship("Book", uselist=True)
-    # books = relationship("Book")
-
     def set_password(self, password):
         self.salt = bcrypt.gensalt()
         password = password.encode("utf-8")
@@ -63,22 +60,23 @@ class Book(Base):
     owner_id = Column(Integer(), nullable=False)
     current_borrower_id = Column(Integer(), nullable=True)
 
-    # user = relationship("User", uselist=True)
-    # user = relationship("User")
-    borrow_history = relationship("BorrowHistory", uselist=True)
+    book_transactions = relationship("BookTransaction", uselist=True)
+    # owner = relationship("User")
+    # current_borrower = relationship("User")
 
 
-class BorrowHistory(Base):
-    __tablename__ = "borrow_history"
+class BookTransaction(Base):
+    __tablename__ = "book_transactions"
     id = Column(Integer, primary_key=True)
     book_id = Column(Integer(), ForeignKey('books.id'), nullable=False)
-    borrower_id = Column(Integer(), ForeignKey('users.id'), nullable=False)
-    # timestamp = Column(DateTime, nullable=False, default=datetime.now)
-    date_borrowed = Column(DateTime, nullable=False, default=datetime.now)
-    date_returned = Column(DateTime, nullable=True, default=datetime.now)
-    # unix seconds since 1/1/70
+    book_owner_id = Column(Integer(), ForeignKey('users.id'), nullable=False)
+    requester_id = Column(Integer(), ForeignKey('users.id'), nullable=False)
+    date_requested = Column(DateTime, nullable=False, default=datetime.now)
+    date_borrowed = Column(DateTime, nullable=True)
+    date_returned = Column(DateTime, nullable=True)
+    date_confirmed = Column(DateTime, nullable=True)
 
-    books = relationship("Book")
+    book = relationship("Book")
 
 
 def register_book(new_book):
@@ -89,20 +87,6 @@ def register_book(new_book):
 def register_user(new_user):
     session.add(new_user)
     session.commit()
-
-# adding new code here
-
-
-def request_book(book):
-    session.add(book)
-    session.commit()
-
-
-def book_availability(book):
-    session.add(book)
-    session.commit()
-
-# end of new code
 
 
 def create_tables():

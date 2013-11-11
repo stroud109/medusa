@@ -1,3 +1,9 @@
+from datetime import datetime
+from flaskext.markdown import Markdown
+import config
+import forms
+import model
+
 from flask import (
     Flask,
     render_template,
@@ -11,11 +17,9 @@ from flask import (
 from model import (
     User,
     Book,
-    # BorrowHistory,
+    BookTransaction,
     register_book,
     register_user,
-    request_book,
-    book_availability,
     session as db_session,
 )
 from flask.ext.login import (
@@ -24,10 +28,6 @@ from flask.ext.login import (
     login_user,
     # current_user,
 )
-from flaskext.markdown import Markdown
-import config
-import forms
-import model
 
 app = Flask(__name__)
 app.config.from_object(config)
@@ -65,61 +65,115 @@ def view_book(id):
 # ACCOUNT FOR BORROW HISTORY
 
 
-@app.route("/borrow_book/<int:id>", methods=["POST"])
+@app.route("/books/<int:id>/request", methods=["POST"])
 @login_required
-def borrow_book(id):
+def request_book(id):
     book = Book.query.get(id)
-    # borrow_history = BorrowHistory.query.get(date_borrowed, date_returned)
-    # book_owner = db_session.query(Book).filter_by(
-    #     id=book.id,
-    #     owner_id=book.owner_id,
-    # ).all()
-    user_id = session.get("user_id")
+    user_id = int(session.get("user_id"))
 
-    #if book_owner.id == user_id:
     if book.owner_id == user_id:
-        if not book.current_borrower:
-            book_availability(book)
-            flash("Your book is now avaialable for users to borrow.")
-        else:
-            flash("Your book is currently checked out.")
-        return redirect(url_for("book"))
+        flash("You can't borrow a book you own")
+        return redirect(url_for("view_book", id=id))
 
-    else:
-        if not book.current_borrower:
-            request_book(book)
-            flash("You've successfully requested to borrow this book.")
-        else:
-            flash("This book is currently checked out.")
-        return redirect(url_for("book"))
+    open_user_transactions = BookTransaction.query.filter_by(
+        book_id=book.id,
+        requester_id=user_id,
+        date_confirmed=None).all()
 
+    if open_user_transactions:
+        flash("You already have an open transaction with this book")
+        return redirect(url_for("view_book", id=id))
+
+    # if not book.current_borrower:  # figure out value of current borrower
+    #     model.session.add(book)  # figure out if book is right thing to add
+    #     flash("You've successfully requested to borrow this book.")
+    # else:
+    #     flash("This book is currently checked out.")
+
+    new_transaction = BookTransaction(
+        book_id=book.id,
+        book_owner_id=book.owner_id,
+        requester_id=user_id,  # do i need a date_requested??
+    )
+
+    model.session.add(new_transaction)
     model.session.commit()
-    model.session.refresh(book)
+    # model.session.refresh(book)
+    return redirect(url_for("view_book", id=id))
 
 
-@app.route("/return_book/<int:id>", methods=["POST"])
+@app.route("/books/<int:id>/borrow", methods=["POST"])
+@login_required
+def declare_borrowed(id):
+    transaction = BookTransaction.query.get(id)
+    user_id = int(session.get("user_id"))
+    print type(transaction.book.owner_id)
+    print type(user_id)
+
+    if transaction.book.owner_id == user_id:
+
+        if transaction.book.current_borrower_id is None:
+            transaction.book.current_borrower_id = transaction.requester_id
+            transaction.date_borrowed = datetime.now()
+            flash("You've declared that this book as borrowed")
+            model.session.add(transaction)
+            model.session.add(transaction.book)
+            model.session.commit()
+
+        else:
+            flash("This book already has a borrower")
+    else:
+        flash("You must own a book to declare that it's been borrowed")
+    # model.session.refresh(book)
+    return redirect(url_for("view_book", id=transaction.book.id))
+
+
+@app.route("/books/<int:id>/return", methods=["POST"])
 @login_required
 def return_book(id):
-    book = Book.query.get(id)
-    user_id = session.get("user_id")
+    transaction = BookTransaction.query.get(id)
+    user_id = int(session.get("user_id"))
 
-    if book.owner_id == user_id:
-        if book.current_borrower:
-            book_availability(book)
+    if transaction.book.owner_id != user_id:  # is this line a good idea?
+        if transaction.book.current_borrower_id == user_id:
+                if transaction.date_returned is not None:
+                    flash("This book has already been returned")
+                else:
+                    transaction.date_returned = datetime.now()
+                    model.session.add(transaction)
+                    model.session.commit()
+                    flash("You have marked this book as returned")
         else:
-            pass
-        return redirect(url_for("book"))
-
+            flash("You can't return a book that aren't borrowing.")
     else:
-        if book.current_borrower:
-            request_book(book)
-            pass
-        else:
-            pass
-        return redirect(url_for("book"))
+        flash("You can't return a book you already own")
 
-    model.session.commit()
-    model.session.refresh(book)
+    return redirect(url_for("view_book", id=transaction.book.id))
+
+
+@app.route("/books/<int:id>/confirmation", methods=["POST"])
+@login_required
+def confirm_book_returned(id):
+    transaction = BookTransaction.query.get(id)
+    user_id = int(session.get("user_id"))
+
+    if transaction.book.owner_id == user_id:
+        if transaction.book.current_borrower_id is not None:
+
+            transaction.book.current_borrower_id = None
+            transaction.date_confirmed = datetime.now()
+
+            model.session.add(transaction)
+            model.session.add(transaction.book)
+            model.session.commit()
+
+        else:
+            flash("You've already confirmed this book has been returned")
+    else:
+        flash("You can only confirm returns on books you own")
+    # model.session.refresh(book)
+    return redirect(url_for("view_book", id=transaction.book.id))
+
 
 # end of new section of code
 
