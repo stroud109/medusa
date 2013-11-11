@@ -4,16 +4,47 @@
 <h2><a href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a></h2>
 Book owner: {{book.owner_id}}
 
-<form method="post" action="{{url_for("request_book", id=book.id)}}"><input type="submit" value="Request Book" class="btn btn-link"/></form>
-
 <h2>Book details go here</h2>
 
-<h2>Book Transactions</h2>
-<ul>
-    {% for transaction in book.book_transactions %}
-    <li>Requester ID: {{transaction.requester_id}} | Date Requested: {{transaction.date_requested}} | Date Borrowed: {{transaction.date_borrowed}} | Date Returned: {{transaction.date_returned}} | Date Confirmed: {{transaction.date_confirmed}} | Owner ID: {{transaction.book.owner_id}}<form method="post" action="{{url_for("declare_borrowed", id=transaction.id)}}"><input type="submit" value="Declare Borrowed" class="btn btn-link"/></form><form method="post" action="{{url_for("return_book", id=transaction.id)}}"><input type="submit" value="Return Book" class="btn btn-link"/></form><form method="post" action="{{url_for("confirm_book_returned", id=transaction.id)}}"><input type="submit" value="Confirm Book Returned" class="btn btn-link"/></form></li>
-    {% endfor %}
-</ul>
+    {% if user_id != None %}
+        {% if user_id != book.owner_id %}
+        <form method="post" action="{{url_for("request_book", id=book.id)}}">
+            <input type="submit" value="Request Book" class="btn btn-link"/>
+        </form>
+        {% endif %}
+
+        <h2>Book Transactions</h2>
+
+        <ul>
+            {% for transaction in book.book_transactions %}
+            <li><span>Requester ID: {{transaction.requester_id}} | Date Requested: {{transaction.date_requested}} | Date Borrowed: {{transaction.date_borrowed}} | Date Returned: {{transaction.date_returned}} | Date Confirmed: {{transaction.date_confirmed}} | Owner ID: {{transaction.book.owner_id}}</span>
+
+            {% if user_id == transaction.book.owner_id %}
+                {% if transaction.date_requested != None %}
+                <form method="post" action="{{url_for("declare_borrowed", id=transaction.id)}}">
+                    <input type="submit" value="Declare Borrowed" class="btn btn-link"/>
+                </form>
+                {% elif transaction.date_returned != None %}
+                <form method="post" action="{{url_for("confirm_book_returned", id=transaction.id)}}">
+                    <input type="submit" value="Confirm Book Returned" class="btn btn-link"/>
+                </form>
+                {% endif %}
+            {% endif %}
+
+            {% if user_id == transaction.requester_id %}
+                {% if transaction.date_borrowed != None %}
+                    {% if transaction.date_returned == None %}
+                    <form method="post" action="{{url_for("return_book", id=transaction.id)}}">
+                        <input type="submit" value="Return Book" class="btn btn-link"/>
+                    </form>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+
+    {% endif %}
 
 {% endblock %}
 

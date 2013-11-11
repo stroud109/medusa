@@ -57,12 +57,13 @@ def index():
 @app.route("/books/<int:id>")  # should show borrow history of book
 def view_book(id):
     book = Book.query.get(id)
-    return render_template("book.html", book=book)
+    user_id = session.get("user_id")
+    if user_id is not None:
+        user_id = int(user_id)
+    return render_template("book.html", book=book, user_id=user_id)
 
 
 # adding this section
-
-# ACCOUNT FOR BORROW HISTORY
 
 
 @app.route("/books/<int:id>/request", methods=["POST"])
@@ -111,17 +112,19 @@ def declare_borrowed(id):
     print type(user_id)
 
     if transaction.book.owner_id == user_id:
+        if transaction.date_requested is not None:
+            if transaction.book.current_borrower_id is None:
+                transaction.book.current_borrower_id = transaction.requester_id
+                transaction.date_borrowed = datetime.now()
+                flash("You've declared that this book as borrowed")
+                model.session.add(transaction)
+                model.session.add(transaction.book)
+                model.session.commit()
 
-        if transaction.book.current_borrower_id is None:
-            transaction.book.current_borrower_id = transaction.requester_id
-            transaction.date_borrowed = datetime.now()
-            flash("You've declared that this book as borrowed")
-            model.session.add(transaction)
-            model.session.add(transaction.book)
-            model.session.commit()
-
+            else:
+                flash("This book already has a borrower")
         else:
-            flash("This book already has a borrower")
+            flash("Book must be requested before it's borrowed")
     else:
         flash("You must own a book to declare that it's been borrowed")
     # model.session.refresh(book)
@@ -134,8 +137,9 @@ def return_book(id):
     transaction = BookTransaction.query.get(id)
     user_id = int(session.get("user_id"))
 
-    if transaction.book.owner_id != user_id:  # is this line a good idea?
+    if transaction.book.owner_id != user_id:
         if transaction.book.current_borrower_id == user_id:
+            if transaction.date_borrowed is not None:
                 if transaction.date_returned is not None:
                     flash("This book has already been returned")
                 else:
@@ -143,8 +147,10 @@ def return_book(id):
                     model.session.add(transaction)
                     model.session.commit()
                     flash("You have marked this book as returned")
+            else:
+                flash("Book must be borrowed before it's returned")
         else:
-            flash("You can't return a book that aren't borrowing.")
+            flash("You can't return a book that you aren't borrowing.")
     else:
         flash("You can't return a book you already own")
 
@@ -158,17 +164,17 @@ def confirm_book_returned(id):
     user_id = int(session.get("user_id"))
 
     if transaction.book.owner_id == user_id:
-        if transaction.book.current_borrower_id is not None:
-
-            transaction.book.current_borrower_id = None
-            transaction.date_confirmed = datetime.now()
-
-            model.session.add(transaction)
-            model.session.add(transaction.book)
-            model.session.commit()
-
+        if transaction.date_returned is not None:
+            if transaction.book.current_borrower_id is not None:
+                transaction.book.current_borrower_id = None
+                transaction.date_confirmed = datetime.now()
+                model.session.add(transaction)
+                model.session.add(transaction.book)
+                model.session.commit()
+            else:
+                flash("You've already confirmed this book has been returned")
         else:
-            flash("You've already confirmed this book has been returned")
+            flash("Book must be marked as returned before you confirm")
     else:
         flash("You can only confirm returns on books you own")
     # model.session.refresh(book)
@@ -258,8 +264,8 @@ def authenticate():
 
     email = form.email.data
     password = form.password.data
-    print "email", email
-    print "password", password
+    # print "email", email
+    # print "password", password
 
     user = User.query.filter_by(email=email).one()
     # when i fix database, change this to one()
