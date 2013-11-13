@@ -1,9 +1,91 @@
 {% extends 'base.html' %}
 {% block body %}
 
-<video id='videoElem' width='320' height='240'></video>
+<video id='videoElem' width='640' height='480'></video>
+<a id="snapshot" class="btn btn-default" href="">Snapshot</a>
+<!-- <button type="submit" id="snapshot" class="btn btn-default">snapshot</button> -->
 
-<canvas id='canvasFeed' width='320' height='240'></canvas>
+<canvas id='canvasFeed' width='640' height='480' style="visibility: hidden"></canvas>
 <script src="/static/js/camera.js"></script>
+<script type="text/javascript">
+// var takePicture = document.querySelector("#Take-Picture"),
+//     showPicture = document.querySelector("#picture");
+//     Result = document.querySelector("#textbit");
+//     Canvas = document.createElement("canvas");
+//     Canvas.width=640;
+//     Canvas.height=480;
+//     var resultArray = [];
+//     ctx = Canvas.getContext("2d");
+//     var workerCount = 0;
+    function receiveMessage(e) {
+        console.log(e.data);
+        // if(e.data.success === "log") {
+        //     console.log(e.data.result);
+        //     return;
+        // }
+        // workerCount--;
+        // if(e.data.success){
+        //     var tempArray = e.data.result;
+        //     for(var i = 0; i < tempArray.length; i++) {
+        //         if(resultArray.indexOf(tempArray[i]) == -1) {
+        //             resultArray.push(tempArray[i]);
+        //         }
+        //     }
+        //     Result.innerHTML=resultArray.join("<br />");
+        // }else{
+        //     if(resultArray.length === 0 && workerCount === 0) {
+        //         Result.innerHTML="Decoding failed.";
+        //     }
+        // }
+    }
+    var DecodeWorker = new Worker("/static/js/barcodeReader.js");
+    // var RightWorker = new Worker("/static/js/barcodeReader.js");
+    // var LeftWorker = new Worker("/static/js/barcodeReader.js");
+    var FlipWorker = new Worker("/static/js/barcodeReader.js");
+
+    DecodeWorker.onmessage = receiveMessage;
+    // RightWorker.onmessage = receiveMessage;
+    // LeftWorker.onmessage = receiveMessage;
+    FlipWorker.onmessage = receiveMessage;
+
+    function decodeImage(canvas, ctx){
+        var data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+
+        // // Theoretically this adds contrast
+        // for (var i=0; i < data.length; i++) {
+        //     p[i] = p[i]+100 < 255 ? p[i]+100 : 255;
+        //     p[i+1] = p[i+1]+100 < 255 ? p[i+1]+100 : 255;
+        //     p[i+2] = p[i+2]+100 < 255 ? p[i+2]+100 : 255;
+        // }
+
+        DecodeWorker.postMessage({pixels: data, cmd: "normal"});
+        // RightWorker.postMessage({pixels: data, cmd: "right"});
+        // LeftWorker.postMessage({pixels: data, cmd: "left"});
+        FlipWorker.postMessage({pixels: data, cmd: "flip"});
+    }
+
+    function process_camera_image() {
+        var canvas = $("canvas#canvasFeed")[0];
+        var video = $("#videoElem")[0];
+        var context = canvas.getContext("2d");
+        context.drawImage(video, 0, 0, video.width, video.height);
+
+        console.log("Got the context");
+
+        decodeImage(canvas, context);
+        return false;
+    }
+
+    $("a#snapshot").click( process_camera_image );
+    // $('#snapshot')
+
+    // .submit(function(){
+    //     var canvasElem = document.getElementById("canvasFeed");
+    //     var ctx = canvasElem.getContext('2d')
+    //     decodeImage(canvasElem, ctx)
+    // });
+
+
+</script>
 
 {% endblock %}

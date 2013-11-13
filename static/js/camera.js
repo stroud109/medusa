@@ -20,32 +20,33 @@
         var context = canvasElem.getContext('2d');
 
         // Set our draw context to 'mirror'
-        context.translate(canvasElem.width, 0);
-        context.scale(-1, 1);
+        // context.translate(canvasElem.width, 0);
+        // context.scale(-1, 1);
 
         // Start to draw the video into the canvas
 
-        var drawSingleFrame = function () {
+        // var drawSingleFrame = function () {
 
-            context.drawImage(videoElem, 0, 0, videoElem.width, videoElem.height);
-        };
+        //     context.drawImage(videoElem, 0, 0, videoElem.width, videoElem.height);
 
-        //
-       setInterval(drawSingleFrame, 500);
+        // };
+
+        // //
+        // setInterval(drawSingleFrame, 500);
     };
 
     // Shim the requestAnimationFrame HTML5 API
     // Paul Irish
     // http://www.paulirish.com/2011/requestanimationframe-for-smart-animating/
 
-    window.requestAnimationFrame = (function(){
-      return  window.requestAnimationFrame       ||
-              window.webkitRequestAnimationFrame ||
-              window.mozRequestAnimationFrame    ||
-              function( callback ){
-                window.setTimeout(callback, 1000 / 60);
-              };
-    })();
+    // window.requestAnimationFrame = (function(){
+    //   return  window.requestAnimationFrame       ||
+    //           window.webkitRequestAnimationFrame ||
+    //           window.mozRequestAnimationFrame    ||
+    //           function( callback ){
+    //             window.setTimeout(callback, 1000 / 60);
+    //           };
+    // })();
 
     // Shim the getUserMedia HTML5 API
     navigator.getUserMedia = (function () {
