@@ -54,6 +54,11 @@ def index():
     return render_template("index.html", books=books)
 
 
+@app.route("/camera")  # remove this and add functionality to add_book route
+def camera():
+    return render_template("camera.html")
+
+
 @app.route("/books/<int:id>")  # should show borrow history of book
 def view_book(id):
     book = Book.query.get(id)
@@ -61,9 +66,6 @@ def view_book(id):
     if user_id is not None:
         user_id = int(user_id)
     return render_template("book.html", book=book, user_id=user_id)
-
-
-# adding this section
 
 
 @app.route("/books/<int:id>/request", methods=["POST"])
@@ -85,16 +87,10 @@ def request_book(id):
         flash("You already have an open transaction with this book")
         return redirect(url_for("view_book", id=id))
 
-    # if not book.current_borrower:  # figure out value of current borrower
-    #     model.session.add(book)  # figure out if book is right thing to add
-    #     flash("You've successfully requested to borrow this book.")
-    # else:
-    #     flash("This book is currently checked out.")
-
     new_transaction = BookTransaction(
         book_id=book.id,
         book_owner_id=book.owner_id,
-        requester_id=user_id,  # do i need a date_requested??
+        requester_id=user_id,
     )
 
     model.session.add(new_transaction)
@@ -179,9 +175,6 @@ def confirm_book_returned(id):
         flash("You can only confirm returns on books you own")
     # model.session.refresh(book)
     return redirect(url_for("view_book", id=transaction.book.id))
-
-
-# end of new section of code
 
 
 @app.route("/users")
