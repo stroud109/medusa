@@ -5,7 +5,8 @@
 <a id="snapshot" class="btn btn-default" href="">Snapshot</a>
 <!-- <button type="submit" id="snapshot" class="btn btn-default">snapshot</button> -->
 
-<canvas id='canvasFeed' width='640' height='480' style="visibility: hidden"></canvas>
+<canvas id='canvasFeed' width='640' height='480'></canvas>
+<!-- <canvas id='canvasFeed' width='640' height='480' style='visibility: hidden'></canvas> -->
 <script src="/static/js/camera.js"></script>
 <script type="text/javascript">
 // var takePicture = document.querySelector("#Take-Picture"),
@@ -19,6 +20,9 @@
 //     var workerCount = 0;
     function receiveMessage(e) {
         console.log(e.data);
+        if (!e.data.success) {
+            setTimeout(process_camera_image, 50);
+        }
         // if(e.data.success === "log") {
         //     console.log(e.data.result);
         //     return;
@@ -58,10 +62,10 @@
         //     p[i+2] = p[i+2]+100 < 255 ? p[i+2]+100 : 255;
         // }
 
-        DecodeWorker.postMessage({pixels: data, cmd: "normal"});
+        DecodeWorker.postMessage({pixels: data, cmd: "normal", skip:["Code39", "Code128", "Code93"]});
         // RightWorker.postMessage({pixels: data, cmd: "right"});
         // LeftWorker.postMessage({pixels: data, cmd: "left"});
-        FlipWorker.postMessage({pixels: data, cmd: "flip"});
+        //FlipWorker.postMessage({pixels: data, cmd: "flip"});
     }
 
     function process_camera_image() {

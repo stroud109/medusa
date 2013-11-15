@@ -25,14 +25,14 @@
 
         // Start to draw the video into the canvas
 
-        // var drawSingleFrame = function () {
+        var drawSingleFrame = function () {
 
-        //     context.drawImage(videoElem, 0, 0, videoElem.width, videoElem.height);
+            context.drawImage(videoElem, 0, 0, videoElem.width, videoElem.height);
 
-        // };
+        };
 
-        // //
-        // setInterval(drawSingleFrame, 500);
+        //
+        setInterval(drawSingleFrame, 50);
     };
 
     // Shim the requestAnimationFrame HTML5 API
@@ -49,6 +49,7 @@
     // })();
 
     // Shim the getUserMedia HTML5 API
+    console.log("accessing camera, in theory");
     navigator.getUserMedia = (function () {
         return navigator.getUserMedia       ||
                navigator.webkitGetUserMedia ||
@@ -71,6 +72,6 @@
         throw new Error('Browser does not appear to support getUserMedia');
     }
 
-    console.log('I\'m doing other shit');
+    console.log('If\'m doing other shit');
 
 })();
