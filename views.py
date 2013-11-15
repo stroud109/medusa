@@ -29,6 +29,8 @@ from flask.ext.login import (
     # current_user,
 )
 
+from amazonproduct import API
+
 app = Flask(__name__)
 app.config.from_object(config)
 
@@ -52,6 +54,31 @@ Markdown(app)
 def index():
     books = Book.query.all()
     return render_template("index.html", books=books)
+
+
+@app.route("/amazon_lookup")
+def amazon_lookup():
+    api = API(locale='us')
+
+    # search by IDType: EAN
+    # ResponseGroup: Images
+    # ItemAttributes: Title, Author, Genre, NumberOfPages
+
+    res = api.item_lookup(
+        ItemId='9780989192804',
+        IdType='EAN',
+        ResponseGroup='ItemAttributes',
+        SearchIndex='Books',
+        )
+
+    book_image = api.item_lookup(
+        ItemId='9780989192804',
+        IdType='EAN',
+        ResponseGroup='Image',
+        SearchIndex='Books',
+        )
+
+    return render_template("amazon.html", res=res, book_image=book_image)
 
 
 @app.route("/camera")  # remove this and add functionality to add_book route
