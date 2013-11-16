@@ -82,14 +82,26 @@ def amazon_lookup():
         SearchIndex='Books',
         )
 
+    book_review = api.item_lookup(
+        ItemId='9780989192804',
+        IdType='EAN',
+        ResponseGroup='EditorialReview',
+        SearchIndex='Books',
+        )
+
+    editorial_review = book_review.Items.Item.EditorialReviews.EditorialReview.Content
+
     book_info = lxml.etree.tounicode(res, pretty_print=True)
     image_info = lxml.etree.tounicode(book_image, pretty_print=True)
+    review_info = lxml.etree.tounicode(book_review, pretty_print=True)
 
     return render_template(
         "amazon.html", res=res,
         book_image=book_image,
         book_info=book_info,
-        image_info=image_info
+        image_info=image_info,
+        review_info=review_info,
+        editorial_review=editorial_review,
         )
 
 

@@ -15,4 +15,13 @@
 {{image_info}}
 <img src="{{book_image.Items.Item.ImageSets.ImageSet.LargeImage.URL}}">
 
+<h2>Review Info</h2>
+{{review_info}}
+
+<h2>Editorial Review</h2>
+{% autoescape off%}
+{{editorial_review}}
+{% endautoescape %}
+
+
 {% endblock %}
