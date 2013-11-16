@@ -4,6 +4,8 @@
 
     var videoElem = document.getElementById("videoElem");
     var canvasElem = document.getElementById("canvasFeed");
+    // Get our canvas's 2d context
+    var context = canvasElem.getContext('2d');
 
     console.log('Have access to canvases', videoElem, canvasElem);
 
@@ -14,10 +16,8 @@
         videoElem.src = window.URL.createObjectURL(mediaStreamObject);
 
         // Tell the video element to 'play' the stream from the camera
-        videoElem.play();
+        // videoElem.play();
 
-        // Get our canvas's 2d context
-        var context = canvasElem.getContext('2d');
 
         // Set our draw context to 'mirror'
         // context.translate(canvasElem.width, 0);
@@ -25,15 +25,34 @@
 
         // Start to draw the video into the canvas
 
-        var drawSingleFrame = function () {
+        startCapture();
 
-            context.drawImage(videoElem, 0, 0, videoElem.width, videoElem.height);
+    //     var drawSingleFrame = function () {
 
-        };
+    //         context.drawImage(videoElem, 0, 0, videoElem.width, videoElem.height);
 
-        //
-        setInterval(drawSingleFrame, 50);
+    //     };
+
+    //     //
+    //     setInterval(drawSingleFrame, 50);
     };
+
+    var renderTimer = null;
+
+    var drawSingleFrame = function () {
+        context.drawImage(videoElem, 0, 0, videoElem.width, videoElem.height);
+    };
+
+    var startCapture = function () {
+        videoElem.play();
+        renderTimer = setInterval(drawSingleFrame, 50);
+    };
+
+    var pauseCapture = function () {
+        videoElem.pause();
+        if (renderTimer) clearInterval(renderTimer);
+    };
+
 
     // Shim the requestAnimationFrame HTML5 API
     // Paul Irish
@@ -49,7 +68,6 @@
     // })();
 
     // Shim the getUserMedia HTML5 API
-    console.log("accessing camera, in theory");
     navigator.getUserMedia = (function () {
         return navigator.getUserMedia       ||
                navigator.webkitGetUserMedia ||
@@ -57,21 +75,29 @@
                navigator.msGetUserMedia;
     })();
 
-    // Check if the browser has a camera
-    if (navigator.getUserMedia) {
-        // If browser has a camera, ask the user
-        // for access to the camera, and when the user
-        // grants access, call the `whenUserGrantsAccess` callback.
-        navigator.getUserMedia({
-            video: true,
-            audio: false
-        }, whenUserGrantsAccess);
+    var askForCamera = function() {
+        console.log("accessing camera, in theory");
+        // Check if the browser has a camera
+        if (navigator.getUserMedia) {
+            // If browser has a camera, ask the user
+            // for access to the camera, and when the user
+            // grants access, call the `whenUserGrantsAccess` callback.
+            navigator.getUserMedia({
+                video: true,
+                audio: false
+            }, whenUserGrantsAccess);
+        // If the browser does not have a camera, throw an error
+        } else {
+            throw new Error('Browser does not appear to support getUserMedia');
+        }
+    };
 
-    // If the browser does not have a camera, throw an error
-    } else {
-        throw new Error('Browser does not appear to support getUserMedia');
-    }
-
-    console.log('If\'m doing other shit');
+    // console.log('If\'m doing other shit');
+    window.Camera = {
+        askForCamera: askForCamera,
+        startCapture: startCapture,
+        pauseCapture: pauseCapture,
+        drawSingleFrame: drawSingleFrame
+    };
 
 })();

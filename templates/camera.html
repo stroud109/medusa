@@ -2,8 +2,9 @@
 {% block body %}
 
 <video id='videoElem' width='640' height='480'></video>
-<a id="snapshot" class="btn btn-default" href="">Snapshot</a>
+<a id="start" class="btn btn-default" href="">Start</a>
 <!-- <button type="submit" id="snapshot" class="btn btn-default">snapshot</button> -->
+<a id="cancel" class="btn btn-warning" href="">Cancel</a>
 
 <canvas id='canvasFeed' width='640' height='480'></canvas>
 <!-- <canvas id='canvasFeed' width='640' height='480' style='visibility: hidden'></canvas> -->
@@ -18,10 +19,16 @@
 //     var resultArray = [];
 //     ctx = Canvas.getContext("2d");
 //     var workerCount = 0;
+
+    window.Camera.askForCamera();
+
     function receiveMessage(e) {
         console.log(e.data);
-        if (!e.data.success) {
-            setTimeout(process_camera_image, 50);
+        if (!(e.data.success || isCancelled)) {
+            setTimeout(processCameraImage, 50)
+        }
+        if (e.data.success) {
+            window.Camera.pauseCapture();
         }
         // if(e.data.success === "log") {
         //     console.log(e.data.result);
@@ -68,7 +75,7 @@
         //FlipWorker.postMessage({pixels: data, cmd: "flip"});
     }
 
-    function process_camera_image() {
+    function processCameraImage() {
         var canvas = $("canvas#canvasFeed")[0];
         var video = $("#videoElem")[0];
         var context = canvas.getContext("2d");
@@ -80,7 +87,20 @@
         return false;
     }
 
-    $("a#snapshot").click( process_camera_image );
+    var isCancelled = false;
+
+    $("a#start").click( function(e){
+        window.Camera.startCapture();
+        processCameraImage();
+        isCancelled = false;
+        e.preventDefault();
+    } );
+    $("a#cancel").click( function(e) {
+        window.Camera.pauseCapture();
+        isCancelled = true;
+        e.preventDefault();
+    });
+
     // $('#snapshot')
 
     // .submit(function(){
