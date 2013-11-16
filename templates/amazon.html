@@ -5,13 +5,14 @@
 
 {% for item in res.Items.Item %}
 
-{{item.ItemAttributes.Title}} | {{item.ItemAttributes.Author}} | {{item.ItemAttributes.NumberOfPages}}
+{{item.ItemAttributes.Title}} | {{item.ItemAttributes.Author}} | {{item.ItemAttributes.NumberOfPages}} | {{item.ItemAttributes.Genre}} </br>
 
 {% endfor %}
-{% for item in book_image.Items.Item %}
 
-{{item.Image}}
-
-{% endfor %}
+<h2>Book Info</h2>
+{{book_info}}
+<h2>Image Info</h2>
+{{image_info}}
+<img src="{{book_image.Items.Item.ImageSets.ImageSet.LargeImage.URL}}">
 
 {% endblock %}

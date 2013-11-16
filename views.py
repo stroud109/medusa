@@ -30,6 +30,7 @@ from flask.ext.login import (
 )
 
 from amazonproduct import API
+import lxml
 
 app = Flask(__name__)
 app.config.from_object(config)
@@ -70,15 +71,26 @@ def amazon_lookup():
         ResponseGroup='ItemAttributes',
         SearchIndex='Books',
         )
+    print "YO! LOOK HERE!!"
+    res.Items.Item.ItemAttributes.Genre = "Undefined"
+    print res.Items.Item.ItemAttributes.Genre
 
     book_image = api.item_lookup(
         ItemId='9780989192804',
         IdType='EAN',
-        ResponseGroup='Image',
+        ResponseGroup='Images',
         SearchIndex='Books',
         )
 
-    return render_template("amazon.html", res=res, book_image=book_image)
+    book_info = lxml.etree.tounicode(res, pretty_print=True)
+    image_info = lxml.etree.tounicode(book_image, pretty_print=True)
+
+    return render_template(
+        "amazon.html", res=res,
+        book_image=book_image,
+        book_info=book_info,
+        image_info=image_info
+        )
 
 
 @app.route("/camera")  # remove this and add functionality to add_book route
