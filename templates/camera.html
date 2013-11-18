@@ -29,6 +29,8 @@
         }
         if (e.data.success) {
             window.Camera.pauseCapture();
+            var ean = e.data.result[0];
+            document.location="book_info/"+ean.replace("EAN-13: ", "");
         }
         // if(e.data.success === "log") {
         //     console.log(e.data.result);

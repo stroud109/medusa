@@ -18,6 +18,7 @@ from model import (
     User,
     Book,
     BookTransaction,
+    # BookInfo,
     register_book,
     register_user,
     session as db_session,
@@ -57,33 +58,34 @@ def index():
     return render_template("index.html", books=books)
 
 
-@app.route("/amazon_lookup")
-def amazon_lookup():
+@app.route("/book_info/<ean>")  # test on this EAN 0076783007994
+def book_info(ean):
     api = API(locale='us')
+    # ean = BookInfo.query.get('ean')
 
     # search by IDType: EAN
     # ResponseGroup: Images
     # ItemAttributes: Title, Author, Genre, NumberOfPages
 
-    res = api.item_lookup(
-        ItemId='9780989192804',
+    results = api.item_lookup(
+        ItemId=ean,
         IdType='EAN',
         ResponseGroup='ItemAttributes',
         SearchIndex='Books',
         )
     print "YO! LOOK HERE!!"
-    res.Items.Item.ItemAttributes.Genre = "Undefined"
-    print res.Items.Item.ItemAttributes.Genre
+    results.Items.Item.ItemAttributes.Genre = "Undefined"
+    print results.Items.Item.ItemAttributes.Genre
 
     book_image = api.item_lookup(
-        ItemId='9780989192804',
+        ItemId=ean,
         IdType='EAN',
         ResponseGroup='Images',
         SearchIndex='Books',
         )
 
     book_review = api.item_lookup(
-        ItemId='9780989192804',
+        ItemId=ean,
         IdType='EAN',
         ResponseGroup='EditorialReview',
         SearchIndex='Books',
@@ -91,12 +93,12 @@ def amazon_lookup():
 
     editorial_review = book_review.Items.Item.EditorialReviews.EditorialReview.Content
 
-    book_info = lxml.etree.tounicode(res, pretty_print=True)
+    book_info = lxml.etree.tounicode(results, pretty_print=True)
     image_info = lxml.etree.tounicode(book_image, pretty_print=True)
     review_info = lxml.etree.tounicode(book_review, pretty_print=True)
 
     return render_template(
-        "amazon.html", res=res,
+        "amazon.html", results=results,
         book_image=book_image,
         book_info=book_info,
         image_info=image_info,
@@ -248,13 +250,15 @@ def new_book():
     return render_template("new_book.html", form=form)
 
 
+# NEEDS TO BE UPDATED
+
+
 @app.route("/add_book", methods=["POST"])
 @login_required
-def add_book():
+def add_book(book_info_id):
     form = forms.NewBookForm(request.form)
     print "form validation", form.validate()
     print form.title.data
-    print form.amazon_url.data
 
     if not form.validate():
         flash("Error, all fields are required")
@@ -268,7 +272,7 @@ def add_book():
 
     book = db_session.query(Book).filter_by(
         owner_id=new_book.owner_id,
-        title=new_book.title
+        title=new_book.title,
     ).all()
 
     if book:
@@ -283,6 +287,8 @@ def add_book():
     model.session.refresh(new_book)
 
     return redirect(url_for("view_book", id=new_book.id))
+
+# END OF SECTION TO UPDATE
 
 
 @app.route("/login")
@@ -312,7 +318,6 @@ def authenticate():
     # print "password", password
 
     user = User.query.filter_by(email=email).one()
-    # when i fix database, change this to one()
 
     if not user or not user.authenticate(password):
         flash("Incorrect username or password")
@@ -356,7 +361,6 @@ def create_account():
 
     email = form.email.data
     user = User.query.filter_by(email=email).one()
-    # changed this from first to one
 
     if user:
         flash("Looks like you already have an account")

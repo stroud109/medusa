@@ -56,13 +56,30 @@ class Book(Base):
 
     id = Column(Integer, primary_key=True)
     title = Column(String(100), nullable=False)
-    amazon_url = Column(String(100), nullable=True)
     owner_id = Column(Integer(), nullable=False)
     current_borrower_id = Column(Integer(), nullable=True)
+    book_info_id = Column(Integer(), ForeignKey('book_info.id'), nullable=False)
 
     book_transactions = relationship("BookTransaction", uselist=True)
+    book_info = relationship("BookInfo", uselist=True)
     # owner = relationship("User")
     # current_borrower = relationship("User")
+
+
+class BookInfo(Base):
+    __tablename__ = "book_info"
+
+    id = Column(Integer, primary_key=True)
+    ean = Column(String(17), nullable=True)
+    isbn = Column(String(13), nullable=True)
+    title = Column(String(100), nullable=False)
+    author = Column(String(100), nullable=False)
+    number_pages = Column(Integer(), nullable=True)
+    genre = Column(String(50), nullable=True)
+    image_url = Column(String(300), nullable=True)
+    editorial_review = Column(String(10000), nullable=True)
+
+    book = relationship("Book")
 
 
 class BookTransaction(Base):
@@ -94,22 +111,35 @@ def create_tables():
     u = User(email="test@test.com", username="test")
     u.set_password("unicorn")
     session.add(u)
+    print "adding user1"
     u2 = User(email="test2@test2.com", username="test2")
     u2.set_password("unicorn")
     session.add(u2)
+    print "adding user2"
+    b_i1 = BookInfo(title="test book", author="test author")
+    session.add(b_i1)
+    print "adding book info 1"
+    b_i2 = BookInfo(title="test book2", author="test author2")
+    session.add(b_i2)
+    print "adding book info 2"
+
     b = Book(
-        title="Test Book",
-        amazon_url="www.smstroud.com",
-        owner_id=1
+        title="test book",
+        owner_id=1,
+        book_info_id=1,
     )
     session.add(b)
+    print "adding book1"
     b2 = Book(
-        title="Test Book2",
-        amazon_url="www.smstroud.com",
+        title="test book2",
         owner_id=2,
+        book_info_id=2,
     )
     session.add(b2)
+    print "adding book2"
     session.commit()
+    print "committing users, book info and books 1 and 2"
 
 if __name__ == "__main__":
     create_tables()
+    print "tables should be created now"

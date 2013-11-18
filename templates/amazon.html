@@ -3,11 +3,9 @@
 
 <!-- Things go in here for testing. Put all this on book template once finished -->
 
-{% for item in res.Items.Item %}
 
-{{item.ItemAttributes.Title}} | {{item.ItemAttributes.Author}} | {{item.ItemAttributes.NumberOfPages}} | {{item.ItemAttributes.Genre}} </br>
+{{results.Items.Item.ItemAttributes.Title}} | {{results.Items.Item.ItemAttributes.Author}} | {{results.Items.Item.ItemAttributes.NumberOfPages}} pages | {{results.Items.Item.ItemAttributes.Genre}} </br>
 
-{% endfor %}
 
 <h2>Book Info</h2>
 {{book_info}}
