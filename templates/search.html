@@ -6,6 +6,16 @@
 <!-- <button type="submit" id="snapshot" class="btn btn-default">snapshot</button> -->
 <a id="cancel" class="btn btn-warning" href="">Cancel</a>
 
+<form action="/results" method="get">
+    <div>
+        <label for="ean">EAN:</label>
+        <input type="text" name="ean" />
+    </div>
+    <div class="button">
+        <button type="submit">search</button>
+    </div>
+</form>
+
 <canvas id='canvasFeed' width='640' height='480'></canvas>
 <!-- <canvas id='canvasFeed' width='640' height='480' style='visibility: hidden'></canvas> -->
 <script src="/static/js/camera.js"></script>

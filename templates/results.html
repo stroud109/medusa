@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block body %}
+
+<!-- Things go in here for testing. Put all this on book template once finished -->
+
+{{book_info.title}} | {{book_info.author}} | {{book_info.number_pages}} pages | {{book_info.genre}} | {{book_info.isbn}}</br>
+
+{% if session.get("user_id") != None %}
+
+<form action="/add_book/{{book_info.id}}" method="post">
+    <div class="button">
+        <button type="submit">add this book</button>
+    </div>
+</form>
+<a href="/search" class="btn btn-warning">try again</a>
+
+{% endif %}
+
+<img src="{{book_info.image_url}}">
+
+<h2>Editorial Review</h2>
+{% autoescape off%}
+{{book_info.editorial_review}}
+{% endautoescape %}
+
+<h2>Book Info</h2>
+{{results_info}}
+
+<h2>Image Info</h2>
+{{image_info}}
+
+<h2>Review Info</h2>
+{{review_info}}
+
+
+
+{% endblock %}

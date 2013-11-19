@@ -2,7 +2,7 @@
 
 {% block body %}
 
-{% if session.get("user_id") %}
+{% if session.get("user_id") != None %}
 
 <form method="post">
 {% for field in form %}

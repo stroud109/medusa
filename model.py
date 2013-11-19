@@ -59,6 +59,7 @@ class Book(Base):
     owner_id = Column(Integer(), nullable=False)
     current_borrower_id = Column(Integer(), nullable=True)
     book_info_id = Column(Integer(), ForeignKey('book_info.id'), nullable=False)
+    # add number_copies = Column(Integer(), nullable=False) ??
 
     book_transactions = relationship("BookTransaction", uselist=True)
     book_info = relationship("BookInfo", uselist=True)

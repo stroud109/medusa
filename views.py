@@ -18,9 +18,9 @@ from model import (
     User,
     Book,
     BookTransaction,
-    # BookInfo,
-    register_book,
-    register_user,
+    BookInfo,
+    # register_book,
+    # register_user,
     session as db_session,
 )
 from flask.ext.login import (
@@ -30,8 +30,7 @@ from flask.ext.login import (
     # current_user,
 )
 
-from amazonproduct import API
-import lxml
+from amazon_search import get_book_info_from_ean
 
 app = Flask(__name__)
 app.config.from_object(config)
@@ -58,58 +57,100 @@ def index():
     return render_template("index.html", books=books)
 
 
-@app.route("/book_info/<ean>")  # test on this EAN 0076783007994
-def book_info(ean):
-    api = API(locale='us')
-    # ean = BookInfo.query.get('ean')
+@app.route("/search")  # camera and user input form live here
+def search():
+    return render_template("search.html")
 
-    # search by IDType: EAN
-    # ResponseGroup: Images
-    # ItemAttributes: Title, Author, Genre, NumberOfPages
 
-    results = api.item_lookup(
-        ItemId=ean,
-        IdType='EAN',
-        ResponseGroup='ItemAttributes',
-        SearchIndex='Books',
-        )
-    print "YO! LOOK HERE!!"
-    results.Items.Item.ItemAttributes.Genre = "Undefined"
-    print results.Items.Item.ItemAttributes.Genre
+@app.route("/results")  # test on this EAN 0076783007994
+def results():  # use this page for pre-DB commit search results
+    # http://domain/path?query=parameter#hash
+    ean = request.args.get('ean')  # checks if url query params has 'ean'
+    if not ean:  # checking for truthiness rather than actual existance
+        return redirect(url_for("search"))
+    # if user pushes 'confirm' button, add and commit book_info item
+    # adds 'book' to book_info library
 
-    book_image = api.item_lookup(
-        ItemId=ean,
-        IdType='EAN',
-        ResponseGroup='Images',
-        SearchIndex='Books',
-        )
+    book_info = db_session.query(BookInfo).filter_by(
+        ean=ean,
+    ).first()
 
-    book_review = api.item_lookup(
-        ItemId=ean,
-        IdType='EAN',
-        ResponseGroup='EditorialReview',
-        SearchIndex='Books',
-        )
-
-    editorial_review = book_review.Items.Item.EditorialReviews.EditorialReview.Content
-
-    book_info = lxml.etree.tounicode(results, pretty_print=True)
-    image_info = lxml.etree.tounicode(book_image, pretty_print=True)
-    review_info = lxml.etree.tounicode(book_review, pretty_print=True)
+    if not book_info:
+        book_info = get_book_info_from_ean(ean)  # see amazon_search.py
+        model.session.add(book_info)
+        model.session.commit()
 
     return render_template(
-        "amazon.html", results=results,
-        book_image=book_image,
+        "results.html",
         book_info=book_info,
-        image_info=image_info,
-        review_info=review_info,
-        editorial_review=editorial_review,
+        # results=results,
+        # # book_image=book_image,
+        # results_info=results_info,
+        # image_info=image_info,
+        # review_info=review_info,
+        # title=title,
+        # author=author,
+        # number_pages=number_pages,
+        # genre=genre,
+        # isbn=isbn,
+        # image_url=image_url,
+        # editorial_review=editorial_review,
         )
 
+# NEEDS TO BE UPDATED
 
-@app.route("/camera")  # remove this and add functionality to add_book route
-def camera():
-    return render_template("camera.html")
+
+# @app.route("/add_book")
+# @login_required
+# def new_book():
+#     # form = forms.NewBookForm()
+#     return render_template("new_book.html", form=form)
+
+
+@app.route("/add_book/<book_info_id>", methods=["POST"])
+# adds book to user library
+@login_required
+def add_book(book_info_id):
+    # form = forms.NewBookForm(request.form)
+    # print "form validation", form.validate()
+    # print form.title.data
+
+    # if not form.validate():
+    #     flash("Error, all fields are required")
+    #     return render_template("new_book.html", form=form)
+
+    book_info = db_session.query(BookInfo).filter_by(
+        id=book_info_id,
+    ).first()
+
+    if not book_info:
+        return redirect(url_for("search"))
+
+    book = db_session.query(Book).filter_by(
+        owner_id=session.get("user_id"),
+        book_info_id=book_info_id,
+    ).all()
+
+    if book:
+        flash("Looks like you already have this book in your library")
+        return redirect(url_for("index"))  # change this
+
+    new_book = Book(
+        title=book_info.title,
+        owner_id=session.get("user_id"),
+        book_info_id=book_info_id,
+    )
+
+    model.session.add(new_book)
+    # print "current user:", current_user
+    # current_user.books.append(new_book)
+
+    model.session.commit()
+    model.session.refresh(new_book)
+
+    return redirect(url_for("view_book", id=new_book.id))
+
+# END OF SECTION TO UPDATE
 
 
 @app.route("/books/<int:id>")  # should show borrow history of book
@@ -230,67 +271,6 @@ def confirm_book_returned(id):
     return redirect(url_for("view_book", id=transaction.book.id))
 
 
-@app.route("/users")
-def view_users():
-    users = User.query.all()
-    return render_template("users.html", users=users)
-
-
-@app.route("/users/<int:id>")
-@login_required
-def view_library(id):  # should show what books are checked out/in/borrowed
-    owner_books = db_session.query(Book).filter_by(owner_id=id).all()
-    return render_template("library.html", books=owner_books)
-
-
-@app.route("/add_book")
-@login_required
-def new_book():
-    form = forms.NewBookForm()
-    return render_template("new_book.html", form=form)
-
-
-# NEEDS TO BE UPDATED
-
-
-@app.route("/add_book", methods=["POST"])
-@login_required
-def add_book(book_info_id):
-    form = forms.NewBookForm(request.form)
-    print "form validation", form.validate()
-    print form.title.data
-
-    if not form.validate():
-        flash("Error, all fields are required")
-        return render_template("new_book.html", form=form)
-
-    new_book = Book(
-        title=form.title.data,
-        amazon_url=form.amazon_url.data,
-        owner_id=session.get("user_id"),
-    )
-
-    book = db_session.query(Book).filter_by(
-        owner_id=new_book.owner_id,
-        title=new_book.title,
-    ).all()
-
-    if book:
-        flash("Looks like you already have this book in your library")
-        return redirect(url_for("index"))
-
-    register_book(new_book)
-    # print "current user:", current_user
-    # current_user.books.append(new_book)
-
-    model.session.commit()
-    model.session.refresh(new_book)
-
-    return redirect(url_for("view_book", id=new_book.id))
-
-# END OF SECTION TO UPDATE
-
-
 @app.route("/login")
 def login():
     if session.get("user_id"):
@@ -372,7 +352,7 @@ def create_account():
     )
     new_user.set_password(request.form.get("password"))
 
-    register_user(new_user)
+    model.session.add(new_user)
 
     model.session.commit()
     model.session.refresh(new_user)
@@ -382,7 +362,20 @@ def create_account():
     return redirect(url_for("index", id=new_user.id))
 
 
-@app.route("/deactivate", methods=["POST"])
+@app.route("/users")
+def view_users():
+    users = User.query.all()
+    return render_template("users.html", users=users)
+
+
+@app.route("/users/<int:id>")
+@login_required
+def view_library(id):  # should show what books are checked out/in/borrowed
+    owner_books = db_session.query(Book).filter_by(owner_id=id).all()
+    return render_template("library.html", books=owner_books)
+
+
+@app.route("/deactivate", methods=["POST"])  # add this for better UX
 def deactivate_accout():
     pass
 
