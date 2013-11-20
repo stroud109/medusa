@@ -2,17 +2,19 @@
 {% block body %}
 
 <form method="post">
+<div class="form-group col-md-4">
 {% for field in form %}
-    {{field.label}}
-    {{field}}
-{% for error in field.errors %}
-    {{error}}
-{% endfor %}
-<br>
+    <div class="form-group {% if field.errors %}has-error{% endif %}">
+        {{field}}
+    {% for error in field.errors %}
+      <label class="control-label" for="{{field.id}}">{{error}}</label>
 
+    {% endfor %}
+    </div>
 {% endfor %}
 
-    <input type="submit">
+    <input class="btn btn-default" type="submit">
+</div>
 </form>
 
 {% endblock %}
