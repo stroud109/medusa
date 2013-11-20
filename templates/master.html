@@ -11,17 +11,18 @@
             <div id="login">
                 Login!
                 <form method="post">
-                {% for field in form %}
-                {{field.label}}
-                {{field}}
-                {% for error in field.errors %}
-                {{ error }}
+                <div class="form-group col-md-4">
+                    {% for field in form %}
+                    <div class="form-group {% if field.errors %}has-error{% endif %}">
+                        {{field}}
+                    {% for error in field.errors %}
+                    <label class="control-label" for="{{field.id}}">{{error}}</label>
+                    {% endfor %}
+                    </div>
                 {% endfor %}
-                <br>
 
-                {% endfor %}
-
-                    <input type="submit">
+                    <input class="btn btn-default" type="submit">
+                </div>
                 </form>
             </div>
             {% endif %}
@@ -34,11 +35,6 @@
                 <a href="/logout">logout</a>
             </div>
             {% endif %}
-            <form method="GET" action="/search" id="search">
-                    <input type="text" class="form-control" placeholder="Search for a book" name="search">
-                    <button type="submit" class="btn btn-default">Submit</button>
-            </form>
-
         </div>
     </body>
 </html>

@@ -123,9 +123,16 @@ def add_book(book_info_id):
 def view_book(id):
     book = Book.query.get(id)
     user_id = session.get("user_id")
+    # print book
+    # print book.book_info[0].isbn
+
     if user_id is not None:
         user_id = int(user_id)
-    return render_template("book.html", book=book, user_id=user_id)
+    return render_template(
+        "book.html",
+        book=book,
+        user_id=user_id,
+    )
 
 
 @app.route("/books/<int:id>/request", methods=["POST"])

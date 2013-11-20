@@ -62,7 +62,7 @@ class Book(Base):
     # add number_copies = Column(Integer(), nullable=False) ??
 
     book_transactions = relationship("BookTransaction", uselist=True)
-    book_info = relationship("BookInfo", uselist=True)
+    book_info = relationship("BookInfo", uselist=False)
     # owner = relationship("User")
     # current_borrower = relationship("User")
 
