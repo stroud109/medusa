@@ -18,16 +18,21 @@ def get_book_info_from_ean(ean):
         ResponseGroup='ItemAttributes',
         SearchIndex='Books',
         )
-    print "YO! LOOK HERE!!"
 
-    results.Items.Item.ItemAttributes.Genre = "Undefined"
+    book_genre = api.item_lookup(
+        ItemId=ean,
+        IdType='EAN',
+        ResponseGroup='BrowseNodes',
+        SearchIndex='Books',
+        )
 
     title = results.Items.Item.ItemAttributes.Title
     author = results.Items.Item.ItemAttributes.Author
+    genre = book_genre.Items.Item.BrowseNodes.BrowseNode.Name
     number_pages = results.Items.Item.ItemAttributes.NumberOfPages
-    genre = results.Items.Item.ItemAttributes.Genre
     isbn = results.Items.Item.ItemAttributes.ISBN
 
+    print "YO! LOOK HERE!!"
     print genre
     print type(title)
 

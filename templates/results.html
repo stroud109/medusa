@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% block body %}
 
-<!-- Things go in here for testing. Put all this on book template once finished -->
+<!-- Put all this on book template once finished -->
 
-{{book_info.title}} | {{book_info.author}} | {{book_info.number_pages}} pages | {{book_info.genre}} | {{book_info.isbn}}</br>
+Title: {{book_info.title}} | Author: {{book_info.author}} | Number of Pages: {{book_info.number_pages}} | Genre: {{book_info.genre}} | ISBN: {{book_info.isbn}}
 
 {% if session.get("user_id") != None %}
 
@@ -22,6 +22,9 @@
 {% autoescape off%}
 {{book_info.editorial_review}}
 {% endautoescape %}
+
+<h2>Genre Info</h2>
+{{genre_info}}
 
 <h2>Book Info</h2>
 {{results_info}}

@@ -71,54 +71,22 @@ def results():  # use this page for pre-DB commit search results
     # if user pushes 'confirm' button, add and commit book_info item
     # adds 'book' to book_info library
 
-    book_info = db_session.query(BookInfo).filter_by(
-        ean=ean,
-    ).first()
+    book_info = db_session.query(BookInfo).filter_by(ean=ean).first()
+
+    # temp = get_book_info_from_ean(ean)
 
     if not book_info:
         book_info = get_book_info_from_ean(ean)  # see amazon_search.py
         model.session.add(book_info)
         model.session.commit()
 
-    return render_template(
-        "results.html",
-        book_info=book_info,
-        # results=results,
-        # # book_image=book_image,
-        # results_info=results_info,
-        # image_info=image_info,
-        # review_info=review_info,
-        # title=title,
-        # author=author,
-        # number_pages=number_pages,
-        # genre=genre,
-        # isbn=isbn,
-        # image_url=image_url,
-        # editorial_review=editorial_review,
-        )
-
-# NEEDS TO BE UPDATED
-
-
-# @app.route("/add_book")
-# @login_required
-# def new_book():
-#     # form = forms.NewBookForm()
-#     return render_template("new_book.html", form=form)
+    return render_template("results.html", book_info=book_info)
 
 
 @app.route("/add_book/<book_info_id>", methods=["POST"])
 # adds book to user library
 @login_required
 def add_book(book_info_id):
-    # form = forms.NewBookForm(request.form)
-    # print "form validation", form.validate()
-    # print form.title.data
-
-    # if not form.validate():
-    #     flash("Error, all fields are required")
-    #     return render_template("new_book.html", form=form)
-
     book_info = db_session.query(BookInfo).filter_by(
         id=book_info_id,
     ).first()
@@ -149,8 +117,6 @@ def add_book(book_info_id):
     model.session.refresh(new_book)
 
     return redirect(url_for("view_book", id=new_book.id))
-
-# END OF SECTION TO UPDATE
 
 
 @app.route("/books/<int:id>")  # should show borrow history of book
@@ -324,7 +290,6 @@ def register():
     else:
         form = forms.NewUserForm()
         return render_template("register.html", form=form)
-        # return render_template("register.html")
 
 
 @app.route("/register", methods=["POST"])
