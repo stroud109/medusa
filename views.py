@@ -128,6 +128,7 @@ def view_book(id):
 
     if user_id is not None:
         user_id = int(user_id)
+
     return render_template(
         "book.html",
         book=book,

@@ -1,67 +1,93 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<h2>{{book.title}}</h2>
-Book owner: {{book.owner_id}}
 
-<div style="float: left; width: 400px">
-    <img src="{{book.book_info.image_url}}">
-</div>
-<div style="width: 900px">
-    <div style="float: right; width: 500px">
-        <h2>Book details</h2>
-        <h5>Title: {{book.book_info.title}}</h5>
-        <h5>Author: {{book.book_info.author}}</h5>
-        <h5>Number of Pages: {{book.book_info.number_pages}}</h5>
-        <h5>Genre: {{book.book_info.genre}}</h5>
-        <h5>ISBN: {{book.book_info.isbn}}</h5>
-    </br>
-    <h2>Editorial Review</h2>
-    {% autoescape off%}
-    {{book.book_info.editorial_review}}
-    {% endautoescape %}
+<div class="container">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">{{book.title}}, Book owner: {{book.owner_id}}</h3>
+            </div>
+            <div class="panel-body">
+                <img src="{{book.book_info.image_url}}">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Book Transactions</h3>
+            </div>
+            <div class="panel-body">
+            {% if user_id != None %}
+                {% if user_id != book.owner_id %}
+                <form method="post" action="{{url_for("request_book", id=book.id)}}">
+                    <input type="submit" value="Request Book" class="btn btn-link"/>
+                </form>
+                {% endif %}
+
+                <h4>Book Transactions</h4>
+
+                <ul>
+                    {% for transaction in book.book_transactions %}
+                    <li><span>Requester ID: {{transaction.requester_id}} | Date Requested: {{transaction.date_requested}} | Date Borrowed: {{transaction.date_borrowed}} | Date Returned: {{transaction.date_returned}} | Date Confirmed: {{transaction.date_confirmed}} | Owner ID: {{transaction.book.owner_id}}</span>
+
+                    {% if user_id == transaction.book.owner_id %}
+                        {% if transaction.date_requested != None %}
+                        <form method="post" action="{{url_for("declare_borrowed", id=transaction.id)}}">
+                            <input type="submit" value="Declare Borrowed" class="btn btn-link"/>
+                        </form>
+                        {% elif transaction.date_returned != None %}
+                        <form method="post" action="{{url_for("confirm_book_returned", id=transaction.id)}}">
+                            <input type="submit" value="Confirm Book Returned" class="btn btn-link"/>
+                        </form>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if user_id == transaction.requester_id %}
+                        {% if transaction.date_borrowed != None %}
+                            {% if transaction.date_returned == None %}
+                            <form method="post" action="{{url_for("return_book", id=transaction.id)}}">
+                                <input type="submit" value="Return Book" class="btn btn-link"/>
+                            </form>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+
+            {% endif %}
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Book Details</h3>
+            </div>
+            <div class="panel-body">
+                <h5>Author: {{book.book_info.author}}</h5>
+                <h5>Number of Pages: {{book.book_info.number_pages}}</h5>
+                <h5>Genre: {{book.book_info.genre}}</h5>
+                <h5>ISBN: {{book.book_info.isbn}}</h5>
+                </br>
+                <h5>Editorial Review</h5>
+                {% autoescape off%}
+                {{book.book_info.editorial_review}}
+                {% endautoescape %}
+            </div>
+        </div>
     </div>
 </div>
 
-    {% if user_id != None %}
-        {% if user_id != book.owner_id %}
-        <form method="post" action="{{url_for("request_book", id=book.id)}}">
-            <input type="submit" value="Request Book" class="btn btn-link"/>
-        </form>
-        {% endif %}
 
-        <h2>Book Transactions</h2>
 
-        <ul>
-            {% for transaction in book.book_transactions %}
-            <li><span>Requester ID: {{transaction.requester_id}} | Date Requested: {{transaction.date_requested}} | Date Borrowed: {{transaction.date_borrowed}} | Date Returned: {{transaction.date_returned}} | Date Confirmed: {{transaction.date_confirmed}} | Owner ID: {{transaction.book.owner_id}}</span>
+</br>
 
-            {% if user_id == transaction.book.owner_id %}
-                {% if transaction.date_requested != None %}
-                <form method="post" action="{{url_for("declare_borrowed", id=transaction.id)}}">
-                    <input type="submit" value="Declare Borrowed" class="btn btn-link"/>
-                </form>
-                {% elif transaction.date_returned != None %}
-                <form method="post" action="{{url_for("confirm_book_returned", id=transaction.id)}}">
-                    <input type="submit" value="Confirm Book Returned" class="btn btn-link"/>
-                </form>
-                {% endif %}
-            {% endif %}
 
-            {% if user_id == transaction.requester_id %}
-                {% if transaction.date_borrowed != None %}
-                    {% if transaction.date_returned == None %}
-                    <form method="post" action="{{url_for("return_book", id=transaction.id)}}">
-                        <input type="submit" value="Return Book" class="btn btn-link"/>
-                    </form>
-                    {% endif %}
-                {% endif %}
-            {% endif %}
-            </li>
-            {% endfor %}
-        </ul>
 
-    {% endif %}
+
+
+
 
 {% endblock %}
 
