@@ -3,38 +3,48 @@
 
 <!-- Put all this on book template once finished -->
 
-Title: {{book_info.title}} | Author: {{book_info.author}} | Number of Pages: {{book_info.number_pages}} | Genre: {{book_info.genre}} | ISBN: {{book_info.isbn}}
 
-{% if session.get("user_id") != None %}
+<div class="container">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">{{book_info.title}}</h3>
+            </div>
+            <div class="panel-body">
+                {% if session.get("user_id") != None %}
 
-<form action="/add_book/{{book_info.id}}" method="post">
-    <div class="button">
-        <button type="submit">add this book</button>
+                <form action="/add_book/{{book_info.id}}" method="post">
+                    <div class="form-group">
+                        <button class="btn btn-default" type="submit">add this book</button>
+                        <a href="/search" class="btn btn-warning">try again</a>
+                    </div>
+                </form>
+
+                {% endif %}
+                <span class="thumbnail">
+                    <img src="{{book_info.image_url}}"/>
+                </span>
+            </div>
+        </div>
     </div>
-</form>
-<a href="/search" class="btn btn-warning">try again</a>
-
-{% endif %}
-
-<img src="{{book_info.image_url}}">
-
-<h2>Editorial Review</h2>
-{% autoescape off%}
-{{book_info.editorial_review}}
-{% endautoescape %}
-
-<h2>Genre Info</h2>
-{{genre_info}}
-
-<h2>Book Info</h2>
-{{results_info}}
-
-<h2>Image Info</h2>
-{{image_info}}
-
-<h2>Review Info</h2>
-{{review_info}}
-
-
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Book Details</h3>
+            </div>
+            <div class="panel-body">
+                <h5>Author: {{book_info.author}}</h5>
+                <h5>Number of Pages: {{book_info.number_pages}}</h5>
+                <h5>Genre: {{book_info.genre}}</h5>
+                <h5>ISBN: {{book_info.isbn}}</h5>
+                <br/>
+                <h5>Editorial Review</h5>
+                {% autoescape off%}
+                {{book_info.editorial_review}}
+                {% endautoescape %}
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
