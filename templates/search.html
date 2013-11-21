@@ -8,6 +8,7 @@
       </div>
       <div class="panel-body">
         <video id='videoElem' width='100%'></video>
+        <canvas style="visibility: hidden; position: absolute; top: 0" id='canvasFeed' width='640' height='480'></canvas>
         <div class="btn-group btn-group-justified">
             <a id="start" class="btn btn-default" href="#">Start</a>
             <a id="cancel" class="btn btn-warning" href="#">Cancel</a>
@@ -36,8 +37,8 @@
 
 
 
-<canvas id='canvasFeed' width='320' height='240'></canvas>
-<!-- <canvas id='canvasFeed' width='640' height='480' style='visibility: hidden'></canvas> -->
+
+
 <script src="/static/js/camera.js"></script>
 <script type="text/javascript">
 // var takePicture = document.querySelector("#Take-Picture"),
@@ -92,7 +93,7 @@
     FlipWorker.onmessage = receiveMessage;
 
     function decodeImage(canvas, ctx){
-        var data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        var data = ctx.getImageData(0, 0, $(canvas).width(), $(canvas).height()).data;
 
         // // Theoretically this adds contrast
         // for (var i=0; i < data.length; i++) {
@@ -111,7 +112,7 @@
         var canvas = $("canvas#canvasFeed")[0];
         var video = $("#videoElem")[0];
         var context = canvas.getContext("2d");
-        context.drawImage(video, 0, 0, video.width, video.height);
+        context.drawImage(video, 0, 0, $(video).width(), $(video).height());
 
         console.log("Got the context");
 

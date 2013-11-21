@@ -22,7 +22,7 @@
             {% if user_id != None %}
                 {% if user_id != book.owner_id %}
                 <form method="post" action="{{url_for("request_book", id=book.id)}}">
-                    <input type="submit" value="Request Book" class="btn btn-link"/>
+                    <input type="submit" value="Request Book" class="btn btn-default"/>
                 </form>
                 {% endif %}
 
@@ -35,11 +35,11 @@
                     {% if user_id == transaction.book.owner_id %}
                         {% if transaction.date_requested != None %}
                         <form method="post" action="{{url_for("declare_borrowed", id=transaction.id)}}">
-                            <input type="submit" value="Declare Borrowed" class="btn btn-link"/>
+                            <input type="submit" value="Declare Borrowed" class="btn btn-default"/>
                         </form>
                         {% elif transaction.date_returned != None %}
                         <form method="post" action="{{url_for("confirm_book_returned", id=transaction.id)}}">
-                            <input type="submit" value="Confirm Book Returned" class="btn btn-link"/>
+                            <input type="submit" value="Confirm Book Returned" class="btn btn-default"/>
                         </form>
                         {% endif %}
                     {% endif %}
@@ -48,7 +48,7 @@
                         {% if transaction.date_borrowed != None %}
                             {% if transaction.date_returned == None %}
                             <form method="post" action="{{url_for("return_book", id=transaction.id)}}">
-                                <input type="submit" value="Return Book" class="btn btn-link"/>
+                                <input type="submit" value="Return Book" class="btn btn-default"/>
                             </form>
                             {% endif %}
                         {% endif %}
@@ -78,16 +78,6 @@
         </div>
     </div>
 </div>
-
-
-
-</br>
-
-
-
-
-
-
 
 {% endblock %}
 
