@@ -38,6 +38,8 @@ class User(Base, UserMixin):
     password = Column(String(64), nullable=False)
     salt = Column(String(64), nullable=False)
 
+    books = relationship("Book", uselist=True)
+
     def set_password(self, password):
         self.salt = bcrypt.gensalt()
         password = password.encode("utf-8")
@@ -56,14 +58,14 @@ class Book(Base):
 
     id = Column(Integer, primary_key=True)
     title = Column(String(100), nullable=False)
-    owner_id = Column(Integer(), nullable=False)
+    owner_id = Column(Integer(), ForeignKey('users.id'), nullable=False)
     current_borrower_id = Column(Integer(), nullable=True)
     book_info_id = Column(Integer(), ForeignKey('book_info.id'), nullable=False)
     # add number_copies = Column(Integer(), nullable=False) ??
 
     book_transactions = relationship("BookTransaction", uselist=True)
     book_info = relationship("BookInfo", uselist=False)
-    # owner = relationship("User")
+    owner = relationship("User", foreign_keys=owner_id)
     # current_borrower = relationship("User")
 
 
@@ -80,7 +82,7 @@ class BookInfo(Base):
     image_url = Column(String(300), nullable=True)
     editorial_review = Column(String(10000), nullable=True)
 
-    book = relationship("Book")
+    books = relationship("Book", uselist=True)
 
 
 class BookTransaction(Base):
@@ -95,6 +97,8 @@ class BookTransaction(Base):
     date_confirmed = Column(DateTime, nullable=True)
 
     book = relationship("Book")
+    book_owner = relationship("User", foreign_keys=book_owner_id)
+    requester = relationship("User", foreign_keys=requester_id)
 
 
 def register_book(new_book):

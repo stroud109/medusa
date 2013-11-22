@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 {% block body %}
 
-    <h2>Viewer library</h2>
+    <h2>{{owner.username}}'s' library</h2>
 
-    {% for book in books %}
+    {% for book in owner.books %}
         <div class="container">
             <h2><a href="{{url_for("view_library", id=book.id)}}">{{book.title}}</a></h2>
         </div>
     {% else %}
-        <h2>{{book.owner_id}}'s library is empty</h2>
+        <h2>{{owner.username}}'s library is empty</h2>
      {% endfor %}
 
      <h2>Viewer history goes here</h2>

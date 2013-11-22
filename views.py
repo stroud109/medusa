@@ -54,7 +54,10 @@ Markdown(app)
 @app.route("/")
 def index():
     books = Book.query.all()
-    return render_template("index.html", books=books)
+    transactions = BookTransaction.query.all()
+    print "LOOK HERE"
+    print "books", books
+    return render_template("index.html", books=books, transactions=transactions)
 
 
 @app.route("/search")  # camera and user input form live here
@@ -344,8 +347,9 @@ def view_users():
 @app.route("/users/<int:id>")
 @login_required
 def view_library(id):  # should show what books are checked out/in/borrowed
-    owner_books = db_session.query(Book).filter_by(owner_id=id).all()
-    return render_template("library.html", books=owner_books)
+    # owner_books = db_session.query(Book).filter_by(owner_id=id).all()
+    owner = User.query.get(id)
+    return render_template("library.html", owner=owner)
 
 
 @app.route("/deactivate", methods=["POST"])  # add this for better UX

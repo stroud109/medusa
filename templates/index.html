@@ -9,4 +9,15 @@
 No books here!
 <a href="{{url_for("new_book")}}">Add a new book</a>
 {% endfor %}
+
+<h2>Book Transactions</h2>
+
+ <ul>
+    {% for transaction in transactions %}
+    <li><span>Requester ID: {{transaction.requester_id}} | Date Requested: {{transaction.date_requested}} | Date Borrowed: {{transaction.date_borrowed}} | Date Returned: {{transaction.date_returned}} | Date Confirmed: {{transaction.date_confirmed}} | Owner ID: {{transaction.book.owner_id}} | Book Owner: {{transaction.book_owner.username}} | Requester: {{transaction.requester.username}}</span>
+    </li>
+    {% endfor %}
+</ul>
+
+
 {% endblock %}
