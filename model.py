@@ -68,6 +68,13 @@ class Book(Base):
     owner = relationship("User", foreign_keys=owner_id)
     # current_borrower = relationship("User")
 
+    def get_open_transaction_for_user(self, user_id):
+        return BookTransaction.query.filter_by(
+            requester_id=user_id,
+            date_confirmed=None,
+            book_id=self.id
+        ).first()
+
 
 class BookInfo(Base):
     __tablename__ = "book_info"

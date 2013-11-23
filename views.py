@@ -136,6 +136,7 @@ def view_book(id):
         "book.html",
         book=book,
         user_id=user_id,
+        open_user_transaction=book.get_open_transaction_for_user(user_id),
     )
 
 
@@ -149,10 +150,7 @@ def request_book(id):
         flash("You can't borrow a book you own")
         return redirect(url_for("view_book", id=id))
 
-    open_user_transactions = BookTransaction.query.filter_by(
-        book_id=book.id,
-        requester_id=user_id,
-        date_confirmed=None).all()
+    open_user_transactions = book.get_open_transaction_for_user(user_id)
 
     if open_user_transactions:
         flash("You already have an open transaction with this book")
