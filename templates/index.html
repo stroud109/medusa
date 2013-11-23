@@ -1,23 +1,40 @@
 {% extends 'base.html' %}
 {% block body %}
-<h2>Books</h2>
-{% for book in books %}
+
+
 <div class="container">
-    <h2><a href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a></h2>
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Books</h3>
+            </div>
+        <div class="panel-body">
+            {% for book in books %}
+            <h4><a href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a></h4>
+            {% else %}
+            No books here!
+            <a href="{{url_for("new_book")}}">Add a new book</a>
+            {% endfor %}
+        </div>
+    </div>
 </div>
-{% else %}
-No books here!
-<a href="{{url_for("new_book")}}">Add a new book</a>
-{% endfor %}
 
-<h2>Book Transactions</h2>
-
- <ul>
-    {% for transaction in transactions %}
-    <li><span>Requester ID: {{transaction.requester_id}} | Date Requested: {{transaction.date_requested}} | Date Borrowed: {{transaction.date_borrowed}} | Date Returned: {{transaction.date_returned}} | Date Confirmed: {{transaction.date_confirmed}} | Owner ID: {{transaction.book.owner_id}} | Book Owner: {{transaction.book_owner.username}} | Requester: {{transaction.requester.username}}</span>
-    </li>
-    {% endfor %}
-</ul>
+<div class="container">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Book Transactions</h3>
+            </div>
+        <div class="panel-body">
+            <ul>
+            {% for transaction in transactions %}
+            <li><span>Requester ID: {{transaction.requester_id}} | Date Requested: {{transaction.date_requested}} | Date Borrowed: {{transaction.date_borrowed}} | Date Returned: {{transaction.date_returned}} | Date Confirmed: {{transaction.date_confirmed}} | Owner ID: {{transaction.book.owner_id}} | Book Owner: {{transaction.book_owner.username}} | Requester: {{transaction.requester.username}}</span>
+            </li>
+            {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
 
 
 {% endblock %}
