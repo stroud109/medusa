@@ -65,14 +65,29 @@ Markdown(app)
 
 @app.route("/")
 def index():
-    books = Book.query.all()
-    transactions = BookTransaction.query.all()
+
+    user_id = session.get("user_id")
+    books = Book.query.filter(
+        Book.owner_id != user_id,
+    ).all()
+    # transactions = BookTransaction.query.all()
+
+    user_requests = BookTransaction.query.filter(
+        BookTransaction.requester_id == user_id,
+    ).all()
+
+    users_book_transactions = BookTransaction.query.filter(
+        BookTransaction.book_owner_id == user_id,
+    ).all()
+
     print "LOOK HERE"
     print "books", books
     return render_template(
         "index.html",
         books=books,
-        transactions=transactions
+        # transactions=transactions,
+        user_requests=user_requests,
+        users_book_transactions=users_book_transactions,
     )
 
 

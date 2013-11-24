@@ -28,7 +28,7 @@
                         {% if session.get("user_id") == None %}
                             <form method="get" action="{{url_for("login")}}"><input type="submit" value="Login" class="btn btn-default navbar-btn"/></form>
                         {% else %}
-                            <form method="post" action="{{url_for("logout")}}"><input type="submit" value="Logout of {{session.get("user_id")}}" class="btn btn-default navbar-btn"/></form>
+                            <form method="post" action="{{url_for("logout")}}"><input type="submit" value="Logout" class="btn btn-default navbar-btn"/></form>
                         {% endif %}
                     </li>
                 </ul>

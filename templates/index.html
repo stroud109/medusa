@@ -6,42 +6,54 @@
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Books</h3>
+                <h3 class="panel-title">Books you can borrow</h3>
             </div>
-        <div class="panel-body">
-            {% for book in books %}
-            <h4><a href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a></h4>
-            {% else %}
-            No books here!
-            <a href="{{url_for("new_book")}}">Add a new book</a>
-            {% endfor %}
+            <div class="panel-body">
+                {% for book in books %}
+                <h4><a href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a></h4>
+                {% else %}
+                No books here!
+                <a href="{{url_for("new_book")}}">Add a new book</a>
+                {% endfor %}
+            </div>
         </div>
     </div>
-</div>
 
-<div class="container">
     <div class="col-md-6">
+        {% if user %}
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Book Transactions</h3>
+                <h3 class="panel-title">Notifications</h3>
             </div>
-        <div class="panel-body">
-            <ul>
-            {% for transaction in transactions %}
-            <li><span><strong>Requester ID:</strong> {{transaction.requester_id}}</br>
-                <strong>Date Requested:</strong> {{transaction.date_requested}}</br>
-                <strong>Date Borrowed:</strong> {{transaction.date_borrowed}}</br>
-                <strong>Date Returned:</strong> {{transaction.date_returned}}</br>
-                <strong>Date Confirmed:</strong> {{transaction.date_confirmed}}</br>
-                <strong>Owner ID:</strong> {{transaction.book.owner_id}}</br>
-                <strong>Book Owner:</strong> {{transaction.book_owner.username}}</br>
-                <strong>Requester:</strong> {{transaction.requester.username}}</span>
-            </li>
-            </br>
-            {% endfor %}
-            </ul>
+            <div class="panel-body">
+                <h3>Your requests</h3>
+                {% for request in user_requests %}
+                <li><span><strong>Book Title:</strong> {{request.book.title}} | <strong>Book Owner:</strong> {{request.book.owner.username}}</br>
+                    <strong>Book requested:</strong> {{request.date_requested|datetimeformat}}</br>
+                    <strong>Book borrowed:</strong> {{request.date_borrowed|datetimeformat}}</br>
+                    <strong>Book returned:</strong> {{request.date_returned|datetimeformat}}</br>
+                    <strong>Book's return confirmed:</strong> {{request.date_confirmed|datetimeformat}}</br>
+                    </span></br>
+                </li>
+                {% endfor %}
+                <h3>Your books</h3>
+                {% for transaction in users_book_transactions %}
+                <li><span><strong>Book Title:</strong> {{transaction.book.title}} | <strong>Book Requester:</strong> {{transaction.requester.username}}</br>
+                    <strong>Book requested:</strong> {{transaction.date_requested|datetimeformat}}</br>
+                    <strong>Book borrowed:</strong> {{transaction.date_borrowed|datetimeformat}}</br>
+                    <strong>Book returned:</strong> {{transaction.date_returned|datetimeformat}}</br>
+                    <strong>Book's return confirmed:</strong> {{transaction.date_confirmed|datetimeformat}}</br>
+                    </span></br>
+                </li>
+                {% endfor %}
+
+            </div>
         </div>
+        {% endif %}
+
     </div>
+
+
 </div>
 
 

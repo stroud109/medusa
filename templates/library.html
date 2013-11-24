@@ -5,30 +5,27 @@
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">{{owner.username}}'s' library</h3>
+                <h3 class="panel-title">{{owner.username}}'s library</h3>
             </div>
-        <div class="panel-body">
-            {% for book in owner.books %}
-            <h4><a href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a></h4>
-            {% else %}
-                <h2>{{owner.username}}'s library is empty</h2>
-            {% endfor %}
+            <div class="panel-body">
+                {% for book in owner.books %}
+                <h4><a href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a></h4>
+                {% else %}
+                    <h2>{{owner.username}}'s library is empty</h2>
+                {% endfor %}
+            </div>
         </div>
     </div>
-</div>
-
-<div class="container">
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">{{owner.username}}'s' Transactions</h3>
+                <h3 class="panel-title">{{owner.username}}'s Transactions</h3>
             </div>
         <div class="panel-body">
             <h2>Viewer history goes here</h2>
         </div>
     </div>
 </div>
-
 
 
 {% endblock %}
