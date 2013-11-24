@@ -10,9 +10,11 @@
             </div>
             <div class="panel-body">
                 {% if user_id != book.owner_id %}
+                    {% if not open_user_transaction %}
                  <form method="post" action="{{url_for("request_book", id=book.id)}}">
                     <input type="submit" value="Request Book" class="btn btn-default"/>
                 </form>
+                    {% endif %}
                 {% elif user_id == book.owner_id %}
                     {% if not transaction_in_progress %}
                         {% if not book_requests %}
@@ -26,20 +28,26 @@
                             {% endfor %}
                         {% endif %}
                     {% endif %}
-                    3
                 {% endif %}
 
-                {% if transaction_in_progress %}
                 {% if user_id != book.owner_id %}
-                <form method="post" action="{{url_for("return_book", id=transaction_in_progress.id)}}">
-                    <input type="submit" value="Return Book" class="btn btn-default"/>
-                </form>
-                {% elif user_id == book.owner_id %}
-                {% elif open_user_transaction %}
-                 <form method="post" action="{{url_for("confirm_book_returned", id=transaction_in_progress.id)}}">
-                    <input type="submit" value="Confirm Book Returned" class="btn btn-default"/>
-                </form>
-                {% endif %}
+                    {% if transaction_in_progress.requester_id == user_id %}
+                        {% if transaction_in_progress.date_returned == None %}
+                            This button should appear if:
+                            logged in user is not book owner,
+                            logged in user has borrowed book,
+                            logged in user has not already returned book
+                            <form method="post" action="{{url_for("return_book", id=transaction_in_progress.id)}}">
+                                <input type="submit" value="Return Book" class="btn btn-default"/>
+                            </form>
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    {% if transaction_in_progress %}
+                     <form method="post" action="{{url_for("confirm_book_returned", id=transaction_in_progress.id)}}">
+                        <input type="submit" value="Confirm Book Returned" class="btn btn-default"/>
+                    </form>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>

@@ -161,6 +161,12 @@ def view_book(id):
         BookTransaction.date_borrowed == None,
     ).all()
 
+    # returned_book = BookTransaction.query.filter(
+    #     BookTransaction.book_id == book.id,
+    #     BookTransaction.date_borrowed != None,
+    #     BookTransaction.date_returned == None,
+    # ).first()
+
     return render_template(
         "book.html",
         book=book,
@@ -168,6 +174,7 @@ def view_book(id):
         transaction_in_progress=transaction_in_progress,
         open_user_transaction=book.get_open_transaction_for_user(user_id),
         book_requests=book_requests,
+        # returned_book=returned_book,
     )
 
 
