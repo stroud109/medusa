@@ -317,15 +317,16 @@ def authenticate():
         return render_template("master.html", form=form)
 
     login_user(user)
-    flash("logged in")
+    flash("Welcome, %s" % user.username)
     return redirect(request.args.get("next", url_for("index")))
 
 
 @app.route("/logout", methods=["POST"])
 @login_required
 def logout():
-    session.pop('user_id', None)
-    flash("Logged out")
+    user_id = session.pop('user_id', None)
+    user = User.query.get(user_id)
+    flash("Goodbye, %s" % user.username)
     return redirect(url_for("index"))
 
 

@@ -11,9 +11,9 @@
             <div class="panel-body">
                 {% if user_id != book.owner_id %}
                     {% if not open_user_transaction %}
-                 <form method="post" action="{{url_for("request_book", id=book.id)}}">
-                    <input type="submit" value="Request Book" class="btn btn-default"/>
-                </form>
+                         <form method="post" action="{{url_for("request_book", id=book.id)}}">
+                            <input type="submit" value="Request Book" class="btn btn-default"/>
+                        </form>
                     {% endif %}
                 {% elif user_id == book.owner_id %}
                     {% if not transaction_in_progress %}
@@ -31,28 +31,36 @@
                 {% endif %}
 
                 {% if user_id != book.owner_id %}
+                {% if transaction_in_progress %}
                     {% if transaction_in_progress.requester_id == user_id %}
                         {% if transaction_in_progress.date_returned == None %}
-                            This button should appear if:
-                            logged in user is not book owner,
-                            logged in user has borrowed book,
-                            logged in user has not already returned book
                             <form method="post" action="{{url_for("return_book", id=transaction_in_progress.id)}}">
                                 <input type="submit" value="Return Book" class="btn btn-default"/>
                             </form>
                         {% endif %}
                     {% endif %}
                 {% else %}
-                    {% if transaction_in_progress %}
+                    {% if transaction_in_progress.date_returned != None %}
                      <form method="post" action="{{url_for("confirm_book_returned", id=transaction_in_progress.id)}}">
                         <input type="submit" value="Confirm Book Returned" class="btn btn-default"/>
                     </form>
                     {% endif %}
                 {% endif %}
+                {% endif %}
+
+                {% for transaction in book.book_transactions %}
+                <li><span><strong>Requester ID:</strong> {{transaction.requester_id}}</br>
+                    <strong>Date Requested:</strong> {{transaction.date_requested}}</br>
+                     <strong>Date Borrowed:</strong> {{transaction.date_borrowed}}</br>
+                     <strong>Date Returned:</strong> {{transaction.date_returned}}</br>
+                    <strong>Date Confirmed:</strong> {{transaction.date_confirmed}}</br>
+                    <strong>Owner ID:</strong> {{transaction.book.owner_id}}</span></br>
+                </li>
+                {% endfor %}
             </div>
         </div>
 
-
+        <ul>
 
 
         <div class="panel panel-default">
