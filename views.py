@@ -49,6 +49,16 @@ def load_user(user_id):
 
 # End login stuff
 
+
+@app.context_processor
+def inject_user():
+    user = None
+    user_id = session.get("user_id")
+    if user_id is not None:
+        user = User.query.get(user_id)
+    return {"user": user}
+
+
 # Adding markdown capability to the app
 Markdown(app)
 

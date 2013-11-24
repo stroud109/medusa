@@ -4,9 +4,10 @@
 
 <div class="container">
     <div class="col-md-6">
+        {% if user %}
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">CURRENT TRANSACTION</h3>
+                <h3 class="panel-title">TRANSACTIONS</h3>
             </div>
             <div class="panel-body">
                 {% if user_id != book.owner_id %}
@@ -18,10 +19,10 @@
                 {% elif user_id == book.owner_id %}
                     {% if not transaction_in_progress %}
                         {% if not book_requests %}
-                            <h4>Currently no transactions</h4>
+                            <h4>There are currently no open transactions</h4>
                         {% else %}
                             {% for transaction in book_requests %}
-                            <strong>Requester ID:</strong> {{transaction.requester_id}}
+                            <strong>Requester:</strong> {{transaction.requester.username}}
                             <form method="post" action="{{url_for("declare_borrowed", id=transaction.id)}}">
                                 <input type="submit" value="Declare Borrowed" class="btn btn-default"/>
                             </form>
@@ -30,8 +31,8 @@
                     {% endif %}
                 {% endif %}
 
-                {% if user_id != book.owner_id %}
                 {% if transaction_in_progress %}
+                {% if user_id != book.owner_id %}
                     {% if transaction_in_progress.requester_id == user_id %}
                         {% if transaction_in_progress.date_returned == None %}
                             <form method="post" action="{{url_for("return_book", id=transaction_in_progress.id)}}">
@@ -49,23 +50,23 @@
                 {% endif%}
 
                 {% for transaction in book.book_transactions %}
-                <li><span><strong>Requester ID:</strong> {{transaction.requester_id}}</br>
-                    <strong>Date Requested:</strong> {{transaction.date_requested|datetimeformat}}</br>
-                     <strong>Date Borrowed:</strong> {{transaction.date_borrowed|datetimeformat}}</br>
-                     <strong>Date Returned:</strong> {{transaction.date_returned|datetimeformat}}</br>
-                    <strong>Date Confirmed:</strong> {{transaction.date_confirmed|datetimeformat}}</br>
-                    <strong>Owner ID:</strong> {{transaction.book.owner_id}}</span></br>
+                <li><span><strong>Book Requester:</strong> {{transaction.requester.username}} | <strong>Book Owner:</strong> {{transaction.book.owner.username}}</br>
+                    <strong>Book requested:</strong> {{transaction.date_requested|datetimeformat}}</br>
+                    <strong>Book borrowed:</strong> {{transaction.date_borrowed|datetimeformat}}</br>
+                    <strong>Book returned:</strong> {{transaction.date_returned|datetimeformat}}</br>
+                    <strong>Book's return confirmed:</strong> {{transaction.date_confirmed|datetimeformat}}</br>
+                    </span></br>
                 </li>
                 {% endfor %}
             </div>
         </div>
+        {% endif %}
 
-        <ul>
 
 
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">{{book.title}}, Book owner: {{book.owner_id}}</h3>
+                <h3 class="panel-title">{{book.title}}</h3>
             </div>
             <div class="panel-body">
                 <span class="thumbnail">
