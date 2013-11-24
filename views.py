@@ -1,5 +1,6 @@
 from datetime import datetime
 from flaskext.markdown import Markdown
+from flask.ext.babel import Babel
 import config
 import forms
 import model
@@ -34,6 +35,7 @@ from amazon_search import get_book_info_from_ean
 
 app = Flask(__name__)
 app.config.from_object(config)
+babel = Babel(app, configure_jinja=True)
 
 # Stuff to make login easier
 login_manager = LoginManager()

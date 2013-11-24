@@ -46,14 +46,14 @@
                     </form>
                     {% endif %}
                 {% endif %}
-                {% endif %}
+                {% endif%}
 
                 {% for transaction in book.book_transactions %}
                 <li><span><strong>Requester ID:</strong> {{transaction.requester_id}}</br>
-                    <strong>Date Requested:</strong> {{transaction.date_requested}}</br>
-                     <strong>Date Borrowed:</strong> {{transaction.date_borrowed}}</br>
-                     <strong>Date Returned:</strong> {{transaction.date_returned}}</br>
-                    <strong>Date Confirmed:</strong> {{transaction.date_confirmed}}</br>
+                    <strong>Date Requested:</strong> {{transaction.date_requested|datetimeformat}}</br>
+                     <strong>Date Borrowed:</strong> {{transaction.date_borrowed|datetimeformat}}</br>
+                     <strong>Date Returned:</strong> {{transaction.date_returned|datetimeformat}}</br>
+                    <strong>Date Confirmed:</strong> {{transaction.date_confirmed|datetimeformat}}</br>
                     <strong>Owner ID:</strong> {{transaction.book.owner_id}}</span></br>
                 </li>
                 {% endfor %}
