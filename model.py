@@ -107,6 +107,30 @@ class BookTransaction(Base):
     book_owner = relationship("User", foreign_keys=book_owner_id)
     requester = relationship("User", foreign_keys=requester_id)
 
+    # def user_can_declare_borrowed(self, user_id):
+    #     return (
+    #         user_id == self.book_owner_id and
+    #         self.book.current_borrower_id is None and
+    #         self.date_requested is not None and
+    #         self.date_borrowed is None and
+    #         self.date_confirmed is None
+    #     )
+
+    def get_state(self):
+        state = None
+        if self.date_borrowed:
+            if self.date_returned:
+                if self.date_confirmed:
+                    state = "closed"
+                else:
+                    state = "returned"
+            else:
+                state = "borrowed"
+        else:
+            state = "requested"
+
+        return state
+
 
 def register_book(new_book):
     session.add(new_book)

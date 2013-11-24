@@ -28,8 +28,16 @@
         <div class="panel-body">
             <ul>
             {% for transaction in transactions %}
-            <li><span>Requester ID: {{transaction.requester_id}} | Date Requested: {{transaction.date_requested}} | Date Borrowed: {{transaction.date_borrowed}} | Date Returned: {{transaction.date_returned}} | Date Confirmed: {{transaction.date_confirmed}} | Owner ID: {{transaction.book.owner_id}} | Book Owner: {{transaction.book_owner.username}} | Requester: {{transaction.requester.username}}</span>
+            <li><span><strong>Requester ID:</strong> {{transaction.requester_id}}</br>
+                <strong>Date Requested:</strong> {{transaction.date_requested}}</br>
+                <strong>Date Borrowed:</strong> {{transaction.date_borrowed}}</br>
+                <strong>Date Returned:</strong> {{transaction.date_returned}}</br>
+                <strong>Date Confirmed:</strong> {{transaction.date_confirmed}}</br>
+                <strong>Owner ID:</strong> {{transaction.book.owner_id}}</br>
+                <strong>Book Owner:</strong> {{transaction.book_owner.username}}</br>
+                <strong>Requester:</strong> {{transaction.requester.username}}</span>
             </li>
+            </br>
             {% endfor %}
             </ul>
         </div>

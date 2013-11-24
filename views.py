@@ -57,7 +57,11 @@ def index():
     transactions = BookTransaction.query.all()
     print "LOOK HERE"
     print "books", books
-    return render_template("index.html", books=books, transactions=transactions)
+    return render_template(
+        "index.html",
+        books=books,
+        transactions=transactions
+    )
 
 
 @app.route("/search")  # camera and user input form live here
@@ -132,11 +136,38 @@ def view_book(id):
     if user_id is not None:
         user_id = int(user_id)
 
+    # can_request_book: user_id != owner_id and no open transaction for user
+    # can_declare_borrowed: if transaction.get_state() == "requested"
+    # and if no other open transactions
+    # can_return_book: if transaction.get_state() == "borrowed"
+    # and if no other open transactions
+    # can_confirm_returned: if transaction.get_state() == "returned"
+    # and if no other open transactions
+
+    # need to build open transaction where transaction is borrowed or returned,
+    # but not closed or requested
+    # this function should not apply to specific user
+
+    # current transaction that's in-progess based on 2nd and 4th state
+    transaction_in_progress = BookTransaction.query.filter(
+        BookTransaction.date_borrowed != None,
+        BookTransaction.date_confirmed == None,
+        BookTransaction.book_id == book.id,
+    ).first()
+
+    book_requests = BookTransaction.query.filter(
+        BookTransaction.book_id == book.id,
+        BookTransaction.date_requested != None,
+        BookTransaction.date_borrowed == None,
+    ).all()
+
     return render_template(
         "book.html",
         book=book,
         user_id=user_id,
+        transaction_in_progress=transaction_in_progress,
         open_user_transaction=book.get_open_transaction_for_user(user_id),
+        book_requests=book_requests,
     )
 
 

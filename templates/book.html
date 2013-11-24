@@ -6,6 +6,49 @@
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading">
+                <h3 class="panel-title">CURRENT TRANSACTION</h3>
+            </div>
+            <div class="panel-body">
+                {% if user_id != book.owner_id %}
+                 <form method="post" action="{{url_for("request_book", id=book.id)}}">
+                    <input type="submit" value="Request Book" class="btn btn-default"/>
+                </form>
+                {% elif user_id == book.owner_id %}
+                    {% if not transaction_in_progress %}
+                        {% if not book_requests %}
+                            <h4>Currently no transactions</h4>
+                        {% else %}
+                            {% for transaction in book_requests %}
+                            <strong>Requester ID:</strong> {{transaction.requester_id}}
+                            <form method="post" action="{{url_for("declare_borrowed", id=transaction.id)}}">
+                                <input type="submit" value="Declare Borrowed" class="btn btn-default"/>
+                            </form>
+                            {% endfor %}
+                        {% endif %}
+                    {% endif %}
+                    3
+                {% endif %}
+
+                {% if transaction_in_progress %}
+                {% if user_id != book.owner_id %}
+                <form method="post" action="{{url_for("return_book", id=transaction_in_progress.id)}}">
+                    <input type="submit" value="Return Book" class="btn btn-default"/>
+                </form>
+                {% elif user_id == book.owner_id %}
+                {% elif open_user_transaction %}
+                 <form method="post" action="{{url_for("confirm_book_returned", id=transaction_in_progress.id)}}">
+                    <input type="submit" value="Confirm Book Returned" class="btn btn-default"/>
+                </form>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+
+
+
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
                 <h3 class="panel-title">{{book.title}}, Book owner: {{book.owner_id}}</h3>
             </div>
             <div class="panel-body">
@@ -40,7 +83,12 @@
 
                 <ul>
                     {% for transaction in book.book_transactions %}
-                    <li><span>Requester ID: {{transaction.requester_id}} | Date Requested: {{transaction.date_requested}} | Date Borrowed: {{transaction.date_borrowed}} | Date Returned: {{transaction.date_returned}} | Date Confirmed: {{transaction.date_confirmed}} | Owner ID: {{transaction.book.owner_id}}</span>
+                    <li><span><strong>Requester ID:</strong> {{transaction.requester_id}}</br>
+                        <strong>Date Requested:</strong> {{transaction.date_requested}}</br>
+                         <strong>Date Borrowed:</strong> {{transaction.date_borrowed}}</br>
+                         <strong>Date Returned:</strong> {{transaction.date_returned}}</br>
+                        <strong>Date Confirmed:</strong> {{transaction.date_confirmed}}</br>
+                        <strong>Owner ID:</strong> {{transaction.book.owner_id}}</span></br>
 
                         {% if user_id == transaction.book.owner_id %}
                         {% if transaction.date_requested != None %}
@@ -66,6 +114,7 @@
                         {% endif %}
                         {% endif %}
                     </li>
+                    </br>
                     {% endfor %}
                 </ul>
                 {% endif %}
@@ -76,12 +125,12 @@
                 <h3 class="panel-title">Book Details</h3>
             </div>
             <div class="panel-body">
-                <h5>Author: {{book.book_info.author}}</h5>
-                <h5>Number of Pages: {{book.book_info.number_pages}}</h5>
-                <h5>Genre: {{book.book_info.genre}}</h5>
-                <h5>ISBN: {{book.book_info.isbn}}</h5>
+                <strong>Author:</strong> {{book.book_info.author}}</br>
+                <strong>Number of Pages:</strong> {{book.book_info.number_pages}}</br>
+                <strong>Genre:</strong> {{book.book_info.genre}}</br>
+                <strong>ISBN:</strong> {{book.book_info.isbn}}</br>
             </br>
-            <h5>Editorial Review</h5>
+            <strong>Editorial Review</strong>
             {% autoescape off%}
             {{book.book_info.editorial_review}}
             {% endautoescape %}
