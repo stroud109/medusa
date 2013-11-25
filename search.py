@@ -54,3 +54,4 @@ def recreate_index():
     # create tokens from book metadata (book info) from every column
     # take resulting dictionary, loop over keys and values
     # save each key as new SearchTerm
+

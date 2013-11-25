@@ -5,6 +5,8 @@ import config
 import forms
 import model
 
+import json
+
 from flask import (
     Flask,
     render_template,
@@ -97,16 +99,39 @@ def index():
 
 @app.route("/keyword_search")  # SEARCH BOOKWORMS FOR A BOOK
 def keyword_search():
-    searched_for = request.args.get('q')  # figure out filter_by token in array
+    searched_for = request.args.get('q')
 
-    search_results = SearchTerm.query.filter_by(
-        token=searched_for,
+    tokens = searched_for.split(" ")
+
+    # figure out filter_by token in array
+    # figure out how to use an in clause in sqlalchemy
+    search_results = SearchTerm.query.filter(
+        SearchTerm.token.in_(tokens)
         ).all()
+    # make the search results a flat, unique list of book info ids
+
+    unique_ids = [json.loads(result.document_ids) for result in search_results]
+    unique_ids = [item for sublist in unique_ids for item in sublist]
+
+    actual_unique_ids = []
+    for unique_id in unique_ids:
+        if unique_id not in actual_unique_ids:
+            actual_unique_ids.append(unique_id)
+    unique_ids = actual_unique_ids
+
+    books = []
+    for unique_id in unique_ids:
+        books = db_session.query(Book).filter_by(
+            book_info_id=unique_id,
+            ).all()
 
     return render_template(
         "keyword_search.html",
         searched_for=searched_for,
-        search_results=search_results,
+        # search_results=search_results,
+        unique_ids=unique_ids,
+        # book_title=book_title,
+        books=books,
     )
 
 

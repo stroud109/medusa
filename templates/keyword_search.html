@@ -10,8 +10,10 @@
 searched for: {{searched_for}}
 <br/>
 search results:
-{% for result in search_results %}
-{{result.document_ids}}
+{{unique_ids}}
+<br/>
+{% for book in books %}
+    {{book.title}}
 {% endfor %}
 
 {% endblock %}
