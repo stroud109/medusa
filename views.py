@@ -20,6 +20,7 @@ from model import (
     Book,
     BookTransaction,
     BookInfo,
+    SearchTerm,
     # register_book,
     # register_user,
     session as db_session,
@@ -63,7 +64,7 @@ def inject_user():
 Markdown(app)
 
 
-@app.route("/")  # CHANGE THIS SO USER CAN ONLY SEE OPEN REQUESTS
+@app.route("/")
 def index():
 
     user_id = session.get("user_id")
@@ -91,6 +92,21 @@ def index():
         # transactions=transactions,
         open_user_transactions=open_user_transactions,
         open_transactions_on_users_books=open_transactions_on_users_books,
+    )
+
+
+@app.route("/keyword_search")  # SEARCH BOOKWORMS FOR A BOOK
+def keyword_search():
+    searched_for = request.args.get('q')  # figure out filter_by token in array
+
+    search_results = SearchTerm.query.filter_by(
+        token=searched_for,
+        ).all()
+
+    return render_template(
+        "keyword_search.html",
+        searched_for=searched_for,
+        search_results=search_results,
     )
 
 
