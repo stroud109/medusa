@@ -70,14 +70,15 @@ def index():
     books = Book.query.filter(
         Book.owner_id != user_id,
     ).all()
+
     # transactions = BookTransaction.query.all()
 
-    open_user_requests = BookTransaction.query.filter(
+    open_user_transactions = BookTransaction.query.filter(
         BookTransaction.requester_id == user_id,
         BookTransaction.date_confirmed == None,
     ).all()
 
-    users_open_book_transactions = BookTransaction.query.filter(
+    open_transactions_on_users_books = BookTransaction.query.filter(
         BookTransaction.book_owner_id == user_id,
         BookTransaction.date_confirmed == None,
     ).all()
@@ -88,8 +89,8 @@ def index():
         "index.html",
         books=books,
         # transactions=transactions,
-        open_user_requests=open_user_requests,
-        users_open_book_transactions=users_open_book_transactions,
+        open_user_transactions=open_user_transactions,
+        open_transactions_on_users_books=open_transactions_on_users_books,
     )
 
 
@@ -221,7 +222,8 @@ def request_book(id):
 
     if open_user_transactions:
         flash("You already have an open transaction with this book")
-        return redirect(url_for("view_book", id=id))
+        # return redirect(url_for("view_book", id=id))
+        return redirect(url_for("index"))
 
     new_transaction = BookTransaction(
         book_id=book.id,
@@ -232,7 +234,8 @@ def request_book(id):
     model.session.add(new_transaction)
     model.session.commit()
     # model.session.refresh(book)
-    return redirect(url_for("view_book", id=id))
+    # return redirect(url_for("view_book", id=id))
+    return redirect(url_for("index"))
 
 
 @app.route("/books/<int:id>/borrow", methods=["POST"])
@@ -260,7 +263,8 @@ def declare_borrowed(id):
     else:
         flash("You must own a book to declare that it's been borrowed")
     # model.session.refresh(book)
-    return redirect(url_for("view_book", id=transaction.book.id))
+    # return redirect(url_for("view_book", id=transaction.book.id))
+    return redirect(url_for("index"))
 
 
 @app.route("/books/<int:id>/return", methods=["POST"])
@@ -271,6 +275,7 @@ def return_book(id):
 
     if transaction.book.owner_id != user_id:
         if transaction.book.current_borrower_id == user_id:
+            # ^Revisit this line to avoid future current_borrower_id bugs
             if transaction.date_borrowed is not None:
                 if transaction.date_returned is not None:
                     flash("This book has already been returned")
@@ -286,7 +291,8 @@ def return_book(id):
     else:
         flash("You can't return a book you already own")
 
-    return redirect(url_for("view_book", id=transaction.book.id))
+    # return redirect(url_for("view_book", id=transaction.book.id))
+    return redirect(url_for("index"))
 
 
 @app.route("/books/<int:id>/confirmation", methods=["POST"])
@@ -310,7 +316,8 @@ def confirm_book_returned(id):
     else:
         flash("You can only confirm returns on books you own")
     # model.session.refresh(book)
-    return redirect(url_for("view_book", id=transaction.book.id))
+    # return redirect(url_for("view_book", id=transaction.book.id))
+    return redirect(url_for("index"))
 
 
 @app.route("/login")
