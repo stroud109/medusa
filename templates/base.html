@@ -50,7 +50,9 @@
         <div class="container">
             <ul class="flash-messages">
             {% for message in get_flashed_messages() %}
+            <div class="alert alert-info">
             <li>{{message}}</li>
+          </div>
             {% endfor %}
             </ul>
             {% block body %}

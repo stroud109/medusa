@@ -27,7 +27,9 @@
             </div>
             {% endif %}
             {% for message in get_flashed_messages() %}
+                <div class="alert alert-info">
                 <li>{{ message }}</li>
+                </div>
             {% endfor %}
 
             {% if session.get("user_id") %}
