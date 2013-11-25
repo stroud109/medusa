@@ -40,7 +40,7 @@
                 </form>
                 {% if session.get("user_id") %}
                 <ul class="nav navbar-nav navbar-right">
-                  <li><a href="{{url_for("view_library", id=user.id)}}">Welcome, {{user.username}}</a></li>
+                  <li><a href="{{url_for("index")}}">Welcome, {{user.username}}</a></li>
                 </ul>
                 {% endif %}
               </div><!-- /.navbar-collapse -->

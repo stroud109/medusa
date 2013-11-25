@@ -63,7 +63,7 @@ def inject_user():
 Markdown(app)
 
 
-@app.route("/")
+@app.route("/")  # CHANGE THIS SO USER CAN ONLY SEE OPEN REQUESTS
 def index():
 
     user_id = session.get("user_id")
@@ -72,12 +72,14 @@ def index():
     ).all()
     # transactions = BookTransaction.query.all()
 
-    user_requests = BookTransaction.query.filter(
+    open_user_requests = BookTransaction.query.filter(
         BookTransaction.requester_id == user_id,
+        BookTransaction.date_confirmed == None,
     ).all()
 
-    users_book_transactions = BookTransaction.query.filter(
+    users_open_book_transactions = BookTransaction.query.filter(
         BookTransaction.book_owner_id == user_id,
+        BookTransaction.date_confirmed == None,
     ).all()
 
     print "LOOK HERE"
@@ -86,8 +88,8 @@ def index():
         "index.html",
         books=books,
         # transactions=transactions,
-        user_requests=user_requests,
-        users_book_transactions=users_book_transactions,
+        open_user_requests=open_user_requests,
+        users_open_book_transactions=users_open_book_transactions,
     )
 
 
@@ -413,7 +415,16 @@ def view_users():
 def view_library(id):  # should show what books are checked out/in/borrowed
     # owner_books = db_session.query(Book).filter_by(owner_id=id).all()
     owner = User.query.get(id)
-    return render_template("library.html", owner=owner)
+
+    user_requests = BookTransaction.query.filter(
+        BookTransaction.requester_id == owner.id,
+    ).all()
+
+    return render_template(
+        "library.html",
+        owner=owner,
+        user_requests=user_requests
+    )
 
 
 @app.route("/deactivate", methods=["POST"])  # add this for better UX

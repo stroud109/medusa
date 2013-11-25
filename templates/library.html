@@ -5,7 +5,7 @@
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">{{owner.username}}'s library</h3>
+                <h3 class="panel-title">{{owner.username}}'s books</h3>
             </div>
             <div class="panel-body">
                 {% for book in owner.books %}
@@ -19,10 +19,18 @@
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">{{owner.username}}'s Transactions</h3>
+                <h3 class="panel-title">{{owner.username}}'s transactions</h3>
             </div>
         <div class="panel-body">
-            <h2>Viewer history goes here</h2>
+            {% for request in user_requests %}
+                <li><span><strong>Book Title:</strong> <a href="{{url_for("view_book", id=request.book.id)}}">{{request.book.title}}</a> | <strong>Book Owner:</strong> <a href="{{url_for("view_library", id=request.book.owner_id)}}">{{request.book.owner.username}}</a></br>
+                    <strong>Book requested:</strong> {{request.date_requested|datetimeformat}}</br>
+                    <strong>Book borrowed:</strong> {{request.date_borrowed|datetimeformat}}</br>
+                    <strong>Book returned:</strong> {{request.date_returned|datetimeformat}}</br>
+                    <strong>Book's return confirmed:</strong> {{request.date_confirmed|datetimeformat}}</br>
+                    </span></br>
+                </li>
+            {% endfor %}
         </div>
     </div>
 </div>

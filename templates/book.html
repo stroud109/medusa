@@ -35,10 +35,15 @@
                             <h4>There are currently no open transactions</h4>
                         {% else %}
                             {% for transaction in book_requests %}
-                            <strong>Requester:</strong> {{transaction.requester.username}}
-                            <form method="post" action="{{url_for("declare_borrowed", id=transaction.id)}}">
-                                <input type="submit" value="Declare Borrowed" class="btn btn-default"/>
-                            </form>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <strong>Requester:</strong> <a href="{{url_for("view_library", id=transaction.requester.id)}}">{{transaction.requester.username}}</a>
+                                    <form class="pull-right" method="post" action="{{url_for("declare_borrowed", id=transaction.id)}}">
+                                        <input type="submit" value="Declare Borrowed" class="btn btn-default"/>
+                                    </form>
+                                </div>
+                            </div>
+
                             {% endfor %}
                         {% endif %}
                     {% endif %}
