@@ -14,13 +14,15 @@
             <div class="panel-body">
                 {% for book in books %}
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-10">
+                    <strong><a href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a></strong>
+                    </div>
+                    <div class="col-md-2">
                     {% if not book.get_open_transaction_for_user(user.id) %}
                     <form class="pull-right" method="post" action="{{url_for("request_book", id=book.id)}}">
                         <input type="submit" value="request" class="btn btn-default"/>
                     </form>
                     {% endif %}
-                    <strong><a href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a></strong>
                     </div>
                 </div>
                 {% else %}
@@ -42,42 +44,45 @@
                 <h3>Your Requests</h3>
 
                 {% for request in open_user_requests %}
-                    <li><span><strong>Book Title:</strong> <a href="{{url_for("view_book", id=request.book.id)}}">{{request.book.title}}</a> | <strong>Book Owner:</strong> <a href="{{url_for("view_library", id=request.book.owner_id)}}">{{request.book.owner.username}}</a></br>
-                    </li>
+                <div class="row">
+                    <div class="col-md-8">
+                    <strong>Book Title:</strong> <a href="{{url_for("view_book", id=request.book.id)}}">{{request.book.title}}</a> | <strong>Book Owner:</strong> <a href="{{url_for("view_library", id=request.book.owner_id)}}">{{request.book.owner.username}}</a>
+                    </div>
+                    <div class="col-md-4">
                     {% if request.date_borrowed != None %}
                         {% if request.date_returned == None %}
-                            <form method="post" action="{{url_for("return_book", id=request.id)}}">
-                                <input type="submit" value="Return Book" class="btn btn-default"/>
+                            <form class="pull-right" method="post" action="{{url_for("return_book", id=request.id)}}">
+                                <input type="submit" value="book returned" class="btn btn-default"/>
                             </form>
                         {% endif %}
                     {% endif %}
+                    </div>
+                </div>
                 {% endfor %}
 
                 <h3>Your Books</h3>
 
                 {% for transaction in users_open_book_transactions %}
-                    <li><span><strong>Book Title:</strong> <a href="{{url_for("view_book", id=transaction.book.id)}}">{{transaction.book.title}}</a> | <strong>Book Requester:</strong> <a href="{{url_for("view_library", id=transaction.requester_id)}}">{{transaction.requester.username}}</a></br>
-                    </li>
-
-                    <div class="row">
+                <div class="row">
+                    <div class="col-md-8">
+                    <strong>Book Title:</strong> <a href="{{url_for("view_book", id=transaction.book.id)}}">{{transaction.book.title}}</a> | <strong>Book Requester:</strong> <a href="{{url_for("view_library", id=transaction.requester_id)}}">{{transaction.requester.username}}</a></br>
+                    </div>
+                    <div class="col-md-4">
                     {% if transaction.date_borrowed == None %}
-                        <div class="col-md-12">
-                            <form class="pull-right" method="post" action="{{url_for("declare_borrowed", id=transaction.id)}}">
-                                <input type="submit" value="Declare Borrowed" class="btn btn-default"/>
-                            </form>
-                        </div>
-
+                        <form class="pull-right" method="post" action="{{url_for("declare_borrowed", id=transaction.id)}}">
+                            <input type="submit" value="declare borrowed" class="btn btn-default"/>
+                        </form>
                     {% else %}
+                        {% if transaction.date_returned != None %}
                         {% if transaction.date_confirmed == None %}
-                         <form method="post" action="{{url_for("confirm_book_returned", id=transaction.id)}}">
-                            <input type="submit" value="Confirm Book Returned" class="btn btn-default"/>
+                         <form class="pull-right" method="post" action="{{url_for("confirm_book_returned", id=transaction.id)}}">
+                            <input type="submit" value="confirm book returned" class="btn btn-default"/>
                         </form>
                         {% endif %}
+                        {% endif %}
                     {% endif %}
-
                     </div>
-
-
+                </div>
 
                 {% endfor %}
             </div>
