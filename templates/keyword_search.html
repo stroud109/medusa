@@ -12,8 +12,11 @@ searched for: {{searched_for}}
 search results:
 {{unique_ids}}
 <br/>
+<ul>
 {% for book in books %}
-    {{book.title}}
+    <li>
+    <strong>title:</strong> {{book.title}}, <strong>id:</strong> {{book.id}}
+    </li>
 {% endfor %}
-
+</ul>
 {% endblock %}

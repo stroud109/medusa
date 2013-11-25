@@ -111,19 +111,30 @@ def keyword_search():
     # make the search results a flat, unique list of book info ids
 
     unique_ids = [json.loads(result.document_ids) for result in search_results]
-    unique_ids = [item for sublist in unique_ids for item in sublist]
+    print "Here is the json", unique_ids
+    # The following line just strips the inner list out
+    # unique_ids = [item for sublist in unique_ids for item in sublist]
+    # print "Here the crazy list comprehension", unique_ids
+    # ^ revisit this
+    # unique_ids = unique_ids[0]
 
     actual_unique_ids = []
-    for unique_id in unique_ids:
+    for unique_id in unique_ids[0]:
         if unique_id not in actual_unique_ids:
             actual_unique_ids.append(unique_id)
     unique_ids = actual_unique_ids
 
     books = []
     for unique_id in unique_ids:
-        books = db_session.query(Book).filter_by(
-            book_info_id=unique_id,
-            ).all()
+        book = BookInfo.query.filter_by(
+            id=unique_id
+            ).one()
+        # print "CURRENT BOOK", book.title
+        books.append(book)
+
+    # books = Book.query.filter(
+    #     Book.book_info_id.in_(unique_ids)
+    #     ).all()
 
     return render_template(
         "keyword_search.html",
