@@ -23,37 +23,38 @@
                 <h3 class="panel-title">{{owner.username}}'s Transactions</h3>
             </div>
         <div class="panel-body">
-            <h3>Open Transactions</h3>
+            <h3>Current Transactions</h3>
 
-            {% for request in user_requests %}
-                {% if request.date_confirmed == None %}
-                <strong>Book Title:</strong> <a href="{{url_for("view_book", id=request.book.id)}}">{{request.book.title}}</a><br/>
-                <strong>Book Owner:</strong> <a href="{{url_for("view_library", id=request.book.owner_id)}}">{{request.book.owner.username}}</a></br>
-                    {% if request.date_returned == None %}
-                        {% if request.date_borrowed == None %}
-                            <strong>Book requested:</strong> {{request.date_requested|datetimeformat}}
-                        {% else %}
-                            <strong>Borrowed:</strong> {{request.date_borrowed|datetimeformat}}
-                        {% endif %}
+            {% for request in current_user_requests %}
+
+            <strong>Book Title:</strong> <a href="{{url_for("view_book", id=request.book.id)}}">{{request.book.title}}</a><br/>
+            <strong>Book Owner:</strong> <a href="{{url_for("view_library", id=request.book.owner_id)}}">{{request.book.owner.username}}</a></br>
+                {% if request.date_returned == None %}
+                    {% if request.date_borrowed == None %}
+                        <strong>Book requested:</strong> {{request.date_requested|datetimeformat}}
                     {% else %}
-                        <strong>Returned:</strong> {{request.date_returned|datetimeformat}}
+                        <strong>Borrowed:</strong> {{request.date_borrowed|datetimeformat}}
                     {% endif %}
-                <hr/>
+                {% else %}
+                    <strong>Returned:</strong> {{request.date_returned|datetimeformat}}
                 {% endif %}
+                <hr/>
+            {% else %}
+            <h5>{{owner.username}} currently has no open transactions</h5>
             {% endfor %}
             <hr/>
             <h3>Past Transactions</h3>
 
-            {% for request in user_requests %}
-                {% if request.date_confirmed != None %}
-                <strong>Book Title:</strong> <a href="{{url_for("view_book", id=request.book.id)}}">{{request.book.title}}</a><br/>
-                <strong>Book Owner:</strong> <a href="{{url_for("view_library", id=request.book.owner_id)}}">{{request.book.owner.username}}</a></br>
+            {% for request in past_user_requests %}
 
-                <strong>Borrowed:</strong> {{request.date_borrowed|datetimeformat}}<br/>
-                <strong>Return Confirmed:</strong> {{request.date_confirmed|datetimeformat}}
+            <strong>Book Title:</strong> <a href="{{url_for("view_book", id=request.book.id)}}">{{request.book.title}}</a><br/>
+            <strong>Book Owner:</strong> <a href="{{url_for("view_library", id=request.book.owner_id)}}">{{request.book.owner.username}}</a></br>
 
-                {% endif %}
-                <hr/>
+            <strong>Borrowed:</strong> {{request.date_borrowed|datetimeformat}}<br/>
+            <strong>Return Confirmed:</strong> {{request.date_confirmed|datetimeformat}}
+            <hr/>
+            {% else %}
+            <h5>{{owner.username}} doesn't have any completed transactions yet</h5>
             {% endfor %}
         </div>
     </div>

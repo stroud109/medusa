@@ -32,7 +32,7 @@
                 {% elif user_id == book.owner_id %}
                     {% if not transaction_in_progress %}
                         {% if not book_requests %}
-                            <h4>There are currently no open transactions</h4>
+                            <h4>There are currently no open transactions on this book</h4>
                         {% else %}
                             {% for transaction in book_requests %}
                             <div class="row">
@@ -67,15 +67,24 @@
                 {% endif %}
                 {% endif%}
 
-                {% for transaction in book.book_transactions %}
-                <li><span><strong>Book Requester:</strong> <a href="{{url_for("view_library", id=transaction.requester.id)}}">{{transaction.requester.username}}</a> | <strong>Book Owner:</strong> <a href="{{url_for("view_library", id=transaction.book.owner.id)}}">{{transaction.book.owner.username}}</a></br>
-                    <strong>Book requested:</strong> {{transaction.date_requested|datetimeformat}}</br>
-                    <strong>Book borrowed:</strong> {{transaction.date_borrowed|datetimeformat}}</br>
-                    <strong>Book returned:</strong> {{transaction.date_returned|datetimeformat}}</br>
-                    <strong>Book's return confirmed:</strong> {{transaction.date_confirmed|datetimeformat}}</br>
-                    </span></br>
-                </li>
+
+                {% for transaction in open_requests %}
+                <strong>Book Requester:</strong> <a href="{{url_for("view_library", id=transaction.requester_id)}}">{{transaction.requester.username}}</a></br>
+                <strong>Book Owner:</strong> <a href="{{url_for("view_library", id=transaction.book_owner_id)}}">{{transaction.book_owner.username}}</a></br>
+                    {% if transaction.date_returned == None %}
+                        {% if transaction.date_borrowed == None %}
+                            <strong>Book requested:</strong> {{transaction.date_requested|datetimeformat}}
+                        {% else %}
+                            <strong>Borrowed:</strong> {{transaction.date_borrowed|datetimeformat}}
+                        {% endif %}
+                    {% else %}
+                        <strong>Returned:</strong> {{transaction.date_returned|datetimeformat}}
+                    {% endif %}
+                    <br/>
+                {% else %}
+                <h5>{{book.title}} currently has no open transactions</h5>
                 {% endfor %}
+
             </div>
         </div>
         {% endif %}

@@ -253,6 +253,12 @@ def view_book(id):
         BookTransaction.date_borrowed == None,
     ).all()
 
+    open_requests = BookTransaction.query.filter(
+        BookTransaction.book_id == book.id,
+        BookTransaction.date_requested != None,
+        BookTransaction.date_confirmed == None,
+    ).all()
+
     # returned_book = BookTransaction.query.filter(
     #     BookTransaction.book_id == book.id,
     #     BookTransaction.date_borrowed != None,
@@ -266,6 +272,7 @@ def view_book(id):
         transaction_in_progress=transaction_in_progress,
         open_user_transaction=book.get_open_transaction_for_user(user_id),
         book_requests=book_requests,
+        open_requests=open_requests,
         # returned_book=returned_book,
     )
 
@@ -485,14 +492,26 @@ def view_library(id):  # should show what books are checked out/in/borrowed
     # owner_books = db_session.query(Book).filter_by(owner_id=id).all()
     owner = User.query.get(id)
 
-    user_requests = BookTransaction.query.filter(
+    # user_requests = BookTransaction.query.filter(
+    #     BookTransaction.requester_id == owner.id,
+    # ).all()
+
+    current_user_requests = BookTransaction.query.filter(
         BookTransaction.requester_id == owner.id,
+        BookTransaction.date_confirmed == None,
+    ).all()
+
+    past_user_requests = BookTransaction.query.filter(
+        BookTransaction.requester_id == owner.id,
+        BookTransaction.date_confirmed != None,
     ).all()
 
     return render_template(
         "library.html",
         owner=owner,
-        user_requests=user_requests
+        # user_requests=user_requests,
+        current_user_requests=current_user_requests,
+        past_user_requests=past_user_requests,
     )
 
 
