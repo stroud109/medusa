@@ -14,8 +14,15 @@ search results:
 <hr/>
 {% if books %}
 {% for book in books|sort(attribute='book_info_id') %}
-    <strong>title:</strong> <a href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a>, <strong>book info id:</strong> {{book.book_info_id}}, <strong>book owner:</strong><a href="{{url_for("view_library", id=book.owner_id)}}">{{book.owner.username}}</a>
-    <hr/>
+<div class="row">
+    <div class="col-md-2">
+        <img src="{{book.book_info.thumbnail_url}}"></img>
+    </div>
+    <div class="col-md-10">
+        <strong>title:</strong> <a href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a>, <strong>book info id:</strong> {{book.book_info_id}}, <strong>book owner:</strong><a href="{{url_for("view_library", id=book.owner_id)}}">{{book.owner.username}}</a>
+    </div>
+</div>
+<hr/>
 {% endfor %}
 {% else %}
     <h4>There are no search results for "{{searched_for}}"</h4>

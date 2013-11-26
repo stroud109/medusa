@@ -6,6 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy import (
     Column,
+    Text,
     Integer,
     String,
     DateTime,
@@ -87,6 +88,7 @@ class BookInfo(Base):
     number_pages = Column(Integer(), nullable=True)
     genre = Column(String(50), nullable=True)
     image_url = Column(String(300), nullable=True)
+    thumbnail_url = Column(Text, nullable=True)
     editorial_review = Column(String(10000), nullable=True)
 
     books = relationship("Book", uselist=True)

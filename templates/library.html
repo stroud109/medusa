@@ -9,8 +9,17 @@
             </div>
             <div class="panel-body">
                 {% for book in owner.books %}
-                <h4><a href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a></h4>
+                <div class="col-md-10">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img src="{{book.book_info.thumbnail_url}}"></img>
+                        </div>
+                        <div class="col-md-8">
+                            <strong> <a href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a></strong>
+                        </div>
+                    </div>
                 <hr/>
+                </div>
                 {% else %}
                     <h2>{{owner.username}}'s library is empty</h2>
                 {% endfor %}

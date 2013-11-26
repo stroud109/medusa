@@ -15,7 +15,14 @@
                 {% for book in books|sort(attribute='title') %}
                 <div class="row">
                     <div class="col-md-10">
-                    <strong><a href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a></strong>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <img src="{{book.book_info.thumbnail_url}}"></img>
+                            </div>
+                            <div class="col-md-8">
+                                <strong> <a href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a></strong>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-2">
                     {% if not book.get_open_transaction_for_user(user.id) %}

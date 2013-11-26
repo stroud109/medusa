@@ -44,6 +44,7 @@ def get_book_info_from_ean(ean):
         )
 
     image_url = book_image.Items.Item.ImageSets.ImageSet.LargeImage.URL
+    thumbnail_url = book_image.Items.Item.ImageSets.ImageSet.MediumImage.URL
 
     book_review = api.item_lookup(
         ItemId=ean,
@@ -66,5 +67,7 @@ def get_book_info_from_ean(ean):
         number_pages=int(number_pages),
         genre=str(genre),
         image_url=str(image_url),
+        thumbnail_url=str(thumbnail_url),
+        # ^this is the medium image in amazon's api
         editorial_review=editorial_review.text,
         )
