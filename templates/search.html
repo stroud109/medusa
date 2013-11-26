@@ -51,6 +51,14 @@
 //     ctx = Canvas.getContext("2d");
 //     var workerCount = 0;
 
+    var messageContainer = $(".flash-messages");
+
+    var flashMessage = function(alertLevel, message){
+        var messageElem = $("<div class='alert alert-"+ alertLevel +"'>"+ message +"<br/></div>");
+        messageContainer.html(messageElem);
+        // messageElem.fadeOut(2000)
+    };
+
     window.Camera.askForCamera();
 
     function receiveMessage(e) {
@@ -127,11 +135,13 @@
         processCameraImage();
         isCancelled = false;
         e.preventDefault();
-    } );
+        flashMessage("success", "barcode capture started");
+    });
     $("a#cancel").click( function(e) {
         window.Camera.pauseCapture();
         isCancelled = true;
         e.preventDefault();
+        flashMessage("danger", "barcode capture stopped");
     });
 
     // $('#snapshot')
