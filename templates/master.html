@@ -28,7 +28,7 @@
             {% endif %}
             {% for message in get_flashed_messages() %}
                 <div class="alert alert-info">
-                <li>{{ message }}</li>
+                {{ message }}<br/>
                 </div>
             {% endfor %}
 

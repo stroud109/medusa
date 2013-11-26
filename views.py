@@ -99,9 +99,12 @@ def index():
 
 @app.route("/keyword_search")  # SEARCH BOOKWORMS FOR A BOOK
 def keyword_search():
+
     searched_for = request.args.get('q')
 
-    tokens = searched_for.split(" ")
+    tokens = []
+    if searched_for is not None:
+        tokens = searched_for.split(' ')
 
     # figure out filter_by token in array
     # figure out how to use an in clause in sqlalchemy
