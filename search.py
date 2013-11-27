@@ -22,8 +22,8 @@ def recreate_index():
             data = getattr(info, column)
             # getattr is a shortcut for 'info.<attribute name>
             if data:
-                lowercased_string = data.lower()
-                tokens = lowercased_string.split(' ')
+                lowercased_words = data.ascii_lowercase()
+                tokens = lowercased_words.split(' ')
 
                 for token in tokens:
                     if not token in book_info_ids_by_token:
@@ -55,4 +55,3 @@ def recreate_index():
     # create tokens from book metadata (book info) from every column
     # take resulting dictionary, loop over keys and values
     # save each key as new SearchTerm
-

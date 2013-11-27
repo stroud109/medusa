@@ -59,11 +59,11 @@
                         {% endif %}
                     {% endif %}
                 {% else %}
-                    {% if transaction_in_progress.date_returned != None %}
+
                      <form method="post" action="{{url_for("confirm_book_returned", id=transaction_in_progress.id)}}">
                         <input type="submit" value="Confirm Book Returned" class="btn btn-default"/>
                     </form>
-                    {% endif %}
+
                 {% endif %}
                 {% endif%}
 

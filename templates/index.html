@@ -92,13 +92,13 @@
                             <input type="submit" value="declare borrowed" class="btn btn-default"/>
                         </form>
                     {% else %}
-                        {% if transaction.date_returned != None %}
+
                         {% if transaction.date_confirmed == None %}
                          <form class="pull-right" method="post" action="{{url_for("confirm_book_returned", id=transaction.id)}}">
                             <input type="submit" value="confirm book returned" class="btn btn-default"/>
                         </form>
                         {% endif %}
-                        {% endif %}
+
                     {% endif %}
                     </div>
                 </div>

@@ -103,7 +103,12 @@ def keyword_search():
     searched_for = request.args.get('q')
 
     tokens = []
-    if searched_for is not None:
+
+    if not searched_for or searched_for == "":
+        flash('Please enter a valid search term')
+        return redirect(url_for("index"))
+    else:
+    # if searched_for is not None and searched_for != "":
         tokens = searched_for.split(' ')
 
     # figure out filter_by token in array
@@ -375,17 +380,17 @@ def confirm_book_returned(id):
     user_id = int(session.get("user_id"))
 
     if transaction.book.owner_id == user_id:
-        if transaction.date_returned is not None:
-            if transaction.book.current_borrower_id is not None:
-                transaction.book.current_borrower_id = None
-                transaction.date_confirmed = datetime.now()
-                model.session.add(transaction)
-                model.session.add(transaction.book)
-                model.session.commit()
-            else:
-                flash("You've already confirmed this book has been returned")
+        # if transaction.date_returned is not None:
+        if transaction.book.current_borrower_id is not None:
+            transaction.book.current_borrower_id = None
+            transaction.date_confirmed = datetime.now()
+            model.session.add(transaction)
+            model.session.add(transaction.book)
+            model.session.commit()
         else:
-            flash("Book must be marked as returned before you confirm")
+            flash("You've already confirmed this book has been returned")
+        # else:
+        #     flash("Book must be marked as returned before you confirm")
     else:
         flash("You can only confirm returns on books you own")
     # model.session.refresh(book)
