@@ -490,7 +490,44 @@ def view_users():
     return render_template("users.html", users=users)
 
 
-@app.route("/users/<int:id>")
+@app.route("/users/<int:id>", methods=["POST"])
+@login_required
+def update_user(id):
+    """
+    Takes a POSTed form and updates the given user with values
+    from the form.
+    """
+    user_id = session.get('user_id')
+    user_id = int(user_id)
+
+    # Check to make sure the session user is the
+    # owner of the user model they are trying to update
+    if id != user_id:
+        flash('You can\'t update other user accounts.')
+        return redirect(url_for('view_library', id=user_id))
+
+    # Check to make sure the user we are trying to
+    # update actually exists
+    user = User.query.get(id)
+    if user is None:
+        flash("Couldn't find a user with ID %s" % user_id)
+        return redirect(url_for('index'))
+
+    # Start setting attributes on the user
+    # For right now, we only have one attribute we care about
+    form = forms.UserForm(request.form)
+    if form.avatar_url.data:
+        user.avatar_url = form.avatar_url.data
+        model.session.add(user)
+        model.session.commit()
+
+    # Finally, tell the browser to redirect the user
+    # to their library page
+    flash('You updated your account successfully')
+    return redirect(url_for('view_library', id=user.id))
+
+
+@app.route("/users/<int:id>", methods=["GET"])
 @login_required
 def view_library(id):  # should show what books are checked out/in/borrowed
     # owner_books = db_session.query(Book).filter_by(owner_id=id).all()
@@ -521,11 +558,11 @@ def view_library(id):  # should show what books are checked out/in/borrowed
 
 @app.route("/users/<int:id>/edit")
 @login_required
-def edit_user_account(id):
+def edit_user(id):
     owner = User.query.get(id)
 
     return render_template(
-        "edit_user_account.html",
+        "edit_user.html",
         owner=owner,
     )
 

@@ -41,7 +41,7 @@
                 {% if session.get("user_id") %}
                 <ul class="nav navbar-nav navbar-right">
                   <li><a href="{{url_for("index")}}">Welcome, {{user.username}}</a></li>
-                  <li><img src="/static/img/avatars/sheep.png"></img></li>
+                  <li><img src="{{user.avatar_url}}"></img></li>
                 </ul>
                 {% endif %}
               </div><!-- /.navbar-collapse -->

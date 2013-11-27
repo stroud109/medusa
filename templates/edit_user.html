@@ -2,7 +2,7 @@
 {% block body %}
 
 <h4>Select an avater</h4>
-<form method="post" action="url_for("user", id=id)">
+<form method="post" action="{{url_for("update_user", id=owner.id)}}">
     <!-- need to work on the line above -->
     <div class="radio">
     <label>
@@ -24,7 +24,7 @@
     </div>
 <input type="submit" value="update" class="btn btn-default navbar-btn"/>
 </form>
-<h2>Update your name</h2>
+<h2>Update your username</h2>
 
 <h2>Update your library</h2>
 

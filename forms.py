@@ -36,6 +36,13 @@ class LoginForm(Form):
     )
 
 
+class UserForm(Form):
+    avatar_url = TextField(
+        "Avatar",
+        widget=TextInput(),
+    )
+
+
 class NewUserForm(Form):
     username = TextField(
         "Username",
