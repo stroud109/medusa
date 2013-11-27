@@ -116,6 +116,10 @@ def keyword_search():
     unique_ids = [json.loads(result.document_ids) for result in search_results]
     # print "Here is the json", unique_ids
     # The following line just strips the inner list out
+    # unique_ids = []
+    # for sublist in unique_ids:
+    #     for item in sublist:
+    #        unique_ids.append(item)
     unique_ids = [item for sublist in unique_ids for item in sublist]
     # ^ revisit this
     # print "Here the crazy list comprehension", unique_ids
@@ -407,7 +411,7 @@ def authenticate():
 
     if not form.validate():
     # if method not "POST" not form.validate():
-        flash("Please input a valid email or password")
+        # flash("Please input a valid email or password")
         return render_template("master.html", form=form)
 
     email = form.email.data
@@ -418,7 +422,7 @@ def authenticate():
     user = User.query.filter_by(email=email).one()
 
     if not user or not user.authenticate(password):
-        flash("Incorrect username or password")
+        # flash("Incorrect username or password")
         return render_template("master.html", form=form)
 
     login_user(user)
@@ -512,6 +516,17 @@ def view_library(id):  # should show what books are checked out/in/borrowed
         # user_requests=user_requests,
         current_user_requests=current_user_requests,
         past_user_requests=past_user_requests,
+    )
+
+
+@app.route("/users/<int:id>/edit")
+@login_required
+def edit_user_account(id):
+    owner = User.query.get(id)
+
+    return render_template(
+        "edit_user_account.html",
+        owner=owner,
     )
 
 

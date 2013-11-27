@@ -38,6 +38,7 @@ class User(Base, UserMixin):
     email = Column(String(64), nullable=False)
     password = Column(String(64), nullable=False)
     salt = Column(String(64), nullable=False)
+    avatar_url = Column(Text(), nullable=True)
 
     books = relationship("Book", uselist=True)
 
@@ -139,7 +140,7 @@ class SearchTerm(Base):
     id = Column(Integer, primary_key=True)
     token = Column(String(1000), nullable=False)
     num_results = Column(Integer(), nullable=False)
-    document_ids = Column(String(1000), nullable=False)
+    document_ids = Column(Text(), nullable=False)
 
 
 def register_book(new_book):

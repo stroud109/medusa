@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block body %}
+
+<h4>Select an avater</h4>
+<form method="post" action="url_for("user", id=id)">
+    <!-- need to work on the line above -->
+    <div class="radio">
+    <label>
+        <input type="radio" name="avatar_url" value="/static/img/avatars/sheep.png" checked/>
+        sheep
+    </label>
+    </div>
+    <div class="radio">
+      <label>
+        <input type="radio" name="avatar_url" value="/static/img/avatars/lion.png"/>
+        lion
+    </label>
+    </div>
+    <div class="radio">
+      <label>
+        <input type="radio" name="avatar_url" value="/static/img/avatars/butterowl.png"/>
+        butterowl
+    </label>
+    </div>
+<input type="submit" value="update" class="btn btn-default navbar-btn"/>
+</form>
+<h2>Update your name</h2>
+
+<h2>Update your library</h2>
+
+{% endblock %}

@@ -29,6 +29,7 @@ def recreate_index():
                     if not token in book_info_ids_by_token:
                         book_info_ids_by_token[token] = []
                     book_info_ids_by_token[token].append(info.id)
+                    # use set to avoid redundant keys
 
     # id = Column(Integer, primary_key=True)
     # token = Column(String(1000), nullable=False)

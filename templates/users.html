@@ -8,7 +8,15 @@
             </div>
         <div class="panel-body">
             {% for user in users %}
-            <h4><a href="{{url_for("view_library", id=user.id)}}">{{user.username}}</a></h4>
+            <div class="row">
+                <div class="col-md-4">
+                    <img src="/static/img/avatars/sheep.png"></img>
+                </div>
+                <div class="col-md-8">
+                    <h4><a href="{{url_for("view_library", id=user.id)}}">{{user.username}}</a></h4>
+                </div>
+            </div>
+            <hr/>
             {% else %}
             No users here!
         </div>
