@@ -1,20 +1,33 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% block body %}
 
-<form method="post">
-<div class="form-group col-md-4">
-{% for field in form %}
-    <div class="form-group {% if field.errors %}has-error{% endif %}">
-        {{field}}
-    {% for error in field.errors %}
-      <label class="control-label" for="{{field.id}}">{{error}}</label>
+    <div id="login" class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        Register
+                    </h3>
+                </div>
+            <div class="panel-body">
+                <form method="post">
+                    <div class="form-group">
+                        {% for field in form %}
+                        <div class="form-group {% if field.errors %}has-error{% endif %}">
+                        {{field}}
+                        {% for error in field.errors %}
+                        <label class="control-label" for="{{field.id}}">{{error}}</label>
+                        {% endfor %}
+                        </div>
+                        {% endfor %}
+                        <input class="btn btn-default" type="submit">
+                    </div>
+                </form>
+            </div>
+        </div>
 
-    {% endfor %}
+        <div class="col-md-4"></div>
     </div>
-{% endfor %}
-
-    <input class="btn btn-default" type="submit">
-</div>
-</form>
 
 {% endblock %}

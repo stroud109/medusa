@@ -1,31 +1,39 @@
 {% extends "base.html" %}
 {% block body %}
-        <div class="container">
-            {% if session.get("user_id") == None %}
-            <div id="login">
-                Login!
-                <form method="post">
-                <div class="form-group col-md-4">
-                    {% for field in form %}
-                    <div class="form-group {% if field.errors %}has-error{% endif %}">
-                        {{field}}
-                    {% for error in field.errors %}
-                    <label class="control-label" for="{{field.id}}">{{error}}</label>
-                    {% endfor %}
-                    </div>
-                {% endfor %}
 
-                    <input class="btn btn-default" type="submit">
+    <div id="login" class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        {% if not user %}Login{% else %}Logout{% endif %}
+                    </h3>
                 </div>
+            <div class="panel-body">
+            {% if not user %}
+                <form method="post">
+                    <div class="form-group">
+                        {% for field in form %}
+                        <div class="form-group {% if field.errors %}has-error{% endif %}">
+                        {{field}}
+                        {% for error in field.errors %}
+                        <label class="control-label" for="{{field.id}}">{{error}}</label>
+                        {% endfor %}
+                        </div>
+                        {% endfor %}
+                        <input class="btn btn-default" type="submit">
+                    </div>
                 </form>
-            </div>
+            {% else %}
+                <div id="logout">
+                    <a href="/logout" class="btn btn-default">logout</a>
+                </div>
             {% endif %}
-
-            {% if session.get("user_id") %}
-            <div id="logout">
-                <a href="/logout">logout</a>
             </div>
-            {% endif %}
         </div>
+
+        <div class="col-md-4"></div>
+    </div>
 
 {% endblock %}

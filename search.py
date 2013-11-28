@@ -14,6 +14,13 @@ COLUMNS_TO_INDEX = (
 
 
 def recreate_index():
+    '''
+    This function indexes the book_info table of the database
+    I'd eventually like to impliment tf-idf functionality, thus
+    I am not deduplicating the docoment_ids for each SearchTerm
+    http://en.wikipedia.org/wiki/Tf%E2%80%93idf
+    '''
+
     book_infos = BookInfo.query.all()
     book_info_ids_by_token = {}
 
@@ -51,7 +58,8 @@ def recreate_index():
 
     return book_info_ids_by_token
 
-    # create a dictionary of keywords where key is a token, value is a list of book ids
+    # create a dictionary of keywords where key is a token
+    # and value is a list of book ids
     # create tokens from book metadata (book info) from every column
     # take resulting dictionary, loop over keys and values
     # save each key as new SearchTerm
