@@ -1,29 +1,102 @@
 {% extends 'base.html' %}
 {% block body %}
 
-<h4>Select an avater</h4>
-<form method="post" action="{{url_for("update_user", id=owner.id)}}">
-    <!-- need to work on the line above -->
-    <div class="radio">
-    <label>
-        <input type="radio" name="avatar_url" value="/static/img/avatars/sheep.png" checked/>
-        sheep
-    </label>
+<h4>Select an avatar</h4>
+<div class="container">
+
+    <div class="col-md-8">
+        <form method="post" action="{{url_for("update_user", id=owner.id)}}">
+        <ul class="list-inline">
+            <li>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="avatar_url" value="/static/img/avatars/cat.png"/>
+                    <img src="/static/img/avatars/cat.png" width="100" height="100">
+                </label>
+            </div>
+            </li>
+            <li>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="avatar_url" value="/static/img/avatars/spaceman.png"/>
+                    <img src="/static/img/avatars/spaceman.png" width="100" height="100">
+                </label>
+            </div>
+            </li>
+            <li>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="avatar_url" value="/static/img/avatars/lion.png"/>
+                    <img src="/static/img/avatars/lion.png" width="100" height="100">
+                </label>
+            </div>
+            </li>
+            <li>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="avatar_url" value="/static/img/avatars/sleepy.png"/>
+                    <img src="/static/img/avatars/sleepy.png" width="100" height="100">
+                </label>
+            </div>
+            </li>
+            <li>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="avatar_url" value="/static/img/avatars/veniceunderwater.png"/>
+                    <img src="/static/img/avatars/veniceunderwater.png" width="100" height="100">
+                </label>
+            </div>
+            </li>
+            <li>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="avatar_url" value="/static/img/avatars/butterowl.png"/>
+                    <img src="/static/img/avatars/butterowl.png" width="100" height="100">
+                </label>
+            </div>
+            </li>
+            <li>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="avatar_url" value="/static/img/avatars/sloth.png"/>
+                    <img src="/static/img/avatars/sloth.png" width="100" height="100">
+                </label>
+            </div>
+            </li>
+            <li>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="avatar_url" value="/static/img/avatars/queen.png"/>
+                    <img src="/static/img/avatars/queen.png" width="100" height="100">
+                </label>
+            </div>
+            </li>
+            <li>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="avatar_url" value="/static/img/avatars/oldman.png"/>
+                    <img src="/static/img/avatars/oldman.png" width="100" height="100">
+                </label>
+            </div>
+            </li>
+            <li>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="avatar_url" value="/static/img/avatars/sheep.png" checked/>
+                    <img src="/static/img/avatars/sheep.png" width="100" height="100">
+                </label>
+            </div>
+            </li>
+
+        </ul>
+
+            <input type="submit" value="update" class="btn btn-default navbar-btn"/>
+        </form>
+
     </div>
-    <div class="radio">
-      <label>
-        <input type="radio" name="avatar_url" value="/static/img/avatars/lion.png"/>
-        lion
-    </label>
-    </div>
-    <div class="radio">
-      <label>
-        <input type="radio" name="avatar_url" value="/static/img/avatars/butterowl.png"/>
-        butterowl
-    </label>
-    </div>
-<input type="submit" value="update" class="btn btn-default navbar-btn"/>
-</form>
+</div>
+
+
 <h2>Update your username</h2>
 
 <h2>Update your library</h2>

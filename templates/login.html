@@ -2,20 +2,22 @@
  -->
 {% extends "base.html" %}
 {% block body %}
+<div class="center-block">
+    <form method="post">
+    {% for field in form %}
+    {{field.label}}
+    {{field}}
+    {% for error in field.errors %}
+    {{ error }}
+    {% endfor %}
+    <br>
 
-<form method="post">
-{% for field in form %}
-{{field.label}}
-{{field}}
-{% for error in field.errors %}
-{{ error }}
-{% endfor %}
-<br>
+    {% endfor %}
 
-{% endfor %}
+        <input type="submit">
+    </form>
+</div>
 
-    <input type="submit">
-</form>
 
 <!-- <form method="post">
     <input type="text" name="email" placeholder="Email"><br>
