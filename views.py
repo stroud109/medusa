@@ -537,6 +537,26 @@ def view_library(id):  # should show what books are checked out/in/borrowed
     )
 
 
+@app.route("/books/<int:id>/delete", methods=["POST"])
+@login_required
+def remove_book(id):
+    book = Book.query.get(id)
+    user_id = session.get("user_id")
+
+    if user_id is not None:
+        user_id = int(user_id)
+
+    if book.owner.id == user_id:
+        flash("%s was successfully deleted from your library" % book.title)
+        model.session.delete(book)
+        BookTransaction.query.filter_by(
+            book_id=book.id
+        ).delete()
+        model.session.commit()
+
+    return redirect(url_for("view_library", id=user_id))
+
+
 @app.route("/users/<int:id>/edit")
 @login_required
 def edit_user(id):
