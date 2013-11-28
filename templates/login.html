@@ -1,27 +1,31 @@
-<!-- i'm using master.html instead of this template
- -->
 {% extends "base.html" %}
 {% block body %}
-<div class="center-block">
-    <form method="post">
-    {% for field in form %}
-    {{field.label}}
-    {{field}}
-    {% for error in field.errors %}
-    {{ error }}
-    {% endfor %}
-    <br>
+        <div class="container">
+            {% if session.get("user_id") == None %}
+            <div id="login">
+                Login!
+                <form method="post">
+                <div class="form-group col-md-4">
+                    {% for field in form %}
+                    <div class="form-group {% if field.errors %}has-error{% endif %}">
+                        {{field}}
+                    {% for error in field.errors %}
+                    <label class="control-label" for="{{field.id}}">{{error}}</label>
+                    {% endfor %}
+                    </div>
+                {% endfor %}
 
-    {% endfor %}
+                    <input class="btn btn-default" type="submit">
+                </div>
+                </form>
+            </div>
+            {% endif %}
 
-        <input type="submit">
-    </form>
-</div>
+            {% if session.get("user_id") %}
+            <div id="logout">
+                <a href="/logout">logout</a>
+            </div>
+            {% endif %}
+        </div>
 
-
-<!-- <form method="post">
-    <input type="text" name="email" placeholder="Email"><br>
-    <input type="password" name="password" placeholder="Password"><br>
-    <input type="submit">
-</form> -->
 {% endblock %}

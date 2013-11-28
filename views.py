@@ -402,10 +402,10 @@ def confirm_book_returned(id):
 def login():
     if session.get("user_id"):
         flash("You're already logged in!")
-        return render_template("master.html")
+        return render_template("login.html")
     else:
         form = forms.LoginForm()
-        return render_template("master.html", form=form)
+        return render_template("login.html", form=form)
 
 
 @app.route("/login", methods=["POST"])
@@ -416,8 +416,8 @@ def authenticate():
 
     if not form.validate():
     # if method not "POST" not form.validate():
-        # flash("Please input a valid email or password")
-        return render_template("master.html", form=form)
+        flash("Please input a valid email or password")
+        return render_template("login.html", form=form)
 
     email = form.email.data
     password = form.password.data
@@ -427,8 +427,8 @@ def authenticate():
     user = User.query.filter_by(email=email).one()
 
     if not user or not user.authenticate(password):
-        # flash("Incorrect username or password")
-        return render_template("master.html", form=form)
+        flash("Incorrect username or password")
+        return render_template("login.html", form=form)
 
     login_user(user)
     flash("Welcome, %s" % user.username)
@@ -467,7 +467,7 @@ def create_account():
         return render_template("register.html", form=form)
 
     email = form.email.data
-    user = User.query.filter_by(email=email).one()
+    user = User.query.filter_by(email=email).first()
 
     if user:
         flash("Looks like you already have an account")
@@ -486,7 +486,8 @@ def create_account():
     login_user(new_user)
 
     flash("You successfully created your account!")
-    return redirect(url_for("index", id=new_user.id))
+    # return redirect(url_for("index", id=new_user.id))
+    return redirect(url_for("edit_user", id=new_user.id))
 
 
 @app.route("/users")
@@ -566,10 +567,7 @@ def view_library(id):  # should show what books are checked out/in/borrowed
 def edit_user(id):
     owner = User.query.get(id)
 
-    return render_template(
-        "edit_user.html",
-        owner=owner,
-    )
+    return render_template("edit_user.html", owner=owner)
 
 
 @app.route("/deactivate", methods=["POST"])  # add this for better UX
