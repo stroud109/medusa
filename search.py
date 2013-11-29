@@ -13,6 +13,21 @@ COLUMNS_TO_INDEX = (
 )
 
 
+def get_tokens_from_book_info(book_info):
+    tokens = []
+    for column in COLUMNS_TO_INDEX:
+        data = getattr(book_info, column)
+        # getattr is a shortcut for 'info.<attribute name>
+        if data:
+            lowercased_words = data.lower()
+
+            for token in lowercased_words.split(' '):
+                token = token.replace(r'[^\w\d]', '')
+                tokens.append(token)
+
+    return tokens
+
+
 def recreate_index():
     '''
     This function indexes the book_info table of the database
@@ -25,31 +40,28 @@ def recreate_index():
     book_info_ids_by_token = {}
 
     for info in book_infos:
-        for column in COLUMNS_TO_INDEX:
-            data = getattr(info, column)
-            # getattr is a shortcut for 'info.<attribute name>
-            if data:
-                lowercased_words = data.ascii_lowercase()
-                tokens = lowercased_words.split(' ')
+        tokens = get_tokens_from_book_info(info)
 
-                for token in tokens:
-                    if not token in book_info_ids_by_token:
-                        book_info_ids_by_token[token] = []
-                    book_info_ids_by_token[token].append(info.id)
-                    # use set to avoid redundant keys
+        # for column in COLUMNS_TO_INDEX:
+        #     data = getattr(info, column)
+        #     # getattr is a shortcut for 'info.<attribute name>
+        #     if data:
+        #         lowercased_words = data.ascii_lowercase()
+        #         tokens = lowercased_words.split(' ')
 
-    # id = Column(Integer, primary_key=True)
-    # token = Column(String(1000), nullable=False)
-    # num_results = Column(Integer(), nullable=False)
-    # document_ids = Column(String(1000), nullable=False)
+        for token in tokens:
+            if not token in book_info_ids_by_token:
+                book_info_ids_by_token[token] = []
+            book_info_ids_by_token[token].append(info.id)
+            # use set to avoid redundant keys
 
     for token, book_ids in book_info_ids_by_token.items():
 
         search_term = SearchTerm(
             token=token,
-            document_ids=json.dumps(book_ids),
-            # creates a json string from the book_ids array
             num_results=len(book_ids),
+            # creates a json string from the book_ids array
+            document_ids=json.dumps(book_ids),
         )
 
         session.add(search_term)
@@ -63,3 +75,40 @@ def recreate_index():
     # create tokens from book metadata (book info) from every column
     # take resulting dictionary, loop over keys and values
     # save each key as new SearchTerm
+
+
+def index_new_book_info(book_info):
+
+    book_info_ids_by_token = {}
+
+    # for column in COLUMNS_TO_INDEX:
+    #         data = getattr(book_info, column)
+    #         # getattr is a shortcut for 'info.<attribute name>
+    #         if data:
+    #             lowercased_words = data.lower()
+    #             tokens = lowercased_words.split(' ')
+
+    tokens = get_tokens_from_book_info(book_info)
+
+    for token in tokens:
+        # token = token.replace(r'[^\w\d]', '')
+        # remove anything that does't match a word char or a number
+        if not token in book_info_ids_by_token:
+            book_info_ids_by_token[token] = []
+        book_info_ids_by_token[token].append(book_info.id)
+        # use set to avoid redundant keys
+
+    for token, book_ids in book_info_ids_by_token.items():
+
+        search_term = SearchTerm(
+            token=token,
+            num_results=len(book_ids),
+            # creates a json string from the book_ids array
+            document_ids=json.dumps(book_ids),
+        )
+
+        session.add(search_term)
+
+    session.commit()
+
+    return book_info_ids_by_token

@@ -35,6 +35,7 @@ from flask.ext.login import (
 )
 
 from amazon_search import get_book_info_from_ean
+from search import index_new_book_info
 
 app = Flask(__name__)
 app.config.from_object(config)
@@ -162,6 +163,8 @@ def results():  # use this page for pre-DB commit search results
         book_info = get_book_info_from_ean(ean)  # see amazon_search.py
         model.session.add(book_info)
         model.session.commit()
+        model.session.refresh(book_info)
+        index_new_book_info(book_info)
 
     return render_template("results.html", book_info=book_info)
 
@@ -283,7 +286,7 @@ def request_book(id):
         book_owner_id=book.owner_id,
         requester_id=user_id,
     )
-
+    flash("You've successfully requested this book")
     model.session.add(new_transaction)
     model.session.commit()
     # model.session.refresh(book)
@@ -304,7 +307,7 @@ def declare_borrowed(id):
             if transaction.book.current_borrower_id is None:
                 transaction.book.current_borrower_id = transaction.requester_id
                 transaction.date_borrowed = datetime.now()
-                flash("You've declared that this book as borrowed")
+                flash("You've declared that your book is being borrowed")
                 model.session.add(transaction)
                 model.session.add(transaction.book)
                 model.session.commit()
@@ -334,13 +337,13 @@ def return_book(id):
                     flash("This book has already been returned")
                 else:
                     transaction.date_returned = datetime.now()
+                    flash("You've marked this book as returned")
                     model.session.add(transaction)
                     model.session.commit()
-                    flash("You have marked this book as returned")
             else:
                 flash("Book must be borrowed before it's returned")
         else:
-            flash("You can't return a book that you aren't borrowing.")
+            flash("You can't return a book that you aren't borrowing")
     else:
         flash("You can't return a book you already own")
 
@@ -359,6 +362,7 @@ def confirm_book_returned(id):
         if transaction.book.current_borrower_id is not None:
             transaction.book.current_borrower_id = None
             transaction.date_confirmed = datetime.now()
+            flash("You've confirmed that your book has been returned to you")
             model.session.add(transaction)
             model.session.add(transaction.book)
             model.session.commit()
@@ -460,7 +464,7 @@ def create_account():
     model.session.refresh(new_user)
     login_user(new_user)
 
-    flash("You successfully created your account!")
+    flash("You've successfully created an account. Welcome!")
     # return redirect(url_for("index", id=new_user.id))
     return redirect(url_for("edit_user", id=new_user.id))
 
