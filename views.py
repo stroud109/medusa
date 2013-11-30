@@ -35,6 +35,8 @@ from flask.ext.login import (
     # current_user,
 )
 
+from sqlalchemy import or_
+
 from amazon_search import get_book_info_from_ean
 from search import index_new_book_info, recreate_index
 
@@ -480,11 +482,17 @@ def create_account():
         return render_template("register.html", form=form)
 
     email = form.email.data
-    user = User.query.filter_by(email=email).first()
+    username = form.username.data
+    username_or_email = or_(User.email == email, User.username == username)
+    user = User.query.filter(username_or_email).first()
 
     if user:
-        flash("Looks like you already have an account")
-        return redirect(url_for("login"))
+        if user.email == email:
+            form.email.errors = ["There's already an account with this email"]
+        if user.username == username:
+            form.username.errors = ["There's aleady an account with this username"]
+        # return redirect(url_for("create_account"))
+        return render_template("register.html", form=form)
 
     new_user = User(
         username=request.form.get("username"),

@@ -34,8 +34,8 @@ Base.query = session.query_property()
 class User(Base, UserMixin):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
-    username = Column(String(64), nullable=False)
-    email = Column(String(64), nullable=False)
+    username = Column(String(64), unique=True, nullable=False)
+    email = Column(String(64), unique=True, nullable=False)
     password = Column(String(64), nullable=False)
     salt = Column(String(64), nullable=False)
     avatar_url = Column(Text(), nullable=True)
