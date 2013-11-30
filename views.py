@@ -8,6 +8,7 @@ import model
 import json
 
 from flask import (
+    abort,
     Flask,
     render_template,
     redirect,
@@ -223,6 +224,10 @@ def add_book(book_info_id):
 @app.route("/books/<int:id>")  # should show borrow history of book
 def view_book(id):
     book = Book.query.get(id)
+
+    if not book:
+        abort(404)
+
     user_id = g.user.id
     # print book
     # print book.book_info[0].isbn
@@ -283,6 +288,10 @@ def view_book(id):
 @login_required
 def request_book(id):
     book = Book.query.get(id)
+
+    if not book:
+        abort(404)
+
     user_id = int(g.user.id)
 
     if book.owner_id == user_id:
@@ -313,11 +322,14 @@ def request_book(id):
 @login_required
 def declare_borrowed(id):
     transaction = BookTransaction.query.get(id)
-    user_id = int(g.user.id)
-    print type(transaction.book.owner_id)
-    print type(user_id)
 
-    if transaction.book.owner_id == user_id:
+    if not transaction:
+        abort(404)
+
+    # print type(transaction.book.owner_id)
+    # print type(g.user.id)
+
+    if transaction.book.owner_id == g.user.id:
         if transaction.date_requested is not None:
             if transaction.book.current_borrower_id is None:
                 transaction.book.current_borrower_id = transaction.requester_id
@@ -342,10 +354,12 @@ def declare_borrowed(id):
 @login_required
 def return_book(id):
     transaction = BookTransaction.query.get(id)
-    user_id = int(g.user.id)
 
-    if transaction.book.owner_id != user_id:
-        if transaction.book.current_borrower_id == user_id:
+    if not transaction:
+        abort(404)
+
+    if transaction.book.owner_id != g.user.id:
+        if transaction.book.current_borrower_id == g.user.id:
             # ^Revisit this line to avoid future current_borrower_id bugs
             if transaction.date_borrowed is not None:
                 if transaction.date_returned is not None:
@@ -370,6 +384,10 @@ def return_book(id):
 @login_required
 def confirm_book_returned(id):
     transaction = BookTransaction.query.get(id)
+
+    if not transaction:
+        abort(404)
+
     user_id = int(g.user.id)
 
     if transaction.book.owner_id == user_id:
@@ -495,6 +513,9 @@ def edit_user(id):
 
     owner = User.query.get(id)
 
+    if not owner:
+        abort(404)
+
     return render_template("edit_user.html", owner=owner)
 
 
@@ -537,6 +558,9 @@ def view_library(id):  # should show what books are checked out/in/borrowed
     # user_requests = BookTransaction.query.filter(
     #     BookTransaction.requester_id == owner.id,
     # ).all()
+
+    if not owner:
+        abort(404)
 
     current_user_requests = BookTransaction.query.filter(
         BookTransaction.requester_id == owner.id,
