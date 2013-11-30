@@ -20,7 +20,7 @@
                     <div class="col-md-10">
                         <div class="row">
                             <div class="col-md-4">
-                            <img src="{{book.book_info.thumbnail_url}}"></img>
+                            <a href="{{url_for("view_book", id=book.id)}}"><img src="{{book.book_info.thumbnail_url}}"></img></a>
                         </div>
                         <div class="col-md-8">
                             <strong> <a href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a></strong>

@@ -11,12 +11,12 @@
                 <h3 class="panel-title">{{book_info.title}}</h3>
             </div>
             <div class="panel-body">
-                {% if session.get("user_id") != None %}
+                {% if g.user %}
 
-                <form action="/add_book/{{book_info.id}}" method="post">
+                <form action="{{url_for("add_book", book_info_id=book_info.id)}}" method="post">
                     <div class="form-group">
                         <button class="btn btn-default" type="submit">add this book</button>
-                        <a href="/search" class="btn btn-warning">try again</a>
+                        <a href="{{url_for("search")}}" class="btn btn-warning">try again</a>
                     </div>
                 </form>
 

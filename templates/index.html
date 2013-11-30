@@ -17,10 +17,15 @@
                     <div class="col-md-10">
                         <div class="row">
                             <div class="col-md-4">
-                                <img src="{{book.book_info.thumbnail_url}}"></img>
+                                <a href="{{url_for("view_book", id=book.id)}}"><img src="{{book.book_info.thumbnail_url}}"></img></a>
                             </div>
                             <div class="col-md-8">
-                                <strong> <a href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a></strong>
+                                <strong> <a href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a></strong><br/>
+                                {% if not book.get_open_transaction_for_user(g.user.id) %}
+                                <strong>From the library of <a href="{{(url_for('view_library', id=book.owner_id))}}">{{book.owner.username}}</a></strong><br/>
+                                {% else %}
+                                <em>You requested this book from <a href="{{(url_for('view_library', id=book.owner_id))}}">{{book.owner.username}}</a> {{book.get_open_transaction_for_user(g.user.id).date_requested|timedeltaformat}} ago</em>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -58,7 +63,8 @@
                 {% for transaction in open_user_transactions|sort(attribute='date_requested') %}
                 <div class="row">
                     <div class="col-md-8">
-                    <strong>Book Title:</strong> <a href="{{url_for("view_book", id=transaction.book.id)}}">{{transaction.book.title}}</a> | <strong>Book Owner:</strong> <a href="{{url_for("view_library", id=transaction.book.owner_id)}}">{{transaction.book.owner.username}}</a>
+                        <strong>Book Owner:</strong> <a href="{{url_for("view_library", id=transaction.book.owner_id)}}">{{transaction.book.owner.username}}</a><br/>
+                    <strong>Book Title:</strong> <a href="{{url_for("view_book", id=transaction.book.id)}}">{{transaction.book.title}}</a><br/>
                     </div>
                     <div class="col-md-4">
 
@@ -75,6 +81,7 @@
                 {% endfor %}
                 {% endif %}
                 <hr/>
+
                 <h3>Your Books</h3>
 
                 {% if not open_transactions_on_users_books %}
@@ -84,7 +91,8 @@
                 {% for transaction in open_transactions_on_users_books|sort(attribute='date_requested') %}
                 <div class="row">
                     <div class="col-md-8">
-                    <strong>Book Title:</strong> <a href="{{url_for("view_book", id=transaction.book.id)}}">{{transaction.book.title}}</a> | <strong>Book Requester:</strong> <a href="{{url_for("view_library", id=transaction.requester_id)}}">{{transaction.requester.username}}</a></br>
+                    <strong>Book Requester:</strong> <a href="{{url_for("view_library", id=transaction.requester_id)}}">{{transaction.requester.username}}</a><br/>
+                    <strong>Book Title:</strong> <a href="{{url_for("view_book", id=transaction.book.id)}}">{{transaction.book.title}}</a><br/>
                     </div>
                     <div class="col-md-4">
                     {% if transaction.date_borrowed == None %}

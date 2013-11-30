@@ -24,7 +24,7 @@
         <h3 class="panel-title">Alternative Search</h3>
       </div>
       <div class="panel-body">
-        <form role="form" action="/results" method="get">
+        <form role="form" action="{{url_for("results")}}" method="get">
             <div class="form-group col-md-6">
             <input type="text" class="form-control" name="ean" placeholder="Barcode Number">
             </div>

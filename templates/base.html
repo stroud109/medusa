@@ -8,8 +8,8 @@
     <body>
         <div class="container">
           {% if g.user %}
-          <img src="/static/img/medusa-sm.jpg"></img>
-          <img class="pull-right img-circle" src="{{g.user.avatar_url}}"></img>
+          <a href="{{url_for("index")}}"><img src="/static/img/medusa-sm.jpg"></img></a>
+          <a href="{{url_for("view_library", id=g.user.id)}}"><img class="pull-right img-circle" src="{{g.user.avatar_url}}"></img></a>
           {% else %}
           <img src="/static/img/medusa-md.jpg"></img>
           {% endif %}
@@ -23,7 +23,7 @@
                   <span class="icon-bar"></span>
                   <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/">Bookworms</a>
+                <a class="navbar-brand" href="{{url_for("index")}}">Bookworms</a>
               </div>
 
               <!-- Collect the nav links, forms, and other content for toggling -->

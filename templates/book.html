@@ -69,16 +69,15 @@
 
 
                 {% for transaction in open_requests %}
-                <strong>Book Requester:</strong> <a href="{{url_for("view_library", id=transaction.requester_id)}}">{{transaction.requester.username}}</a></br>
-                <strong>Book Owner:</strong> <a href="{{url_for("view_library", id=transaction.book_owner_id)}}">{{transaction.book_owner.username}}</a></br>
+
                     {% if transaction.date_returned == None %}
                         {% if transaction.date_borrowed == None %}
-                            <strong>Book requested:</strong> {{transaction.date_requested|datetimeformat}}
+                            <strong><a href="{{url_for("view_library", id=transaction.requester_id)}}">{{transaction.requester.username}}</a> requested</strong> this book from <strong><a href="{{url_for("view_library", id=transaction.book_owner_id)}}">{{transaction.book_owner.username}}</a></strong> {{transaction.date_requested|timedeltaformat}} ago</br>
                         {% else %}
-                            <strong>Borrowed:</strong> {{transaction.date_borrowed|datetimeformat}}
+                            <strong><a href="{{url_for("view_library", id=transaction.requester_id)}}">{{transaction.requester.username}}</a> borrowed</strong> this book from <strong><a href="{{url_for("view_library", id=transaction.book_owner_id)}}">{{transaction.book_owner.username}}</a></strong> {{transaction.date_borrowed|timedeltaformat}} ago</br>
                         {% endif %}
                     {% else %}
-                        <strong>Returned:</strong> {{transaction.date_returned|datetimeformat}}
+                        <strong><a href="{{url_for("view_library", id=transaction.requester_id)}}">{{transaction.requester.username}}</a> returned</strong> this book to <strong><a href="{{url_for("view_library", id=transaction.book_owner_id)}}">{{transaction.book_owner.username}}</a></strong> {{transaction.date_returned|timedeltaformat}} ago</a></br>
                     {% endif %}
                     <br/>
                 {% else %}

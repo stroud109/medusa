@@ -12,7 +12,7 @@
             {% for user in users %}
             <div class="row">
                 <div class="col-md-4">
-                    <img class="img-circle" src="{{user.avatar_url}}"></img>
+                    <a href="{{url_for("view_library", id=user.id)}}"><img class="img-circle" src="{{user.avatar_url}}"></img></a>
                 </div>
                 <div class="col-md-8">
                     <h4>
