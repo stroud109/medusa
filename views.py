@@ -36,7 +36,7 @@ from flask.ext.login import (
 )
 
 from amazon_search import get_book_info_from_ean
-from search import index_new_book_info
+from search import index_new_book_info, recreate_index
 
 app = Flask(__name__)
 app.config.from_object(config)
@@ -112,6 +112,12 @@ def index():
         open_user_transactions=open_user_transactions,
         open_transactions_on_users_books=open_transactions_on_users_books,
     )
+
+
+@app.route("/keyword_search/recreate_index")
+def recreate_search_index():
+    recreate_index()
+    return "success", 200
 
 
 @app.route("/keyword_search")  # SEARCH BOOKWORMS FOR A BOOK
@@ -228,12 +234,9 @@ def view_book(id):
     if not book:
         abort(404)
 
-    user_id = g.user.id
+    # user_id = g.user.id
     # print book
     # print book.book_info[0].isbn
-
-    if user_id is not None:
-        user_id = int(user_id)
 
     # can_request_book: user_id != owner_id and no open transaction for user
     # can_declare_borrowed: if transaction.get_state() == "requested"
@@ -275,7 +278,6 @@ def view_book(id):
     return render_template(
         "book.html",
         book=book,
-        user_id=user_id,
         transaction_in_progress=transaction_in_progress,
         open_user_transaction=book.get_open_transaction_for_user(g.user.id),
         book_requests=book_requests,

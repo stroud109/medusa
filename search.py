@@ -23,6 +23,7 @@ def get_tokens_from_book_info(book_info):
 
             for token in lowercased_words.split(' '):
                 token = token.replace(r'[^\w\d]', '')
+                # remove anything that does't match a word char or a number
                 tokens.append(token)
 
     return tokens
@@ -42,18 +43,14 @@ def recreate_index():
     for info in book_infos:
         tokens = get_tokens_from_book_info(info)
 
-        # for column in COLUMNS_TO_INDEX:
-        #     data = getattr(info, column)
-        #     # getattr is a shortcut for 'info.<attribute name>
-        #     if data:
-        #         lowercased_words = data.ascii_lowercase()
-        #         tokens = lowercased_words.split(' ')
-
         for token in tokens:
             if not token in book_info_ids_by_token:
                 book_info_ids_by_token[token] = []
             book_info_ids_by_token[token].append(info.id)
             # use set to avoid redundant keys
+
+    # deleting all search terms before recreating index
+    SearchTerm.query.delete()
 
     for token, book_ids in book_info_ids_by_token.items():
 
@@ -70,33 +67,17 @@ def recreate_index():
 
     return book_info_ids_by_token
 
-    # create a dictionary of keywords where key is a token
-    # and value is a list of book ids
-    # create tokens from book metadata (book info) from every column
-    # take resulting dictionary, loop over keys and values
-    # save each key as new SearchTerm
-
 
 def index_new_book_info(book_info):
 
     book_info_ids_by_token = {}
 
-    # for column in COLUMNS_TO_INDEX:
-    #         data = getattr(book_info, column)
-    #         # getattr is a shortcut for 'info.<attribute name>
-    #         if data:
-    #             lowercased_words = data.lower()
-    #             tokens = lowercased_words.split(' ')
-
     tokens = get_tokens_from_book_info(book_info)
 
     for token in tokens:
-        # token = token.replace(r'[^\w\d]', '')
-        # remove anything that does't match a word char or a number
         if not token in book_info_ids_by_token:
             book_info_ids_by_token[token] = []
         book_info_ids_by_token[token].append(book_info.id)
-        # use set to avoid redundant keys
 
     for token, book_ids in book_info_ids_by_token.items():
 

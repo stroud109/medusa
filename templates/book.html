@@ -17,19 +17,19 @@
     </div>
 
     <div class="col-md-6">
-        {% if user %}
+        {% if g.user %}
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">Book Transactions</h3>
             </div>
             <div class="panel-body">
-                {% if user_id != book.owner_id %}
+                {% if g.user.id != book.owner_id %}
                     {% if not open_user_transaction %}
                          <form method="post" action="{{url_for("request_book", id=book.id)}}">
                             <input type="submit" value="Request Book" class="btn btn-default"/>
                         </form>
                     {% endif %}
-                {% elif user_id == book.owner_id %}
+                {% elif g.user.id == book.owner_id %}
                     {% if not transaction_in_progress %}
                         {% if not book_requests %}
                             <h4>There are currently no open transactions on this book</h4>
@@ -50,8 +50,8 @@
                 {% endif %}
 
                 {% if transaction_in_progress %}
-                {% if user_id != book.owner_id %}
-                    {% if transaction_in_progress.requester_id == user_id %}
+                {% if g.user.id != book.owner_id %}
+                    {% if transaction_in_progress.requester_id == g.user.id %}
                         {% if transaction_in_progress.date_returned == None %}
                             <form method="post" action="{{url_for("return_book", id=transaction_in_progress.id)}}">
                                 <input type="submit" value="Return Book" class="btn btn-default"/>

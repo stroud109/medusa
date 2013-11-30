@@ -5,7 +5,14 @@
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">{{owner.username}}'s Books</h3>
+                <h3 class="panel-title">
+                    {% if g.user.id == owner.id %}
+                    Your Books
+                    {% else %}
+                    {{owner.username}}'s Books
+                    {% endif %}
+                </h3>
+
             </div>
             <div class="panel-body">
                 {% for book in owner.books %}
@@ -38,7 +45,13 @@
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">{{owner.username}}'s Transactions</h3>
+                <h3 class="panel-title">
+                    {% if g.user.id == owner.id %}
+                    Your Transactions
+                    {% else %}
+                    {{owner.username}}'s Transactions
+                    {% endif %}
+                </h3>
             </div>
         <div class="panel-body">
             <h3>Current Transactions</h3>
