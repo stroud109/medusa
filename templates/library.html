@@ -21,7 +21,7 @@
                     </div>
                 </div>
                 <div class="col-md-2">
-                    {% if user == owner %}
+                    {% if g.user == owner %}
                     <form class="pull-right" method="post" action="{{url_for("remove_book", id=book.id)}}">
                         <input type="submit" value="remove" class="btn btn-sm"/>
                     </form>

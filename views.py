@@ -12,7 +12,7 @@ from flask import (
     render_template,
     redirect,
     request,
-    # g,
+    g,
     session,
     url_for,
     flash,
@@ -54,13 +54,22 @@ def load_user(user_id):
 # End login stuff
 
 
-@app.context_processor
-def inject_user():
+# @app.context_processor
+# def inject_user():
+#     user = None
+#     user_id = session.get("user_id")
+#     if user_id is not None:
+#         user = User.query.get(user_id)
+#     return {"user": user}
+
+
+@app.before_request
+def attach_user_to_global_object():
     user = None
     user_id = session.get("user_id")
     if user_id is not None:
         user = User.query.get(user_id)
-    return {"user": user}
+    g.user = user
 
 
 # Adding markdown capability to the app
@@ -70,25 +79,31 @@ Markdown(app)
 @app.route("/")
 def index():
 
-    user_id = session.get("user_id")
-    books = Book.query.filter(
-        Book.owner_id != user_id,
-    ).all()
+    books = None
+    open_user_transactions = None
+    open_transactions_on_users_books = None
 
-    # transactions = BookTransaction.query.all()
+    if g.user:
+        # user_id = session.get("user_id")
+        books = Book.query.filter(
+            Book.owner_id != g.user.id,
+        ).all()
 
-    open_user_transactions = BookTransaction.query.filter(
-        BookTransaction.requester_id == user_id,
-        BookTransaction.date_confirmed == None,
-    ).all()
+        # transactions = BookTransaction.query.all()
 
-    open_transactions_on_users_books = BookTransaction.query.filter(
-        BookTransaction.book_owner_id == user_id,
-        BookTransaction.date_confirmed == None,
-    ).all()
+        open_user_transactions = BookTransaction.query.filter(
+            BookTransaction.requester_id == g.user.id,
+            BookTransaction.date_confirmed == None,
+        ).all()
 
-    print "LOOK HERE"
-    print "books", books
+        open_transactions_on_users_books = BookTransaction.query.filter(
+            BookTransaction.book_owner_id == g.user.id,
+            BookTransaction.date_confirmed == None,
+        ).all()
+
+        print "LOOK HERE"
+        print "books", books
+
     return render_template(
         "index.html",
         books=books,
@@ -181,7 +196,7 @@ def add_book(book_info_id):
         return redirect(url_for("search"))
 
     book = db_session.query(Book).filter_by(
-        owner_id=session.get("user_id"),
+        owner_id=g.user.id,
         book_info_id=book_info_id,
     ).all()
 
@@ -191,7 +206,7 @@ def add_book(book_info_id):
 
     new_book = Book(
         title=book_info.title,
-        owner_id=session.get("user_id"),
+        owner_id=g.user.id,
         book_info_id=book_info_id,
     )
 
@@ -208,7 +223,7 @@ def add_book(book_info_id):
 @app.route("/books/<int:id>")  # should show borrow history of book
 def view_book(id):
     book = Book.query.get(id)
-    user_id = session.get("user_id")
+    user_id = g.user.id
     # print book
     # print book.book_info[0].isbn
 
@@ -257,7 +272,7 @@ def view_book(id):
         book=book,
         user_id=user_id,
         transaction_in_progress=transaction_in_progress,
-        open_user_transaction=book.get_open_transaction_for_user(user_id),
+        open_user_transaction=book.get_open_transaction_for_user(g.user.id),
         book_requests=book_requests,
         open_requests=open_requests,
         # returned_book=returned_book,
@@ -268,7 +283,7 @@ def view_book(id):
 @login_required
 def request_book(id):
     book = Book.query.get(id)
-    user_id = int(session.get("user_id"))
+    user_id = int(g.user.id)
 
     if book.owner_id == user_id:
         flash("You can't borrow a book you own")
@@ -298,7 +313,7 @@ def request_book(id):
 @login_required
 def declare_borrowed(id):
     transaction = BookTransaction.query.get(id)
-    user_id = int(session.get("user_id"))
+    user_id = int(g.user.id)
     print type(transaction.book.owner_id)
     print type(user_id)
 
@@ -327,7 +342,7 @@ def declare_borrowed(id):
 @login_required
 def return_book(id):
     transaction = BookTransaction.query.get(id)
-    user_id = int(session.get("user_id"))
+    user_id = int(g.user.id)
 
     if transaction.book.owner_id != user_id:
         if transaction.book.current_borrower_id == user_id:
@@ -355,7 +370,7 @@ def return_book(id):
 @login_required
 def confirm_book_returned(id):
     transaction = BookTransaction.query.get(id)
-    user_id = int(session.get("user_id"))
+    user_id = int(g.user.id)
 
     if transaction.book.owner_id == user_id:
         # if transaction.date_returned is not None:
@@ -379,7 +394,7 @@ def confirm_book_returned(id):
 
 @app.route("/login")
 def login():
-    if session.get("user_id"):
+    if g.user:
         flash("You're already logged in!")
         return render_template("login.html")
     else:
@@ -417,17 +432,16 @@ def authenticate():
 @app.route("/logout", methods=["POST"])
 @login_required
 def logout():
-    user_id = session.pop('user_id', None)
-    user = User.query.get(user_id)
-    flash("Goodbye, %s" % user.username)
+    session.pop('user_id', None)
+    flash("Goodbye, %s" % g.user.username)
     return redirect(url_for("index"))
 
 
 @app.route("/register")
 def register():
-    if session.get("user_id"):
+    if g.user:
         flash("You already have an account!")
-        return redirect(url_for("index", user_id=session.get("user_id")))
+        return redirect(url_for("index", user_id=g.user.id))
     else:
         form = forms.NewUserForm()
         return render_template("register.html", form=form)
@@ -475,6 +489,15 @@ def view_users():
     return render_template("users.html", users=users)
 
 
+@app.route("/users/<int:id>/edit")
+@login_required
+def edit_user(id):
+
+    owner = User.query.get(id)
+
+    return render_template("edit_user.html", owner=owner)
+
+
 @app.route("/users/<int:id>", methods=["POST"])
 @login_required
 def update_user(id):
@@ -482,34 +505,27 @@ def update_user(id):
     Takes a POSTed form and updates the given user with values
     from the form.
     """
-    user_id = session.get('user_id')
-    user_id = int(user_id)
-
     # Check to make sure the session user is the
     # owner of the user model they are trying to update
-    if id != user_id:
+    if int(id) != g.user.id:
         flash('You can\'t update other user accounts.')
-        return redirect(url_for('view_library', id=user_id))
+        return redirect(url_for('view_library', id=g.user.id))
 
     # Check to make sure the user we are trying to
     # update actually exists
-    user = User.query.get(id)
-    if user is None:
-        flash("Couldn't find a user with ID %s" % user_id)
-        return redirect(url_for('index'))
 
     # Start setting attributes on the user
     # For right now, we only have one attribute we care about
     form = forms.UserForm(request.form)
     if form.avatar_url.data:
-        user.avatar_url = form.avatar_url.data
-        model.session.add(user)
+        g.user.avatar_url = form.avatar_url.data
+        model.session.add(g.user)
         model.session.commit()
 
     # Finally, tell the browser to redirect the user
     # to their library page
     flash('You updated your account successfully')
-    return redirect(url_for('view_library', id=user.id))
+    return redirect(url_for('view_library', id=g.user.id))
 
 
 @app.route("/users/<int:id>", methods=["GET"])
@@ -545,12 +561,8 @@ def view_library(id):  # should show what books are checked out/in/borrowed
 @login_required
 def remove_book(id):
     book = Book.query.get(id)
-    user_id = session.get("user_id")
 
-    if user_id is not None:
-        user_id = int(user_id)
-
-    if book.owner.id == user_id:
+    if book.owner.id == g.user.id:
         flash("%s was successfully deleted from your library" % book.title)
         model.session.delete(book)
         BookTransaction.query.filter_by(
@@ -558,15 +570,7 @@ def remove_book(id):
         ).delete()
         model.session.commit()
 
-    return redirect(url_for("view_library", id=user_id))
-
-
-@app.route("/users/<int:id>/edit")
-@login_required
-def edit_user(id):
-    owner = User.query.get(id)
-
-    return render_template("edit_user.html", owner=owner)
+    return redirect(url_for("view_library", id=g.user.id))
 
 
 @app.route("/deactivate", methods=["POST"])  # add this for better UX
