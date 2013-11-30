@@ -15,7 +15,15 @@
                     <img class="img-circle" src="{{user.avatar_url}}"></img>
                 </div>
                 <div class="col-md-8">
-                    <h4><a href="{{url_for("view_library", id=user.id)}}">{{user.username}}</a></h4>
+                    <h4>
+                        <a href="{{url_for("view_library", id=user.id)}}">
+                            {% if g.user.id == user.id %}
+                            You!
+                            {% else %}
+                            {{user.username}}
+                            {% endif %}
+                        </a>
+                    </h4>
                 </div>
             </div>
             <hr/>
