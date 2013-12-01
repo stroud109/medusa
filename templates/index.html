@@ -62,8 +62,21 @@
                 {% for transaction in open_user_transactions|sort(attribute='date_requested') %}
                 <div class="row">
                     <div class="col-md-8">
-                        <strong>Book Owner:</strong> <a href="{{url_for("view_library", id=transaction.book.owner_id)}}">{{transaction.book.owner.username}}</a><br/>
-                    <strong>Book Title:</strong> <a href="{{url_for("view_book", id=transaction.book.id)}}">{{transaction.book.title}}</a><br/>
+
+                        {% if not transaction.date_borrowed != None %}
+                            {% if transaction.date_returned == None %}
+
+                                You're borrowing <strong><a href="{{url_for("view_book", id=transaction.book.id)}}">{{transaction.book.title}}</a></strong> from <strong><a href="{{url_for("view_library", id=transaction.book.owner_id)}}">{{transaction.book.owner.username}}</a></strong><br/>
+
+                            {% endif %}
+
+                        {% else %}
+
+                            You requested to borrow <strong><a href="{{url_for("view_book", id=transaction.book.id)}}">{{transaction.book.title}}</a></strong> from <strong><a href="{{url_for("view_library", id=transaction.book.owner_id)}}">{{transaction.book.owner.username}}</a></strong><br/>
+
+                        {% endif %}
+
+
                     </div>
                     <div class="col-md-4">
 
@@ -90,8 +103,13 @@
                 {% for transaction in open_transactions_on_users_books|sort(attribute='date_requested') %}
                 <div class="row">
                     <div class="col-md-8">
-                    <strong>Book Requester:</strong> <a href="{{url_for("view_library", id=transaction.requester_id)}}">{{transaction.requester.username}}</a><br/>
-                    <strong>Book Title:</strong> <a href="{{url_for("view_book", id=transaction.book.id)}}">{{transaction.book.title}}</a><br/>
+                        {% if transaction.date_borrowed == None %}
+                            <strong><a href="{{url_for("view_library", id=transaction.requester_id)}}">{{transaction.requester.username}}</a></strong> requested to borrow <strong><a href="{{url_for("view_book", id=transaction.book.id)}}">{{transaction.book.title}}</a></strong> from you<br/>
+                        {% else %}
+                            {% if transaction.date_confirmed == None %}
+                                <strong><a href="{{url_for("view_library", id=transaction.requester_id)}}">{{transaction.requester.username}}</a></strong> returned <strong><a href="{{url_for("view_book", id=transaction.book.id)}}">{{transaction.book.title}}</a></strong> to you<br/>
+                            {% endif %}
+                        {% endif %}
                     </div>
                     <div class="col-md-4">
                     {% if transaction.date_borrowed == None %}
