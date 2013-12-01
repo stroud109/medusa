@@ -23,7 +23,8 @@
                             <a href="{{url_for("view_book", id=book.id)}}"><img src="{{book.book_info.thumbnail_url}}"></img></a>
                         </div>
                         <div class="col-md-8">
-                            <strong> <a href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a></strong>
+                            <strong><a href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a></strong><br/>
+                            <strong>by {{book.book_info.author}}</strong>
                         </div>
                     </div>
                 </div>
@@ -58,16 +59,26 @@
 
             {% for request in current_user_requests %}
 
-            <strong>Book Title:</strong> <a href="{{url_for("view_book", id=request.book.id)}}">{{request.book.title}}</a><br/>
-            <strong>Book Owner:</strong> <a href="{{url_for("view_library", id=request.book.owner_id)}}">{{request.book.owner.username}}</a></br>
                 {% if request.date_returned == None %}
                     {% if request.date_borrowed == None %}
-                        <strong>Book requested:</strong> {{request.date_requested|datetimeformat}}
+                        {% if g.user.id == owner.id %}
+                            You requested <strong><a href="{{url_for("view_book", id=request.book.id)}}">{{request.book.title}}</a></strong> from <a href="{{url_for("view_library", id=request.book.owner_id)}}">{{request.book.owner.username}}</a> {{request.date_requested|timedeltaformat}} ago
+                        {% else %}
+                            <strong><a href="{{url_for("view_library", id=owner.id)}}">{{owner.username}}</a></strong> requested <strong><a href="{{url_for("view_book", id=request.book.id)}}">{{request.book.title}}</a></strong> from <a href="{{url_for("view_library", id=request.book.owner_id)}}">{{request.book.owner.username}}</a> {{request.date_requested|timedeltaformat}} ago
+                        {% endif %}
                     {% else %}
-                        <strong>Borrowed:</strong> {{request.date_borrowed|datetimeformat}}
+                        {% if g.user.id == owner.id %}
+                            You borrowed <strong><a href="{{url_for("view_book", id=request.book.id)}}">{{request.book.title}}</a></strong> from <a href="{{url_for("view_library", id=request.book.owner_id)}}">{{request.book.owner.username}}</a> {{request.date_borrowed|timedeltaformat}} ago
+                        {% else %}
+                            <strong><a href="{{url_for("view_library", id=owner.id)}}">{{owner.username}}</a></strong> borrowed <strong><a href="{{url_for("view_book", id=request.book.id)}}">{{request.book.title}}</a></strong> from <a href="{{url_for("view_library", id=request.book.owner_id)}}">{{request.book.owner.username}}</a> {{request.date_borrowed|timedeltaformat}} ago
+                        {% endif %}
                     {% endif %}
                 {% else %}
-                    <strong>Returned:</strong> {{request.date_returned|datetimeformat}}
+                    {% if g.user.id == owner.id %}
+                        You returned <strong><a href="{{url_for("view_book", id=request.book.id)}}">{{request.book.title}}</a></strong> to <a href="{{url_for("view_library", id=request.book.owner_id)}}">{{request.book.owner.username}}</a> {{request.date_returned|timedeltaformat}} ago
+                    {% else %}
+                        <strong><a href="{{url_for("view_library", id=owner.id)}}">{{owner.username}}</a></strong> returned <strong><a href="{{url_for("view_book", id=request.book.id)}}">{{request.book.title}}</a></strong> from <a href="{{url_for("view_library", id=request.book.owner_id)}}">{{request.book.owner.username}}</a> {{request.date_returned|timedeltaformat}} ago
+                    {% endif %}
                 {% endif %}
                 <hr/>
             {% else %}
@@ -78,11 +89,11 @@
 
             {% for request in past_user_requests %}
 
-            <strong>Book Title:</strong> <a href="{{url_for("view_book", id=request.book.id)}}">{{request.book.title}}</a><br/>
-            <strong>Book Owner:</strong> <a href="{{url_for("view_library", id=request.book.owner_id)}}">{{request.book.owner.username}}</a></br>
-
-            <strong>Borrowed:</strong> {{request.date_borrowed|datetimeformat}}<br/>
-            <strong>Return Confirmed:</strong> {{request.date_confirmed|datetimeformat}}
+                {% if g.user.id == owner.id %}
+                    You finished borrowing <strong><a href="{{url_for("view_book", id=request.book.id)}}">{{request.book.title}}</a></strong> from <strong><a href="{{url_for("view_library", id=request.book.owner_id)}}">{{request.book.owner.username}}</a></strong> {{request.date_confirmed|timedeltaformat}} ago
+                {% else %}
+                    <strong><a href="{{url_for("view_library", id=owner.id)}}">{{owner.username}}</a></strong> finished borrowing <strong><a href="{{url_for("view_book", id=request.book.id)}}">{{request.book.title}}</a></strong> from <strong><a href="{{url_for("view_library", id=request.book.owner_id)}}">{{request.book.owner.username}}</a></strong> {{request.date_confirmed|timedeltaformat}} ago
+                {% endif %}
             <hr/>
             {% else %}
             <h5>{{owner.username}} doesn't have any completed transactions yet</h5>

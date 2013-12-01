@@ -7,12 +7,14 @@
   <script type="text/javascript" src="/static/js/bootstrap.js"></script>
 </head>
 <body>
+  <div class="brand-bar">
   <div class="container">
     {% if g.user %}
     <a href="{{url_for("index")}}"><img src="/static/img/medusa-sm.jpg"></img></a>
     {% else %}
     <img src="/static/img/medusa-md.jpg"></img>
     {% endif %}
+  </div>
   </div>
   <nav class="navbar navbar-default" role="navigation">
 
