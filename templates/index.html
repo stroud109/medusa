@@ -4,7 +4,49 @@
 {% if g.user %}
 <div class="container">
 
-    <div class="col-md-6">
+    <div class="row">
+        <div class="col-md-8">
+            <h2 class="title-shadow">Browse Books</h2>
+            <hr/>
+            <div class="row">
+               {% for book in books|sort(attribute='title') %}
+               <div class="col-sm-4">
+                    <div class="panel panel-default book-tile">
+                        <div class="panel-heading">
+                            <h5>{{book.title}}</h5>
+                        </div>
+                        <div class="panel-body">
+                            <div class="img-wrapper">
+                                <a href="{{url_for("view_book", id=book.id)}}"><img class="book-img" src="{{book.book_info.thumbnail_url}}"></img></a>
+                            </div>
+                            <div class="transaction-info">
+                                {% if not book.get_open_transaction_for_user(g.user.id) %}
+                                    From the library of <a class="user-name" href="{{(url_for('view_library', id=book.owner_id))}}">{{book.owner.username}}</a><br/>
+                                {% else %}
+                                    <em>You requested this book from <a class="user-name" href="{{(url_for('view_library', id=book.owner_id))}}">{{book.owner.username}}</a> {{book.get_open_transaction_for_user(g.user.id).date_requested|timedeltaformat}} ago</em>
+                                {% endif %}
+                                <div>
+                                {% if not book.get_open_transaction_for_user(g.user.id) %}
+                                    <form method="post" action="{{url_for("request_book", id=book.id)}}">
+                                        <input type="submit" value="request" class="btn btn-default btn-block"/>
+                                    </form>
+                                {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        <div class="col-md-4 title-shadow">
+
+        </div>
+    </div>
+
+
+<!-- OLD STUFF -->
+
+<!--     <div class="col-md-6">
 
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -43,17 +85,17 @@
                 {% endfor %}
             </div>
         </div>
-    </div>
+    </div> -->
 
-    <div class="col-md-6">
+    <div class="col-md-4">
         {% if g.user %}
+        <h2 class="title-shadow">Recent Activity</h2>
+        <hr/>
         <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">Recent Activity</h3>
-            </div>
+
             <div class="panel-body">
 
-                <h3>Requests You've Made</h3>
+                <h3 class="panel-title">Requests You've Made</h3><br/>
 
                 {% if not open_user_transactions %}
                 <h5>You have no open transactions right now</h5>
@@ -83,7 +125,7 @@
                     {% if transaction.date_borrowed != None %}
                         {% if transaction.date_returned == None %}
                             <form class="pull-right" method="post" action="{{url_for("return_book", id=transaction.id)}}">
-                                <input type="submit" value="I returned book" class="btn btn-default"/>
+                                <input type="submit" value="I returned book" class="btn btn-xs"/>
                             </form>
                         {% endif %}
                     {% endif %}
@@ -94,7 +136,7 @@
                 {% endif %}
                 <hr/>
 
-                <h3>Requests On Your Books</h3>
+                <h3 class="panel-title">Requests On Your Books</h3>
 
                 {% if not open_transactions_on_users_books %}
                 <h5>There are no open transactions on any of your books right now</h5>
@@ -115,12 +157,12 @@
                     {% if transaction.book.current_borrower_id == None %}
                     <!-- if the book doesn't have a current borrower id, then we can let the owner declare it borrowed -->
                         <form class="pull-right" method="post" action="{{url_for("declare_borrowed", id=transaction.id)}}">
-                            <input type="submit" value="declare borrowed" class="btn btn-default"/>
+                            <input type="submit" value="declare borrowed" class="btn btn-xs"/>
                         </form>
                     {% elif transaction.book.current_borrower_id == transaction.requester_id %}
                     <!-- else, if this transaction represents the current "borrowing" transaction, then we can let the owner confirm the transaction's return, regardless of whether the borrower indicated the book was returned -->
                          <form class="pull-right" method="post" action="{{url_for("confirm_book_returned", id=transaction.id)}}">
-                            <input type="submit" value="confirm book returned" class="btn btn-default"/>
+                            <input type="submit" value="confirm book returned" class="btn btn-xs"/>
                         </form>
 
                     {% endif %}
@@ -136,6 +178,8 @@
 
 </div>
 {% else %}
+
+<!-- this is what loggout out users will see -->
 
     <div class="col-md-1"></div>
 

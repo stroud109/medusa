@@ -52,3 +52,36 @@ font-family: 'Helvetica Neue','Helvetica','ヒラギノ角ゴ Pro W3','Hiragino 
 color: #211922;
 font-size: 12px;
 }
+
+.book-tile {
+  height: 280px;
+}
+
+.book-tile .panel-heading {
+  padding: 1px 9px;
+}
+
+.book-tile .panel-heading h5 {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.book-img {
+  max-height: 150px;
+}
+
+.transaction-info {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.img-wrapper {
+  text-align: center
+}
+
+.title-shadow {
+  text-shadow: #e5e5ee 0 2px 0;
+  color: #333;
+}
+
