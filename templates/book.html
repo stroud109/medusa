@@ -37,7 +37,7 @@
                             {% for transaction in book_requests %}
                             <div class="row">
                                 <div class="col-md-12">
-                                    <strong>Requester:</strong> <a href="{{url_for("view_library", id=transaction.requester.id)}}">{{transaction.requester.username}}</a>
+                                    <strong>Requester:</strong> <a class="user-name" href="{{url_for("view_library", id=transaction.requester.id)}}">{{transaction.requester.username}}</a>
                                     <form class="pull-right" method="post" action="{{url_for("declare_borrowed", id=transaction.id)}}">
                                         <input type="submit" value="Declare Borrowed" class="btn btn-default"/>
                                     </form>
@@ -72,16 +72,16 @@
 
                     {% if transaction.date_returned == None %}
                         {% if transaction.date_borrowed == None %}
-                            <strong><a href="{{url_for("view_library", id=transaction.requester_id)}}">{{transaction.requester.username}}</a> requested</strong> this book from <strong><a href="{{url_for("view_library", id=transaction.book_owner_id)}}">{{transaction.book_owner.username}}</a></strong> {{transaction.date_requested|timedeltaformat}} ago</br>
+                            <a class="user-name" href="{{url_for("view_library", id=transaction.requester_id)}}">{{transaction.requester.username}}</a> requested this book from <a class="user-name" href="{{url_for("view_library", id=transaction.book_owner_id)}}">{{transaction.book_owner.username}}</a> {{transaction.date_requested|timedeltaformat}} ago</br>
                         {% else %}
-                            <strong><a href="{{url_for("view_library", id=transaction.requester_id)}}">{{transaction.requester.username}}</a> borrowed</strong> this book from <strong><a href="{{url_for("view_library", id=transaction.book_owner_id)}}">{{transaction.book_owner.username}}</a></strong> {{transaction.date_borrowed|timedeltaformat}} ago</br>
+                            <a class="user-name" href="{{url_for("view_library", id=transaction.requester_id)}}">{{transaction.requester.username}}</a> borrowed this book from <a class="user-name" href="{{url_for("view_library", id=transaction.book_owner_id)}}">{{transaction.book_owner.username}}</a> {{transaction.date_borrowed|timedeltaformat}} ago</br>
                         {% endif %}
                     {% else %}
-                        <strong><a href="{{url_for("view_library", id=transaction.requester_id)}}">{{transaction.requester.username}}</a> returned</strong> this book to <strong><a href="{{url_for("view_library", id=transaction.book_owner_id)}}">{{transaction.book_owner.username}}</a></strong> {{transaction.date_returned|timedeltaformat}} ago</a></br>
+                        <a class="user-name" href="{{url_for("view_library", id=transaction.requester_id)}}">{{transaction.requester.username}}</a> returned this book to <a class="user-name" href="{{url_for("view_library", id=transaction.book_owner_id)}}">{{transaction.book_owner.username}}</a> {{transaction.date_returned|timedeltaformat}} ago</a></br>
                     {% endif %}
                     <br/>
                 {% else %}
-                <h5>{{book.title}} currently has no open transactions</h5>
+                <h5>There are currently no open transactions on {{book.title}}</h5>
                 {% endfor %}
 
             </div>

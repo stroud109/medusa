@@ -1,5 +1,5 @@
 .avatar {
-  border: 3px solid #777;
+  border: 2px solid #777;
 }
 
 .avatar-sm {
@@ -24,4 +24,24 @@ body {
 
 .brand-bar {
   background-color: white;
+}
+
+.panel-default {
+box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.33);
+}
+
+.book-title, .user-name {
+-webkit-font-smoothing: antialiased;
+color: #717171;
+font-weight: 700;
+}
+
+.book-title:hover, .user-name:hover {
+color: #717171;
+}
+
+html, body {
+font-family: 'Helvetica Neue','Helvetica','ヒラギノ角ゴ Pro W3','Hiragino Kaku Gothic Pro','メイリオ','Meiryo','ＭＳ Ｐゴシック',arial,sans-serif;
+color: #211922;
+font-size: 12px;
 }

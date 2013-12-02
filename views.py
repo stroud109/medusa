@@ -107,6 +107,9 @@ def index():
         print "LOOK HERE"
         print "books", books
 
+    else:
+        books = Book.query.all()
+
     return render_template(
         "index.html",
         books=books,

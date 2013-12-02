@@ -19,11 +19,11 @@
                                 <a href="{{url_for("view_book", id=book.id)}}"><img src="{{book.book_info.thumbnail_url}}"></img></a>
                             </div>
                             <div class="col-md-8">
-                                <strong> <a href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a></strong><br/>
+                                <span> <a class="book-title" href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a></span><br/>
                                 {% if not book.get_open_transaction_for_user(g.user.id) %}
-                                <strong>From the library of <a href="{{(url_for('view_library', id=book.owner_id))}}">{{book.owner.username}}</a></strong><br/>
+                                From the library of <a class="user-name" href="{{(url_for('view_library', id=book.owner_id))}}">{{book.owner.username}}</a><br/>
                                 {% else %}
-                                <em>You requested this book from <a href="{{(url_for('view_library', id=book.owner_id))}}">{{book.owner.username}}</a> {{book.get_open_transaction_for_user(g.user.id).date_requested|timedeltaformat}} ago</em>
+                                <em>You requested this book from <a class="user-name" href="{{(url_for('view_library', id=book.owner_id))}}">{{book.owner.username}}</a> {{book.get_open_transaction_for_user(g.user.id).date_requested|timedeltaformat}} ago</em>
                                 {% endif %}
                             </div>
                         </div>
@@ -66,13 +66,13 @@
                         {% if not transaction.date_borrowed != None %}
                             {% if transaction.date_returned == None %}
 
-                                You're borrowing <strong><a href="{{url_for("view_book", id=transaction.book.id)}}">{{transaction.book.title}}</a></strong> from <strong><a href="{{url_for("view_library", id=transaction.book.owner_id)}}">{{transaction.book.owner.username}}</a></strong><br/>
+                                You're borrowing <a class="book-title" href="{{url_for("view_book", id=transaction.book.id)}}">{{transaction.book.title}}</a> from <a class="user-name" href="{{url_for("view_library", id=transaction.book.owner_id)}}">{{transaction.book.owner.username}}</a><br/>
 
                             {% endif %}
 
                         {% else %}
 
-                            You requested to borrow <strong><a href="{{url_for("view_book", id=transaction.book.id)}}">{{transaction.book.title}}</a></strong> from <strong><a href="{{url_for("view_library", id=transaction.book.owner_id)}}">{{transaction.book.owner.username}}</a></strong><br/>
+                            You requested to borrow <a class="book-title" href="{{url_for("view_book", id=transaction.book.id)}}">{{transaction.book.title}}</a> from <a class="user-name" href="{{url_for("view_library", id=transaction.book.owner_id)}}">{{transaction.book.owner.username}}</a><br/>
 
                         {% endif %}
 
@@ -94,7 +94,7 @@
                 {% endif %}
                 <hr/>
 
-                <h3>Your Books</h3>
+                <h3>Requests On Your Books</h3>
 
                 {% if not open_transactions_on_users_books %}
                 <h5>There are no open transactions on any of your books right now</h5>
@@ -104,25 +104,24 @@
                 <div class="row">
                     <div class="col-md-8">
                         {% if transaction.date_borrowed == None %}
-                            <strong><a href="{{url_for("view_library", id=transaction.requester_id)}}">{{transaction.requester.username}}</a></strong> requested to borrow <strong><a href="{{url_for("view_book", id=transaction.book.id)}}">{{transaction.book.title}}</a></strong> from you<br/>
+                            <a class="user-name" href="{{url_for("view_library", id=transaction.requester_id)}}">{{transaction.requester.username}}</a> requested to borrow <a class="book-title" href="{{url_for("view_book", id=transaction.book.id)}}">{{transaction.book.title}}</a> from you<br/>
                         {% else %}
                             {% if transaction.date_confirmed == None %}
-                                <strong><a href="{{url_for("view_library", id=transaction.requester_id)}}">{{transaction.requester.username}}</a></strong> returned <strong><a href="{{url_for("view_book", id=transaction.book.id)}}">{{transaction.book.title}}</a></strong> to you<br/>
+                                <a class="user-name" href="{{url_for("view_library", id=transaction.requester_id)}}">{{transaction.requester.username}}</a> returned <a class="book-title" href="{{url_for("view_book", id=transaction.book.id)}}">{{transaction.book.title}}</a> to you<br/>
                             {% endif %}
                         {% endif %}
                     </div>
                     <div class="col-md-4">
-                    {% if transaction.date_borrowed == None %}
+                    {% if transaction.book.current_borrower_id == None %}
+                    <!-- if the book doesn't have a current borrower id, then we can let the owner declare it borrowed -->
                         <form class="pull-right" method="post" action="{{url_for("declare_borrowed", id=transaction.id)}}">
                             <input type="submit" value="declare borrowed" class="btn btn-default"/>
                         </form>
-                    {% else %}
-
-                        {% if transaction.date_confirmed == None %}
+                    {% elif transaction.book.current_borrower_id == transaction.requester_id %}
+                    <!-- else, if this transaction represents the current "borrowing" transaction, then we can let the owner confirm the transaction's return, regardless of whether the borrower indicated the book was returned -->
                          <form class="pull-right" method="post" action="{{url_for("confirm_book_returned", id=transaction.id)}}">
                             <input type="submit" value="confirm book returned" class="btn btn-default"/>
                         </form>
-                        {% endif %}
 
                     {% endif %}
                     </div>
@@ -138,7 +137,42 @@
 </div>
 {% else %}
 
-Welcome
+    <div class="col-md-1"></div>
+
+    <div class="col-md-10">
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Books To Borrow</h3>
+            </div>
+            <div class="panel-body">
+                {% for book in books|sort(attribute='title') %}
+                <div class="row">
+                    <div class="col-md-10">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <a href="{{url_for("view_book", id=book.id)}}"><img src="{{book.book_info.thumbnail_url}}"></img></a>
+                            </div>
+                            <div class="col-md-8">
+                                <strong> <a href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a></strong><br/>
+
+                                <strong>From the library of <a href="{{(url_for('view_library', id=book.owner_id))}}">{{book.owner.username}}</a></strong><br/>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <hr/>
+                {% else %}
+                No books here!
+                <a href="{{url_for("new_book")}}">Add a new book</a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-1"></div>
 
 {% endif %}
 
