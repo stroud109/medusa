@@ -1,6 +1,39 @@
 {% extends 'base.html' %}
 {% block body %}
+
 <div class="row">
+    <h2 class="title-shadow">View Users</h2>
+    {% for user in users %}
+    <div class="col-sm-2">
+        <div class="panel panel-default book-tile">
+            <div class="panel-heading">
+                <h5>
+                    <a class="user-name" href="{{url_for("view_library", id=user.id)}}">
+                        {% if g.user.id == user.id %}
+                        You!
+                        {% else %}
+                        {{user.username}}
+                        {% endif %}
+                    </a>
+                </h5>
+            </div>
+            <div class="panel-body">
+                <div class="img-wrapper">
+                    <a href="{{url_for("view_library", id=user.id)}}"><img class="img-circle avatar" src="{{user.avatar_url}}"></img></a>
+                </div>
+                <div class="transaction-info">
+                    n books in library<br/>
+                    location: SF
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- OLD STUFF -->
+
+<!-- <div class="row">
     <div class="col-md-2"></div>
 <div class="row">
     <div class="col-md-8">
@@ -35,5 +68,6 @@
 <div class="row">
     <div class="col-md-2"></div>
 <a href="{{url_for("register")}}">Register</a>
-{% endfor %}
+{% endfor %} -->
+
 {% endblock %}

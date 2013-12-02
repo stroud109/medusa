@@ -24,7 +24,7 @@
                 <img src="{{book.book_info.thumbnail_url}}"></img>
             </div>
             <div class="col-md-10">
-                <strong>title:</strong> <a href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a>, <strong>book info id:</strong> {{book.book_info_id}}, <strong>book owner:</strong><a href="{{url_for("view_library", id=book.owner_id)}}">{{book.owner.username}}</a>
+                <a class="book-title" href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a>, from the library of <a class="user-name" href="{{url_for("view_library", id=book.owner_id)}}">{{book.owner.username}}</a>
             </div>
         </div>
         <hr/>
