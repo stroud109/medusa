@@ -1,63 +1,19 @@
 {% extends 'base.html' %}
 {% block body %}
 
-<div class="container">
-    <div class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">
-                    {% if g.user.id == owner.id %}
-                    Your Library
-                    {% else %}
-                    {{owner.username}}'s Library
-                    {% endif %}
-                </h3>
-
-            </div>
-            <div class="panel-body">
-                {% for book in owner.books %}
-                <div class="row">
-                    <div class="col-md-10">
-                        <div class="row">
-                            <div class="col-md-4">
-                            <a href="{{url_for("view_book", id=book.id)}}"><img src="{{book.book_info.thumbnail_url}}"></img></a>
-                        </div>
-                        <div class="col-md-8">
-                            <a class="book-title" href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a><br/>
-                            by {{book.book_info.author}}
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    {% if g.user == owner %}
-                    <form class="pull-right" method="post" action="{{url_for("remove_book", id=book.id)}}">
-                        <input type="submit" value="remove" class="btn btn-sm"/>
-                    </form>
-                    {% endif %}
-                </div>
-            </div>
-                <hr/>
+<div class="row">
+    <div class="col-md-12">
+        <div class="alert alert-info">
+            <h3 class="panel-title">
+                {% if g.user.id == owner.id %}
+                Your Current Transactions
                 {% else %}
-                    <h2>{{owner.username}}'s library is empty</h2>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">
-                    {% if g.user.id == owner.id %}
-                    Your Transactions
-                    {% else %}
-                    {{owner.username}}'s Transactions
-                    {% endif %}
-                </h3>
-            </div>
-        <div class="panel-body">
-            <h3>Current Transactions</h3>
+                {{owner.username}}'s Current Transactions
+                {% endif %}
+            </h3>
+            <br/>
 
-            {% for request in current_user_requests %}
+             {% for request in current_user_requests %}
 
                 {% if request.date_returned == None %}
                     {% if request.date_borrowed == None %}
@@ -84,20 +40,68 @@
             {% else %}
             <h5>{{owner.username}} currently has no open transactions</h5>
             {% endfor %}
-            <hr/>
-            <h3>Past Transactions</h3>
 
-            {% for request in past_user_requests %}
 
-                {% if g.user.id == owner.id %}
-                    You finished borrowing <a class="book-title" href="{{url_for("view_book", id=request.book.id)}}">{{request.book.title}}</a> from <a class="user-name" href="{{url_for("view_library", id=request.book.owner_id)}}">{{request.book.owner.username}}</a> {{request.date_confirmed|timedeltaformat}} ago
-                {% else %}
-                    <a class="user-name" href="{{url_for("view_library", id=owner.id)}}">{{owner.username}}</a> finished borrowing <a class="book-title" href="{{url_for("view_book", id=request.book.id)}}">{{request.book.title}}</a> from <a class="user-name" href="{{url_for("view_library", id=request.book.owner_id)}}">{{request.book.owner.username}}</a> {{request.date_confirmed|timedeltaformat}} ago
+        </div>
+    </div>
+</div>
+<div class="row">
+    <h2 class="title-shadow">
+        {% if g.user.id == owner.id %}
+        Your Library
+        {% else %}
+        {{owner.username}}'s Library
+        {% endif %}
+    </h2>
+   {% for book in owner.books|sort(attribute='title') %}
+   <div class="col-sm-2">
+        <div class="panel panel-default book-tile">
+            <div class="panel-heading">
+                <h5>{{book.title}}</h5>
+            </div>
+            <div class="panel-body">
+                <div class="img-wrapper">
+                    <a href="{{url_for("view_book", id=book.id)}}"><img class="book-img" src="{{book.book_info.thumbnail_url}}"></img></a><hr/>
+                </div>
+                {% if g.user == owner %}
+                    <form method="post" action="{{url_for("remove_book", id=book.id)}}">
+                        <input type="submit" value="remove" class="btn btn-default btn-xs"/>
+                    </form>
                 {% endif %}
-            <hr/>
-            {% else %}
-            <h5>{{owner.username}} doesn't have any completed transactions yet</h5>
-            {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+        <h5>{{owner.username}}'s library is empty</h5>
+    {% endfor %}
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    {% if g.user.id == owner.id %}
+                    Your Past Transactions
+                    {% else %}
+                    {{owner.username}}'s Past Transactions
+                    {% endif %}
+                </h3>
+            </div>
+            <div class="panel-body">
+
+                {% for request in past_user_requests|sort(reverse=True, attribute='date_confirmed') %}
+
+                    {% if g.user.id == owner.id %}
+                        You finished borrowing <a class="book-title" href="{{url_for("view_book", id=request.book.id)}}">{{request.book.title}}</a> from <a class="user-name" href="{{url_for("view_library", id=request.book.owner_id)}}">{{request.book.owner.username}}</a> {{request.date_confirmed|timedeltaformat}} ago
+                    {% else %}
+                        <a class="user-name" href="{{url_for("view_library", id=owner.id)}}">{{owner.username}}</a> finished borrowing <a class="book-title" href="{{url_for("view_book", id=request.book.id)}}">{{request.book.title}}</a> from <a class="user-name" href="{{url_for("view_library", id=request.book.owner_id)}}">{{request.book.owner.username}}</a> {{request.date_confirmed|timedeltaformat}} ago
+                    {% endif %}
+                    <hr/>
+                {% else %}
+                <h5>{{owner.username}} doesn't have any completed transactions yet</h5>
+                {% endfor %}
+
+            </div>
         </div>
     </div>
 </div>
