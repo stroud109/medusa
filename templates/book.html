@@ -71,6 +71,7 @@
                     {% endif %}
                 {% endif %}
             {% endif %}
+
         {% else %}
         <!-- if there is not a logged in user -->
         <div class="alert alert-info">
@@ -117,113 +118,8 @@
             </div>
         </div>
     </div>
-
+</div>
 <!-- OLD STUFF BELOW HERE -->
-
-    <div class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">{{book.title}}</h3>
-            </div>
-            <div class="panel-body">
-                <span class="thumbnail">
-                    <img class="img-responsive" src="{{book.book_info.image_url}}">
-                </span>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6">
-        {% if g.user %}
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">Book Transactions</h3>
-            </div>
-            <div class="panel-body">
-                {% if g.user.id != book.owner_id %}
-                    {% if not open_user_transaction %}
-                         <form method="post" action="{{url_for("request_book", id=book.id)}}">
-                            <input type="submit" value="Request Book" class="btn btn-default"/>
-                        </form>
-                    {% endif %}
-                {% elif g.user.id == book.owner_id %}
-                    {% if not transaction_in_progress %}
-                        {% if not book_requests %}
-                            <h4>There are currently no open transactions on this book</h4>
-                        {% else %}
-                            {% for transaction in book_requests %}
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <strong>Requester:</strong> <a class="user-name" href="{{url_for("view_library", id=transaction.requester.id)}}">{{transaction.requester.username}}</a>
-                                    <form class="pull-right" method="post" action="{{url_for("declare_borrowed", id=transaction.id)}}">
-                                        <input type="submit" value="Declare Borrowed" class="btn btn-default"/>
-                                    </form>
-                                </div>
-                            </div>
-
-                            {% endfor %}
-                        {% endif %}
-                    {% endif %}
-                {% endif %}
-
-                {% if transaction_in_progress %}
-                {% if g.user.id != book.owner_id %}
-                    {% if transaction_in_progress.requester_id == g.user.id %}
-                        {% if transaction_in_progress.date_returned == None %}
-                            <form method="post" action="{{url_for("return_book", id=transaction_in_progress.id)}}">
-                                <input type="submit" value="Return Book" class="btn btn-default"/>
-                            </form>
-                        {% endif %}
-                    {% endif %}
-                {% else %}
-
-                     <form method="post" action="{{url_for("confirm_book_returned", id=transaction_in_progress.id)}}">
-                        <input type="submit" value="Confirm Book Returned" class="btn btn-default"/>
-                    </form>
-
-                {% endif %}
-                {% endif%}
-
-                <div class="col-md-8">
-                {% for transaction in book_requests %}
-
-                    {% if transaction.date_returned == None %}
-                        {% if transaction.date_borrowed == None %}
-                            <a class="user-name" href="{{url_for("view_library", id=transaction.requester_id)}}">{{transaction.requester.username}}</a> requested this book from <a class="user-name" href="{{url_for("view_library", id=transaction.book_owner_id)}}">{{transaction.book_owner.username}}</a> {{transaction.date_requested|timedeltaformat}} ago</br>
-                        {% else %}
-                            <a class="user-name" href="{{url_for("view_library", id=transaction.requester_id)}}">{{transaction.requester.username}}</a> borrowed this book from <a class="user-name" href="{{url_for("view_library", id=transaction.book_owner_id)}}">{{transaction.book_owner.username}}</a> {{transaction.date_borrowed|timedeltaformat}} ago</br>
-                        {% endif %}
-                    {% else %}
-                        <a class="user-name" href="{{url_for("view_library", id=transaction.requester_id)}}">{{transaction.requester.username}}</a> returned this book to <a class="user-name" href="{{url_for("view_library", id=transaction.book_owner_id)}}">{{transaction.book_owner.username}}</a> {{transaction.date_returned|timedeltaformat}} ago</a></br>
-                    {% endif %}
-                    <br/>
-                {% else %}
-                <h5>There are currently no open transactions on {{book.title}}</h5>
-                {% endfor %}
-                </div>
-            </div>
-        </div>
-        {% endif %}
-
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">Book Details</h3>
-            </div>
-            <div class="panel-body">
-                <strong>Author:</strong> {{book.book_info.author}}</br>
-                <strong>Number of Pages:</strong> {{book.book_info.number_pages}}</br>
-                <strong>Genre:</strong> {{book.book_info.genre}}</br>
-                <strong>ISBN:</strong> {{book.book_info.isbn}}</br>
-            </br>
-            <strong>Editorial Review</strong>
-            {% autoescape off%}
-            {{book.book_info.editorial_review}}
-            {% endautoescape %}
-        </div>
-    </div>
-    </div>
-</div>
-</div>
 
 {% endblock %}
 

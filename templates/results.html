@@ -1,50 +1,58 @@
 {% extends 'base.html' %}
 {% block body %}
 
-<!-- Put all this on book template once finished -->
-
-
 <div class="container">
-    <div class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">{{book_info.title}}</h3>
-            </div>
-            <div class="panel-body">
-                {% if g.user %}
 
+    <div class="row">
+        <div class="col-md-12">
+
+            {% if g.user %}
+            <div class="alert alert-info">
+                <h5>We found {{book_info.title}}. Would you like to add it to your library?</h5>
                 <form action="{{url_for("add_book", book_info_id=book_info.id)}}" method="post">
                     <div class="form-group">
-                        <button class="btn btn-default" type="submit">add this book</button>
+                        <button class="btn btn-default" type="submit">add to your library</button>
                         <a href="{{url_for("search")}}" class="btn btn-warning">try again</a>
                     </div>
                 </form>
+            </div>
+            {% endif %}
 
-                {% endif %}
-                <span class="thumbnail">
-                    <img class="img-responsive" src="{{book_info.image_url}}"/>
-                </span>
+            <div class="panel panel-default">
+                <div class="panel-heading clearfix">
+                    <h3 class="panel-title">{{book_info.title}}</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="col-md-4"
+                        <span class="thumbnail">
+                            <img class="img-responsive" src="{{book_info.image_url}}"/>
+                        </span>
+                    </div>
+
+                    <div class="col-md-8">
+
+                        <h3 class="panel-title">Book Details</h3>
+
+                        <h5>Author: {{book_info.author}}</h5>
+                        <h5>Number of Pages: {{book_info.number_pages}}</h5>
+                        <h5>Genre: {{book_info.genre}}</h5>
+                        <h5>ISBN: {{book_info.isbn}}</h5>
+                        <br/>
+                        <h5>Editorial Review</h5>
+                        {% autoescape off%}
+                        {{book_info.editorial_review}}
+                        {% endautoescape %}
+
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">Book Details</h3>
-            </div>
-            <div class="panel-body">
-                <h5>Author: {{book_info.author}}</h5>
-                <h5>Number of Pages: {{book_info.number_pages}}</h5>
-                <h5>Genre: {{book_info.genre}}</h5>
-                <h5>ISBN: {{book_info.isbn}}</h5>
-                <br/>
-                <h5>Editorial Review</h5>
-                {% autoescape off%}
-                {{book_info.editorial_review}}
-                {% endautoescape %}
-            </div>
-        </div>
-    </div>
+
 </div>
+
+<!-- Put all this on book template once finished -->
+
 
 {% endblock %}

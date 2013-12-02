@@ -315,12 +315,12 @@ def request_book(id):
         book_owner_id=book.owner_id,
         requester_id=user_id,
     )
-    flash("You've successfully requested this book")
+    # flash("You've successfully requested this book")
     model.session.add(new_transaction)
     model.session.commit()
     # model.session.refresh(book)
     # return redirect(url_for("view_book", id=id))
-    return redirect(url_for("index"))
+    return redirect(url_for("view_book", id=book.id))
 
 
 @app.route("/books/<int:id>/borrow", methods=["POST"])
@@ -339,7 +339,7 @@ def declare_borrowed(id):
             if transaction.book.current_borrower_id is None:
                 transaction.book.current_borrower_id = transaction.requester_id
                 transaction.date_borrowed = datetime.now()
-                flash("You've declared that your book is being borrowed")
+                # flash("You've declared that your book is being borrowed")
                 model.session.add(transaction)
                 model.session.add(transaction.book)
                 model.session.commit()
@@ -352,7 +352,7 @@ def declare_borrowed(id):
         flash("You must own a book to declare that it's been borrowed")
     # model.session.refresh(book)
     # return redirect(url_for("view_book", id=transaction.book.id))
-    return redirect(url_for("index"))
+    return redirect(url_for("view_book", id=transaction.book_id))
 
 
 @app.route("/books/<int:id>/return", methods=["POST"])
@@ -371,7 +371,7 @@ def return_book(id):
                     flash("This book has already been returned")
                 else:
                     transaction.date_returned = datetime.now()
-                    flash("You've marked this book as returned")
+                    # flash("You've marked this book as returned")
                     model.session.add(transaction)
                     model.session.commit()
             else:
@@ -382,7 +382,7 @@ def return_book(id):
         flash("You can't return a book you already own")
 
     # return redirect(url_for("view_book", id=transaction.book.id))
-    return redirect(url_for("index"))
+    return redirect(url_for("view_book", id=transaction.book_id))
 
 
 @app.route("/books/<int:id>/confirmation", methods=["POST"])
@@ -400,7 +400,7 @@ def confirm_book_returned(id):
         if transaction.book.current_borrower_id is not None:
             transaction.book.current_borrower_id = None
             transaction.date_confirmed = datetime.now()
-            flash("You've confirmed that your book has been returned to you")
+            # flash("You've confirmed that your book has been returned to you")
             model.session.add(transaction)
             model.session.add(transaction.book)
             model.session.commit()
@@ -412,7 +412,7 @@ def confirm_book_returned(id):
         flash("You can only confirm returns on books you own")
     # model.session.refresh(book)
     # return redirect(url_for("view_book", id=transaction.book.id))
-    return redirect(url_for("index"))
+    return redirect(url_for("view_book", id=transaction.book_id))
 
 
 @app.route("/login")
