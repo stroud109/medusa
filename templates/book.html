@@ -3,6 +3,123 @@
 {% block body %}
 
 <div class="container">
+
+    <div class="row">
+        <div class="col-md-12">
+        {% if g.user %}
+        <!--  if there is a logged in user -->
+            {% if g.user.id != book.owner_id %}
+            <!-- if g.user exists and g.user is not the book owner, and .. -->
+            <div class="alert alert-info">
+                {% if open_user_transaction %}
+                <!-- .. g.user already has an open transaction, and ... -->
+                    {% if open_user_transaction.date_returned %}
+                    <!-- .. the transaction has a date_returned -->
+                    <span>You indicated to {{book.owner.username}} that you returned this book.</span>
+                    {% elif open_user_transaction.date_borrowed %}
+                    <!-- .. the transaction has a date_borrowed -->
+                    <span>You are currently borrowing this book.</span>
+                    <form method="post" action="{{url_for("return_book", id=open_user_transaction.id)}}">
+                        <input type="submit" value="Return Book" class="btn btn-default"/>
+                    </form>
+                    {% else %}
+                    <!-- .. the transaction is just a request -->
+                    <span>You've requested this book from {{book.owner.username}}</span>
+                    {% endif %}
+                {% else %}
+                <!-- .. g.user does not have an open transaction -->
+                    <span>You can request to borrow this book from {{book.owner.username}}</span>
+                    <form method="post" action="{{url_for("request_book", id=book.id)}}">
+                        <input type="submit" value="Request Book" class="btn btn-default"/>
+                    </form>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {% if g.user.id == book.owner_id %}
+            <!-- if g.user is the owner of the book, and .. -->
+                {% if transaction_in_progress %}
+                <div class="alert alert-info">
+                <!-- .. there is a transaction in progress -->
+                    {% if transaction_in_progress.date_returned %}
+                    <!-- .. if the borrower has indicated they've returned the book -->
+                        <span>{{transaction_in_progress.requester.username}} has indicated they have returned this book to you.</span>
+                    {% else %}
+                    <!-- .. if the borrower is still borrowing your book -->
+                        <span>{{transaction_in_progress.requester.username}} is currently borrowing your book.</span>
+                    {% endif %}
+                    <form method="post" action="{{url_for("confirm_book_returned", id=transaction_in_progress.id)}}">
+                                <input type="submit" value="Confirm Book Returned" class="btn btn-default"/>
+                    </form>
+                </div>
+                {% else %}
+                    <!-- there is no transaction in progress, so lets show all available requests -->
+                    {% if book_requests %}
+                    <div class="alert alert-info">
+                        <h5>Other users would like your book!</h5>
+                        {% for transaction in book_requests %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <form class="pull-right" method="post" action="{{url_for("declare_borrowed", id=transaction.id)}}">
+                                    <input type="submit" value="Declare Borrowed" class="btn btn-default"/>
+                                </form>
+                                <a class="user-name" href="{{url_for("view_library", id=transaction.requester.id)}}">{{transaction.requester.username}}</a> has requested this book.
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        {% else %}
+        <!-- if there is not a logged in user -->
+        <div class="alert alert-info">
+            <a href="{{url_for("login")}}">Log in</a> to request this book from {{book.owner.username}}.
+        </div>
+        {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading clearfix">
+                    <span class="pull-right">
+                        Owned by <a class="user-name" href="{{url_for("view_library", id=book.owner_id)}}">{{book.owner.username}}</a>
+                        <a href="{{url_for("view_library", id=book.owner.id)}}"><img class="avatar-xs avatar img-circle" src="{{book.owner.avatar_url}}"></img></a>
+                    </span>
+                    <h3 class="panel-title">{{book.title}}</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="col-md-4"
+                        <span class="thumbnail">
+                            <img class="img-responsive" src="{{book.book_info.image_url}}">
+                        </span>
+                    </div>
+
+                    <div class="col-md-8">
+
+                        <h3 class="panel-title">Book Details</h3>
+
+                        <strong>Author:</strong> {{book.book_info.author}}</br>
+                        <strong>Number of Pages:</strong> {{book.book_info.number_pages}}</br>
+                        <strong>Genre:</strong> {{book.book_info.genre}}</br>
+                        <strong>ISBN:</strong> {{book.book_info.isbn}}</br>
+                        </br>
+                        <strong>Editorial Review</strong>
+                        {% autoescape off%}
+                        {{book.book_info.editorial_review}}
+                        {% endautoescape %}
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- OLD STUFF BELOW HERE -->
+
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -67,8 +184,8 @@
                 {% endif %}
                 {% endif%}
 
-
-                {% for transaction in open_requests %}
+                <div class="col-md-8">
+                {% for transaction in book_requests %}
 
                     {% if transaction.date_returned == None %}
                         {% if transaction.date_borrowed == None %}
@@ -83,7 +200,7 @@
                 {% else %}
                 <h5>There are currently no open transactions on {{book.title}}</h5>
                 {% endfor %}
-
+                </div>
             </div>
         </div>
         {% endif %}
@@ -103,6 +220,7 @@
             {{book.book_info.editorial_review}}
             {% endautoescape %}
         </div>
+    </div>
     </div>
 </div>
 </div>

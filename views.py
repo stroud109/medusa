@@ -268,25 +268,23 @@ def view_book(id):
         BookTransaction.date_borrowed == None,
     ).all()
 
-    open_requests = BookTransaction.query.filter(
-        BookTransaction.book_id == book.id,
-        BookTransaction.date_requested != None,
-        BookTransaction.date_confirmed == None,
-    ).all()
-
     # returned_book = BookTransaction.query.filter(
     #     BookTransaction.book_id == book.id,
     #     BookTransaction.date_borrowed != None,
     #     BookTransaction.date_returned == None,
     # ).first()
 
+    open_user_transaction = None
+
+    if g.user:
+        open_user_transaction = book.get_open_transaction_for_user(g.user.id)
+
     return render_template(
         "book.html",
         book=book,
         transaction_in_progress=transaction_in_progress,
-        open_user_transaction=book.get_open_transaction_for_user(g.user.id),
+        open_user_transaction=open_user_transaction,
         book_requests=book_requests,
-        open_requests=open_requests,
         # returned_book=returned_book,
     )
 
