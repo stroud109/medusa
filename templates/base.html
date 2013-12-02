@@ -18,9 +18,6 @@
   </div>
   <nav class="navbar navbar-default" role="navigation">
 
-    <div class="row">
-
-      <div class="col-md-11">
 
        <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
@@ -55,27 +52,22 @@
             <button type="submit" class="btn btn-default">Submit</button>
           </form>
 
-          <ul class="nav navbar-nav navbar-right">
-              {% if g.user %}
-              <li><a href="{{url_for("view_library", id=g.user.id)}}">Welcome, {{g.user.username}}</a></li>
-              <li>
-              <form method="post" action="{{url_for("logout")}}"><input type="submit" value="Logout" class="btn btn-primary navbar-btn"/></form>
-              {% else %}
-              <form method="get" action="{{url_for("login")}}"><input type="submit" value="Login" class="btn btn-primary navbar-btn"/></form>
-              {% endif %}
-            </li>
-          </ul>
+          {% if g.user %}
+          <form class="navbar-form navbar-right" method="post" action="{{url_for("logout")}}">
+            <input type="submit" value="Logout" class="btn btn-primary"/>
+          </form>
+            <a class="pull-right" href="{{url_for("view_library", id=g.user.id)}}">
+          <img class="navbar-avatar avatar-sm avatar img-circle" src="{{g.user.avatar_url}}"/>
+            </a>
+          <p class="navbar-text navbar-right">
+            <a class="navbar-link" href="{{url_for("view_library", id=g.user.id)}}">Welcome, {{g.user.username}}</a>
+          </p>
+          {% else %}
+          <form class="navbar-form navbar-right" method="get" action="{{url_for("login")}}">
+            <input type="submit" value="Login" class="btn btn-primary"/>
+          </form>
+          {% endif %}
 
-        </div>
-      </div>
-
-      <div class="col-md-1 navbar-avatar">
-        {% if g.user %}
-
-          <a href="{{url_for("view_library", id=g.user.id)}}"><img class="pull-right avatar-sm avatar img-circle" src="{{g.user.avatar_url}}"></img></a>
-
-        {% endif %}
-      </div><!-- /.navbar-collapse -->
     </div>
   </nav>
 

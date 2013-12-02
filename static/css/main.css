@@ -16,8 +16,7 @@
 }
 
 .navbar-avatar {
-  padding-top: 0;
-  padding-bottom:0;
+  margin: 0 10px;
 }
 
 .navbar-nav form {
@@ -81,7 +80,7 @@ font-size: 12px;
 }
 
 .title-shadow {
-  text-shadow: #e5e5ee 0 2px 0;
+  text-shadow: #e5e5ee 0 1px 0;
   color: #333;
 }
 
