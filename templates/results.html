@@ -11,8 +11,8 @@
                 <h5>We found {{book_info.title}}. Would you like to add it to your library?</h5>
                 <form action="{{url_for("add_book", book_info_id=book_info.id)}}" method="post">
                     <div class="form-group">
-                        <button class="btn btn-default btn-warning" type="submit">add to your library</button>
-                        <a href="{{url_for("search")}}" class="btn btn-default">try again</a>
+                        <button class="btn btn-default btn-warning" type="submit">Add to your library</button>
+                        <a href="{{url_for("search")}}" class="btn btn-default">Try again</a>
                     </div>
                 </form>
             </div>

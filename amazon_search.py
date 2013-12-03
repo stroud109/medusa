@@ -29,7 +29,10 @@ def get_book_info_from_ean(ean):
     title = results.Items.Item.ItemAttributes.Title
     author = results.Items.Item.ItemAttributes.Author
     genre = book_genre.Items.Item.BrowseNodes.BrowseNode.Name
-    number_pages = results.Items.Item.ItemAttributes.NumberOfPages
+    try:  # sometimes Amazon doesn't have number of pages
+        number_pages = results.Items.Item.ItemAttributes.NumberOfPages
+    except AttributeError:
+        number_pages = 0
     isbn = results.Items.Item.ItemAttributes.ISBN
 
     print "YO! LOOK HERE!!"
@@ -43,8 +46,14 @@ def get_book_info_from_ean(ean):
         SearchIndex='Books',
         )
 
-    image_url = book_image.Items.Item.ImageSets.ImageSet.LargeImage.URL
-    thumbnail_url = book_image.Items.Item.ImageSets.ImageSet.MediumImage.URL
+    try:
+        image_url = book_image.Items.Item.ImageSets.ImageSet.LargeImage.URL
+    except AttributeError:
+        image_url = None
+    try:
+        thumbnail_url = book_image.Items.Item.ImageSets.ImageSet.MediumImage.URL
+    except AttributeError:
+        thumbnail_url = None
 
     book_review = api.item_lookup(
         ItemId=ean,

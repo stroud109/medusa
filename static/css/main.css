@@ -72,6 +72,7 @@ font-size: 12px;
 
 .book-img {
   max-height: 150px;
+  max-width: 150px;
 }
 
 .transaction-info {
