@@ -13,7 +13,9 @@
                <div class="col-sm-4">
                     <div class="panel panel-default book-tile">
                         <div class="panel-heading">
-                            <h5>{{book.title}}</h5>
+                            <h5>
+                                <a class="book-title" href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a>
+                            </h5>
                         </div>
                         <div class="panel-body">
                             <div class="img-wrapper">
