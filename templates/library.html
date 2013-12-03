@@ -14,7 +14,7 @@
             </h3>
             <br/>
 
-             {% for request in current_user_requests %}
+             {% for request in current_user_requests|sort(reverse=True, attribute="date_requested") %}
 
                 {% if request.date_returned == None %}
                     {% if request.date_borrowed == None %}

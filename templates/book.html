@@ -63,7 +63,7 @@
                                 <form class="pull-right" method="post" action="{{url_for("declare_borrowed", id=transaction.id)}}">
                                     <input type="submit" value="Declare Borrowed" class="btn btn-sm btn-default btn-warning"/>
                                 </form>
-                                <a class="user-name" href="{{url_for("view_library", id=transaction.requester.id)}}">{{transaction.requester.username}}</a> has requested this book.
+                                <a class="user-name" href="{{url_for("view_library", id=transaction.requester.id)}}">{{transaction.requester.username}}</a> has requested this book
                             </div>
                         </div>
                         {% endfor %}

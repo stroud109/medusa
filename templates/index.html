@@ -21,22 +21,25 @@
                             <div class="img-wrapper">
                                 <a href="{{url_for("view_book", id=book.id)}}"><img class="book-img" src="{{book.book_info.thumbnail_url}}"></img></a>
                             </div>
+                            {% with %}
+                                {% set transaction = book.get_open_transaction_for_user(g.user.id) %}
                             <div class="transaction-info">
-                                {% if not book.get_open_transaction_for_user(g.user.id) %}
+                                {% if not transaction %}
                                     From the library of <a class="user-name" href="{{(url_for('view_library', id=book.owner_id))}}">{{book.owner.username}}</a><br/>
                                 {% else %}
                                     <div class="book-requested">
-                                        <em>You requested this book from <a class="user-name" href="{{(url_for('view_library', id=book.owner_id))}}">{{book.owner.username}}</a> {{book.get_open_transaction_for_user(g.user.id).date_requested|timedeltaformat}} ago</em>
+                                        <em>You requested this book from <a class="user-name" href="{{(url_for('view_library', id=book.owner_id))}}">{{book.owner.username}}</a> {{transaction.date_requested|timedeltaformat}} ago</em>
                                     </div>
                                 {% endif %}
                                 <div>
-                                {% if not book.get_open_transaction_for_user(g.user.id) %}
+                                {% if not transaction %}
                                     <form method="post" action="{{url_for("request_book", id=book.id)}}">
                                         <input type="submit" value="request" class="btn btn-block btn-warning"/>
                                     </form>
                                 {% endif %}
                                 </div>
                             </div>
+                            {% endwith %}
                         </div>
                     </div>
                 </div>
@@ -109,12 +112,17 @@
                 <h5>You have no open transactions right now</h5>
                 {% else %}
 
-                {% for transaction in open_user_transactions|sort(attribute='date_requested') %}
+                <!-- open transactions are those where g.user.id is the requester.id, and there is no date_confirmed -->
+                {% for transaction in open_user_transactions|sort(reverse=True, attribute='date_requested') %}
                 <div class="row">
                     <div class="col-md-8">
 
-                        {% if not transaction.date_borrowed != None %}
-                            {% if transaction.date_returned == None %}
+                        {% if transaction.date_borrowed %}
+                            {% if transaction.date_returned %}
+
+                                You indicated to <a class="user-name" href="{{url_for("view_library", id=transaction.book.owner_id)}}">{{transaction.book.owner.username}}</a> that you returned <a class="book-title" href="{{url_for("view_book", id=transaction.book.id)}}">{{transaction.book.title}}</a>
+
+                            {% else %}
 
                                 You're borrowing <a class="book-title" href="{{url_for("view_book", id=transaction.book.id)}}">{{transaction.book.title}}</a> from <a class="user-name" href="{{url_for("view_library", id=transaction.book.owner_id)}}">{{transaction.book.owner.username}}</a><br/>
 
@@ -130,10 +138,10 @@
                     </div>
                     <div class="col-md-4">
 
-                    {% if transaction.date_borrowed != None %}
-                        {% if transaction.date_returned == None %}
+                    {% if transaction.date_borrowed %}
+                        {% if not transaction.date_returned %}
                             <form class="pull-right" method="post" action="{{url_for("return_book", id=transaction.id)}}">
-                                <input type="submit" value="I returned book" class="btn btn-xs btn-primary"/>
+                                <input type="submit" value="return book" class="btn btn-xs btn-default"/>
                             </form>
                         {% endif %}
                     {% endif %}
@@ -152,7 +160,7 @@
 
                 {% for transaction in open_transactions_on_users_books|sort(attribute='date_requested') %}
                 <div class="row">
-                    <div class="col-md-8">
+                    <div class="col-sm-8">
                         {% if transaction.date_borrowed == None %}
                             <a class="user-name" href="{{url_for("view_library", id=transaction.requester_id)}}">{{transaction.requester.username}}</a> requested to borrow <a class="book-title" href="{{url_for("view_book", id=transaction.book.id)}}">{{transaction.book.title}}</a> from you<br/>
                         {% else %}
@@ -161,16 +169,16 @@
                             {% endif %}
                         {% endif %}
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-sm-4">
                     {% if transaction.book.current_borrower_id == None %}
                     <!-- if the book doesn't have a current borrower id, then we can let the owner declare it borrowed -->
                         <form class="pull-right" method="post" action="{{url_for("declare_borrowed", id=transaction.id)}}">
-                            <input type="submit" value="declare borrowed" class="btn btn-xs"/>
+                            <input type="submit" value="declare borrowed" class="btn btn-xs btn-default"/>
                         </form>
                     {% elif transaction.book.current_borrower_id == transaction.requester_id %}
                     <!-- else, if this transaction represents the current "borrowing" transaction, then we can let the owner confirm the transaction's return, regardless of whether the borrower indicated the book was returned -->
                          <form class="pull-right" method="post" action="{{url_for("confirm_book_returned", id=transaction.id)}}">
-                            <input type="submit" value="confirm book returned" class="btn btn-xs"/>
+                            <input type="submit" value="confirm returned" class="btn btn-xs btn-default"/>
                         </form>
 
                     {% endif %}
