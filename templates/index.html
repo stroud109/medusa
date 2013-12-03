@@ -2,7 +2,7 @@
 {% block body %}
 
 {% if g.user %}
-<div class="container">
+<div class="row">
 
     <div class="row">
         <div class="col-md-8">
@@ -30,7 +30,7 @@
                                 <div>
                                 {% if not book.get_open_transaction_for_user(g.user.id) %}
                                     <form method="post" action="{{url_for("request_book", id=book.id)}}">
-                                        <input type="submit" value="request" class="btn btn-default btn-block"/>
+                                        <input type="submit" value="request" class="btn btn-block btn-warning"/>
                                     </form>
                                 {% endif %}
                                 </div>
@@ -127,7 +127,7 @@
                     {% if transaction.date_borrowed != None %}
                         {% if transaction.date_returned == None %}
                             <form class="pull-right" method="post" action="{{url_for("return_book", id=transaction.id)}}">
-                                <input type="submit" value="I returned book" class="btn btn-xs"/>
+                                <input type="submit" value="I returned book" class="btn btn-xs btn-primary"/>
                             </form>
                         {% endif %}
                     {% endif %}

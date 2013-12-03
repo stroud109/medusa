@@ -39,6 +39,7 @@ class User(Base, UserMixin):
     password = Column(String(64), nullable=False)
     salt = Column(String(64), nullable=False)
     avatar_url = Column(Text(), nullable=True)
+    # location = Column(String(30), nullable=True)  # COLUMN NEEDS TO BE COMMITTED
 
     books = relationship("Book", uselist=True)
 

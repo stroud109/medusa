@@ -36,11 +36,17 @@ class LoginForm(Form):
     )
 
 
-class UserForm(Form):
+class UserForm(Form):  # RENAME WHEN LOCATION COLUMN AND FORM ADDED?
     avatar_url = TextField(
         "Avatar",
         widget=TextInput(),
     )
+
+# class LocationForm(form):  # IMPLIMENT THIS FORM WHEN LOCATION COLUMN ADDED
+#     location = TextField(
+#         "Location",
+#         widget=TextInput(),
+#     )
 
 
 class NewUserForm(Form):

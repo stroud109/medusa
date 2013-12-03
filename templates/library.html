@@ -20,7 +20,7 @@
                         {% if g.user.id == owner.id %}
                             You requested <a class="book-title" href="{{url_for("view_book", id=request.book.id)}}">{{request.book.title}}</a> from <a class="user-name" href="{{url_for("view_library", id=request.book.owner_id)}}">{{request.book.owner.username}}</a> {{request.date_requested|timedeltaformat}} ago
                         {% else %}
-                            <a class="user-name" href="{{url_for("view_library", id=owner.id)}}">{{owner.username}}</a> requested <a class="book-title" href="{{url_for("view_book", id=request.book.id)}}">{{request.book.title}}</a> from <a href="{{url_for("view_library", id=request.book.owner_id)}}">{{request.book.owner.username}}</a> {{request.date_requested|timedeltaformat}} ago
+                            <a class="user-name" href="{{url_for("view_library", id=owner.id)}}">{{owner.username}}</a> requested <a class="book-title" href="{{url_for("view_book", id=request.book.id)}}">{{request.book.title}}</a> from <a class="user-name" href="{{url_for("view_library", id=request.book.owner_id)}}">{{request.book.owner.username}}</a> {{request.date_requested|timedeltaformat}} ago
                         {% endif %}
                     {% else %}
                         {% if g.user.id == owner.id %}
@@ -52,6 +52,7 @@
         {% else %}
         {{owner.username}}'s Library
         {% endif %}
+        <hr/>
     </h2>
    {% for book in owner.books|sort(attribute='title') %}
    <div class="col-sm-2">

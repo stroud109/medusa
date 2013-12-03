@@ -3,6 +3,21 @@
 
 <div class="panel panel-default">
     <div class="panel-heading">
+        <h3 class="panel-title">Specify your location</h3>
+    </div>
+    <div class="panel-body">
+        <form class="navbar-form navbar-left" action="{{url_for("update_user", id=owner.id)}}" role="location">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Location">
+          </div>
+          <button type="submit" class="btn btn-default">update</button>
+        </form>
+    </div>
+</div>
+
+
+<div class="panel panel-default">
+    <div class="panel-heading">
         <h3 class="panel-title">Select a new avatar</h3>
     </div>
     <div class="panel-body">

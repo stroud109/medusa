@@ -21,7 +21,9 @@
         {% for book in books|sort(attribute='book_info_id') %}
         <div class="row">
             <div class="col-md-2">
-                <img src="{{book.book_info.thumbnail_url}}"></img>
+                <div class="img-wrapper">
+                    <a href="{{url_for("view_book", id=book.id)}}"><img class="book-img" src="{{book.book_info.thumbnail_url}}"></img></a>
+                </div>
             </div>
             <div class="col-md-10">
                 <a class="book-title" href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a>, from the library of <a class="user-name" href="{{url_for("view_library", id=book.owner_id)}}">{{book.owner.username}}</a>

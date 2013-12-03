@@ -10,7 +10,7 @@
         <!--  if there is a logged in user -->
             {% if g.user.id != book.owner_id %}
             <!-- if g.user exists and g.user is not the book owner, and .. -->
-            <div class="alert alert-info">
+            <div class="alert alert-warning">
                 {% if open_user_transaction %}
                 <!-- .. g.user already has an open transaction, and ... -->
                     {% if open_user_transaction.date_returned %}
@@ -20,7 +20,7 @@
                     <!-- .. the transaction has a date_borrowed -->
                     <span>You are currently borrowing this book.</span>
                     <form method="post" action="{{url_for("return_book", id=open_user_transaction.id)}}">
-                        <input type="submit" value="Return Book" class="btn btn-default"/>
+                        <input type="submit" value="Return Book" class="btn btn-warning btn-default"/>
                     </form>
                     {% else %}
                     <!-- .. the transaction is just a request -->
@@ -30,7 +30,7 @@
                 <!-- .. g.user does not have an open transaction -->
                     <span>You can request to borrow this book from {{book.owner.username}}</span>
                     <form method="post" action="{{url_for("request_book", id=book.id)}}">
-                        <input type="submit" value="Request Book" class="btn btn-default"/>
+                        <input type="submit" value="Request Book" class="btn btn-warning btn-default"/>
                     </form>
                 {% endif %}
             </div>
@@ -39,7 +39,7 @@
             {% if g.user.id == book.owner_id %}
             <!-- if g.user is the owner of the book, and .. -->
                 {% if transaction_in_progress %}
-                <div class="alert alert-info">
+                <div class="alert alert-warning">
                 <!-- .. there is a transaction in progress -->
                     {% if transaction_in_progress.date_returned %}
                     <!-- .. if the borrower has indicated they've returned the book -->
@@ -49,19 +49,19 @@
                         <span>{{transaction_in_progress.requester.username}} is currently borrowing your book.</span>
                     {% endif %}
                     <form method="post" action="{{url_for("confirm_book_returned", id=transaction_in_progress.id)}}">
-                                <input type="submit" value="Confirm Book Returned" class="btn btn-default"/>
+                                <input type="submit" value="Confirm Book Returned" class="btn btn-sm btn-default btn-warning"/>
                     </form>
                 </div>
                 {% else %}
                     <!-- there is no transaction in progress, so lets show all available requests -->
                     {% if book_requests %}
-                    <div class="alert alert-info">
+                    <div class="alert alert-warning">
                         <h5>Other users would like your book!</h5>
                         {% for transaction in book_requests %}
                         <div class="row">
                             <div class="col-md-12">
                                 <form class="pull-right" method="post" action="{{url_for("declare_borrowed", id=transaction.id)}}">
-                                    <input type="submit" value="Declare Borrowed" class="btn btn-default"/>
+                                    <input type="submit" value="Declare Borrowed" class="btn btn-sm btn-default btn-warning"/>
                                 </form>
                                 <a class="user-name" href="{{url_for("view_library", id=transaction.requester.id)}}">{{transaction.requester.username}}</a> has requested this book.
                             </div>
@@ -74,7 +74,7 @@
 
         {% else %}
         <!-- if there is not a logged in user -->
-        <div class="alert alert-info">
+        <div class="alert alert-warning">
             <a href="{{url_for("login")}}">Log in</a> to request this book from {{book.owner.username}}.
         </div>
         {% endif %}

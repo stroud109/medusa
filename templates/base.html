@@ -54,7 +54,7 @@
 
           {% if g.user %}
           <form class="navbar-form navbar-right" method="post" action="{{url_for("logout")}}">
-            <input type="submit" value="Logout" class="btn btn-primary"/>
+            <input type="submit" value="Logout" class="btn btn-warning"/>
           </form>
             <a class="pull-right" href="{{url_for("view_library", id=g.user.id)}}">
           <img class="navbar-avatar avatar-sm avatar img-circle" src="{{g.user.avatar_url}}"/>
@@ -64,7 +64,7 @@
           </p>
           {% else %}
           <form class="navbar-form navbar-right" method="get" action="{{url_for("login")}}">
-            <input type="submit" value="Login" class="btn btn-primary"/>
+            <input type="submit" value="Login" class="btn btn-warning"/>
           </form>
           {% endif %}
 
@@ -74,7 +74,7 @@
   <div class="container">
     <div class="flash-messages">
       {% for message in get_flashed_messages() %}
-      <div class="alert alert-info">
+      <div class="alert alert-warning">
         {{message}}<br/>
       </div>
       {% endfor %}

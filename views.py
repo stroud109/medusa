@@ -214,7 +214,7 @@ def add_book(book_info_id):
 
     if book:
         flash("Looks like you already have this book in your library")
-        return redirect(url_for("index"))  # change this
+        return redirect(url_for("view_book", id=book.id))  # CHECK THIS
 
     new_book = Book(
         title=book_info.title,
@@ -515,6 +515,10 @@ def create_account():
 @app.route("/users")
 def view_users():
     users = User.query.all()
+
+    # for user in users:
+    #     num_books = len(user.books)
+        # print "%s has %s many books" % (user.username, len(user.books))
     return render_template("users.html", users=users)
 
 
@@ -540,7 +544,7 @@ def update_user(id):
     # Check to make sure the session user is the
     # owner of the user model they are trying to update
     if int(id) != g.user.id:
-        flash('You can\'t update other user accounts.')
+        flash('You can\'t update other user accounts')
         return redirect(url_for('view_library', id=g.user.id))
 
     # Check to make sure the user we are trying to

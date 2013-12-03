@@ -25,7 +25,7 @@
 }
 
 body {
-  background-image:url('/static/img/dimension/dimension.png');
+  background-image:url('/static/img/stacked_circles/stacked_circles.png');
 }
 
 .brand-bar {
@@ -88,3 +88,37 @@ font-size: 12px;
   color: #333;
 }
 
+.btn-info {
+  color: #835063;
+}
+
+/*.btn-primary {
+color: #fff;
+background-color: #975c7a;
+border-color: #804160;
+}*/
+
+/*.btn-primary {
+color: #fff;
+background-color: #919733;
+border-color: #808823;
+*/
+
+/*.btn-primary {
+color: #fff;
+background-color: #83B000;
+border-color: #8f9713;
+}
+
+.btn-primary:hover {
+  color: #fff;
+  background-color: #5A8700;
+  border-color: #537524;
+
+}
+
+.alert-info {
+color: #537524;
+background-color: #d6dea8;
+border-color: #cdd77a;
+}*/
