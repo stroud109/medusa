@@ -25,7 +25,10 @@
                     {% trans count=user.books|length %}
                     {{count}} books in library<br/>
                     {% endtrans %}
-                    location: SF
+
+                    {% if user.location %}
+                    location: {{user.location}}
+                    {% endif %}
                 </div>
             </div>
         </div>

@@ -1,17 +1,22 @@
 {% extends 'base.html' %}
 {% block body %}
 
+<form method="post" action="{{url_for("update_user", id=owner.id)}}" role="location">
 <div class="panel panel-default">
     <div class="panel-heading">
         <h3 class="panel-title">Specify your location</h3>
     </div>
     <div class="panel-body">
-        <form class="navbar-form navbar-left" action="{{url_for("update_user", id=owner.id)}}" role="location">
-          <div class="form-group">
-            <input type="text" class="form-control" placeholder="Location">
-          </div>
-          <button type="submit" class="btn btn-default">update</button>
-        </form>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <input name="location" type="text" class="form-control" placeholder="Location">
+                </div>
+            </div>
+                <div class="col-sm-4">
+                    <button type="submit" class="btn btn-default">update</button>
+                </div>
+        </div>
     </div>
 </div>
 
@@ -23,7 +28,6 @@
     <div class="panel-body">
         <div class="row">
             <div class="col-md-12">
-                <form method="post" action="{{url_for("update_user", id=owner.id)}}">
                 <ul class="list-inline">
                     {% for avatar_url in avatar_urls %}
                     <li>
@@ -39,12 +43,12 @@
                 </ul>
 
                     <input type="submit" value="update" class="btn btn-default navbar-btn"/>
-                </form>
 
             </div>
         </div>
 
     </div>
 </div>
+</form>
 
 {% endblock %}

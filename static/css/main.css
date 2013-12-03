@@ -88,6 +88,15 @@ font-size: 12px;
   color: #333;
 }
 
+.title-shadow a {
+  color:#333;
+  text-decoration: underline;
+}
+
+.title-shadow a:hover {
+  text-decoration: none;
+}
+
 .btn-info {
   color: #835063;
 }

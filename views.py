@@ -571,8 +571,18 @@ def update_user(id):
     # Start setting attributes on the user
     # For right now, we only have one attribute we care about
     form = forms.UserForm(request.form)
+
+    should_save = False
+
+    if form.location.data:
+        g.user.location = form.location.data
+        should_save = True
+
     if form.avatar_url.data:
         g.user.avatar_url = form.avatar_url.data
+        should_save = True
+
+    if should_save:
         model.session.add(g.user)
         model.session.commit()
 

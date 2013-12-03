@@ -40,6 +40,10 @@
                         </div>
                     </div>
                 </div>
+                {% else %}
+
+                <h3 class="title-shadow">Help us get started, <a href="{{url_for("search")}}">add some books to your library</a></h3>
+
                 {% endfor %}
             </div>
         <div class="col-md-4 title-shadow">
@@ -85,7 +89,7 @@
                 <hr/>
                 {% else %}
                 No books here!
-                <a href="{{url_for("new_book")}}">Add a new book</a>
+                <a href="{{url_for("search")}}">Add a new book</a>
                 {% endfor %}
             </div>
         </div>
@@ -239,7 +243,7 @@
                 <hr/>
                 {% else %}
                 No books here!
-                <a href="{{url_for("new_book")}}">Add a new book</a>
+                <a href="{{url_for("search")}}">Add a new book</a>
                 {% endfor %}
             </div>
         </div>
