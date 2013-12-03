@@ -78,6 +78,19 @@ def attach_user_to_global_object():
 # Adding markdown capability to the app
 Markdown(app)
 
+AVATAR_URLS = [
+    "/static/img/avatars/cat.png",
+    "/static/img/avatars/spaceman.png",
+    "/static/img/avatars/lion.png",
+    "/static/img/avatars/sleepy.png",
+    "/static/img/avatars/veniceunderwater.png",
+    "/static/img/avatars/butterowl.png",
+    "/static/img/avatars/sloth.png",
+    "/static/img/avatars/queen.png",
+    "/static/img/avatars/oldman.png",
+    "/static/img/avatars/sheep.png",
+]
+
 
 @app.route("/")
 def index():
@@ -441,7 +454,7 @@ def authenticate():
     # print "email", email
     # print "password", password
 
-    user = User.query.filter_by(email=email).one()
+    user = User.query.filter_by(email=email).first()
 
     if not user or not user.authenticate(password):
         flash("Incorrect username or password")
@@ -496,8 +509,9 @@ def create_account():
         return render_template("register.html", form=form)
 
     new_user = User(
-        username=request.form.get("username"),
-        email=request.form.get("email"),
+        username=username,
+        email=email,
+        avatar_url=AVATAR_URLS[6],
     )
     new_user.set_password(request.form.get("password"))
 
@@ -531,7 +545,11 @@ def edit_user(id):
     if not owner:
         abort(404)
 
-    return render_template("edit_user.html", owner=owner)
+    return render_template(
+        "edit_user.html",
+        owner=owner,
+        avatar_urls=AVATAR_URLS,
+    )
 
 
 @app.route("/users/<int:id>", methods=["POST"])

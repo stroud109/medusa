@@ -25,86 +25,16 @@
             <div class="col-md-12">
                 <form method="post" action="{{url_for("update_user", id=owner.id)}}">
                 <ul class="list-inline">
+                    {% for avatar_url in avatar_urls %}
                     <li>
                     <div class="radio">
                         <label>
-                            <input type="radio" name="avatar_url" value="/static/img/avatars/cat.png"/>
-                            <img class="img-circle avatar" src="/static/img/avatars/cat.png" width="100" height="100">
+                            <input type="radio" name="avatar_url" value="{{avatar_url}}"/>
+                            <img class="img-circle avatar" src="{{avatar_url}}" width="100" height="100">
                         </label>
                     </div>
                     </li>
-                    <li>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="avatar_url" value="/static/img/avatars/spaceman.png"/>
-                            <img class="img-circle avatar" src="/static/img/avatars/spaceman.png" width="100" height="100">
-                        </label>
-                    </div>
-                    </li>
-                    <li>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="avatar_url" value="/static/img/avatars/lion.png"/>
-                            <img class="img-circle avatar" src="/static/img/avatars/lion.png" width="100" height="100">
-                        </label>
-                    </div>
-                    </li>
-                    <li>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="avatar_url" value="/static/img/avatars/sleepy.png"/>
-                            <img class="img-circle avatar" src="/static/img/avatars/sleepy.png" width="100" height="100">
-                        </label>
-                    </div>
-                    </li>
-                    <li>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="avatar_url" value="/static/img/avatars/veniceunderwater.png"/>
-                            <img class="img-circle avatar" src="/static/img/avatars/veniceunderwater.png" width="100" height="100">
-                        </label>
-                    </div>
-                    </li>
-                    <li>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="avatar_url" value="/static/img/avatars/butterowl.png"/>
-                            <img class="img-circle avatar" src="/static/img/avatars/butterowl.png" width="100" height="100">
-                        </label>
-                    </div>
-                    </li>
-                    <li>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="avatar_url" value="/static/img/avatars/sloth.png"/>
-                            <img class="img-circle avatar" src="/static/img/avatars/sloth.png" width="100" height="100">
-                        </label>
-                    </div>
-                    </li>
-                    <li>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="avatar_url" value="/static/img/avatars/queen.png"/>
-                            <img class="img-circle avatar" src="/static/img/avatars/queen.png" width="100" height="100">
-                        </label>
-                    </div>
-                    </li>
-                    <li>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="avatar_url" value="/static/img/avatars/oldman.png"/>
-                            <img class="img-circle avatar" src="/static/img/avatars/oldman.png" width="100" height="100">
-                        </label>
-                    </div>
-                    </li>
-                    <li>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="avatar_url" value="/static/img/avatars/sheep.png" checked/>
-                            <img class="img-circle avatar" src="/static/img/avatars/sheep.png" width="100" height="100">
-                        </label>
-                    </div>
-                    </li>
+                    {% endfor %}
 
                 </ul>
 
