@@ -24,8 +24,6 @@ from model import (
     BookTransaction,
     BookInfo,
     SearchTerm,
-    # register_book,
-    # register_user,
     session as db_session,
 )
 from flask.ext.login import (
@@ -646,4 +644,8 @@ def deactivate_accout():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(
+        debug=True,
+        host="0.0.0.0",
+        port=5000,
+    )

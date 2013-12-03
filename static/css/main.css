@@ -52,9 +52,9 @@ color: #211922;
 font-size: 12px;
 }
 
-.book-tile {
-  /*height: 280px;*/
-}
+/*.book-tile {
+  height: 280px;
+}*/
 
 .book-requested {
   height: 64px;

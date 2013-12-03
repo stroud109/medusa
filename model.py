@@ -144,16 +144,6 @@ class SearchTerm(Base):
     document_ids = Column(Text(), nullable=False)
 
 
-def register_book(new_book):
-    session.add(new_book)
-    session.commit()
-
-
-def register_user(new_user):
-    session.add(new_user)
-    session.commit()
-
-
 def create_tables():
     Base.metadata.create_all(engine)
     # u = User(email="test@test.com", username="test")
