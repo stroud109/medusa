@@ -4,7 +4,7 @@ Bookworms is a peer-to-peer physical book sharing web app with a barcode reader 
 
 ###Barcode Reader
 ####(camera.js & barcodeReader.js)
-The barcode reader uses HTML5 canvas to take a snapshot every 50 miliseconds. There are four web workers that decode a barcode when it's flipped and not flipped, and from the right and left, resepctively. (The latter two web workers are currently commented out). Once a barcode number is captured, the video screen stops rendering and the barcode number is used to query the Amazon Product API database.
+The barcode reader uses HTML5 canvas to take a snapshot every 50 milliseconds. There are four web workers that decode a barcode when it's flipped and not flipped, and from the right and left, resepctively. (The latter two web workers are currently commented out). Once a barcode number is captured, the video screen stops rendering and the barcode number is used to query the Amazon Product API database.
 
  Right now, the barcode reader only works on 13 digit EAN numbers, and given the resolution of the typical (or at least, my macBook's) computer camera, it tends to work best on larger barcodes.
 
