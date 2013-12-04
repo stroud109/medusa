@@ -113,6 +113,7 @@ $(function() {
 
     // Javascripts from search.html file
     // *********************************
+
     function receiveMessage(e) {
         console.log(e.data);
         if (!(e.data.success || isCancelled)) {
