@@ -16,7 +16,7 @@ In order to avoid hitting the Amazon API all the time, Add Book queries first ch
 
 ###Database
 ####(model.py)
-The BookInfo table stores all resulting book information from queries, regardless of whether a user added the books to their library.
+The BookInfo table stores all resulting book information from Add Book queries, regardless of whether a user added the books to their library.
 
 The Book table stores information pertaining to instances of books in users' libraries.
 
