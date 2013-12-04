@@ -28,6 +28,9 @@ The BookTransaction table stores transaction states for books that have been req
 
 There can be multiple requests on a book, which all have their own BookTransaction ID, but a book cannot have multiple, concurrent borrowers. A transaction is considered "open" when the book's owner has declared that it's being borrowed. A transaction is considered "closed" when the book's owner has declared that their book is returned.
 
+#####screenshot of the barcode reader in action
 ![Alt text](screenshots/barcode_reader.png "screenshot of the barcode reader in action")
+#####screenshot of the Amazon search results page
 ![Alt text](screenshots/search_results.png "screenshot of the Amazon search results page")
+#####screenshot of the home page
 ![Alt text](screenshots/index_page.png "screenshot of the home page")
