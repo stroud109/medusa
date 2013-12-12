@@ -98,7 +98,6 @@ def index():
     open_transactions_on_users_books = None
 
     if g.user:
-        # user_id = session.get("user_id")
         books = Book.query.filter(
             Book.owner_id != g.user.id,
         ).all()
@@ -195,8 +194,6 @@ def results():  # use this page for pre-DB commit search results
 
     book_info = db_session.query(BookInfo).filter_by(ean=ean).first()
 
-    # temp = get_book_info_from_ean(ean)
-
     if not book_info:
         book_info = get_book_info_from_ean(ean)  # see amazon_search.py
         model.session.add(book_info)
@@ -225,7 +222,7 @@ def add_book(book_info_id):
 
     if book:
         flash("Looks like you already have this book in your library")
-        return redirect(url_for("view_book", id=book.id))  # CHECK THIS
+        return redirect(url_for("view_book", id=book.id))
 
     new_book = Book(
         title=book_info.title,
@@ -234,8 +231,6 @@ def add_book(book_info_id):
     )
 
     model.session.add(new_book)
-    # print "current user:", current_user
-    # current_user.books.append(new_book)
 
     model.session.commit()
     model.session.refresh(new_book)
@@ -318,7 +313,6 @@ def request_book(id):
 
     if open_user_transactions:
         flash("You already have an open transaction with this book")
-        # return redirect(url_for("view_book", id=id))
         return redirect(url_for("index"))
 
     new_transaction = BookTransaction(
@@ -330,7 +324,6 @@ def request_book(id):
     model.session.add(new_transaction)
     model.session.commit()
     # model.session.refresh(book)
-    # return redirect(url_for("view_book", id=id))
     return redirect(url_for("view_book", id=book.id))
 
 
@@ -341,9 +334,6 @@ def declare_borrowed(id):
 
     if not transaction:
         abort(404)
-
-    # print type(transaction.book.owner_id)
-    # print type(g.user.id)
 
     if transaction.book.owner_id == g.user.id:
         if transaction.date_requested is not None:
@@ -362,7 +352,6 @@ def declare_borrowed(id):
     else:
         flash("You must own a book to declare that it's been borrowed")
     # model.session.refresh(book)
-    # return redirect(url_for("view_book", id=transaction.book.id))
     return redirect(url_for("view_book", id=transaction.book_id))
 
 
@@ -422,7 +411,6 @@ def confirm_book_returned(id):
     else:
         flash("You can only confirm returns on books you own")
     # model.session.refresh(book)
-    # return redirect(url_for("view_book", id=transaction.book.id))
     return redirect(url_for("view_book", id=transaction.book_id))
 
 
@@ -439,8 +427,6 @@ def login():
 @app.route("/login", methods=["POST"])
 def authenticate():
     form = forms.LoginForm(request.form)
-    # print "Login form validation:", form.validate()
-    # print request.method
 
     if not form.validate():
     # if method not "POST" not form.validate():
@@ -449,8 +435,6 @@ def authenticate():
 
     email = form.email.data
     password = form.password.data
-    # print "email", email
-    # print "password", password
 
     user = User.query.filter_by(email=email).first()
 
@@ -483,9 +467,6 @@ def register():
 
 @app.route("/register", methods=["POST"])
 def create_account():
-    # if session.get("user_id"):
-    #     flash("Your account already exists!")
-    #     return redirect(url_for("index"))
 
     form = forms.NewUserForm(request.form)
     print "form validation", form.validate()
@@ -503,7 +484,6 @@ def create_account():
             form.email.errors = ["There's already an account with this email"]
         if user.username == username:
             form.username.errors = ["There's aleady an account with this username"]
-        # return redirect(url_for("create_account"))
         return render_template("register.html", form=form)
 
     new_user = User(
@@ -520,7 +500,6 @@ def create_account():
     login_user(new_user)
 
     flash("You've successfully created an account. Welcome!")
-    # return redirect(url_for("index", id=new_user.id))
     return redirect(url_for("edit_user", id=new_user.id))
 
 
@@ -528,9 +507,6 @@ def create_account():
 def view_users():
     users = User.query.all()
 
-    # for user in users:
-    #     num_books = len(user.books)
-        # print "%s has %s many books" % (user.username, len(user.books))
     return render_template("users.html", users=users)
 
 

@@ -36,43 +36,4 @@
     {% endfor %}
 </div>
 
-<!-- OLD STUFF -->
-
-<!-- <div class="row">
-    <div class="col-md-2"></div>
-<div class="row">
-    <div class="col-md-8">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">Users</h3>
-            </div>
-        <div class="panel-body">
-            {% for user in users %}
-            <div class="row">
-                <div class="col-md-4">
-                    <a href="{{url_for("view_library", id=user.id)}}"><img class="img-circle avatar" src="{{user.avatar_url}}"></img></a>
-                </div>
-                <div class="col-md-8">
-                    <h5>
-                        <a class="user-name" href="{{url_for("view_library", id=user.id)}}">
-                            {% if g.user.id == user.id %}
-                            You!
-                            {% else %}
-                            {{user.username}}
-                            {% endif %}
-                        </a>
-                    </h5>
-                </div>
-            </div>
-            <hr/>
-            {% else %}
-            No users here!
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-2"></div>
-<a href="{{url_for("register")}}">Register</a>
-{% endfor %} -->
-
 {% endblock %}

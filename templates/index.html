@@ -54,50 +54,6 @@
         </div>
     </div>
 
-
-<!-- OLD STUFF -->
-
-<!--     <div class="col-md-6">
-
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">Books You Can Borrow</h3>
-            </div>
-            <div class="panel-body">
-                {% for book in books|sort(attribute='title') %}
-                <div class="row">
-                    <div class="col-md-10">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <a href="{{url_for("view_book", id=book.id)}}"><img src="{{book.book_info.thumbnail_url}}"></img></a>
-                            </div>
-                            <div class="col-md-8">
-                                <span> <a class="book-title" href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a></span><br/>
-                                {% if not book.get_open_transaction_for_user(g.user.id) %}
-                                From the library of <a class="user-name" href="{{(url_for('view_library', id=book.owner_id))}}">{{book.owner.username}}</a><br/>
-                                {% else %}
-                                <em>You requested this book from <a class="user-name" href="{{(url_for('view_library', id=book.owner_id))}}">{{book.owner.username}}</a> {{book.get_open_transaction_for_user(g.user.id).date_requested|timedeltaformat}} ago</em>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                    {% if not book.get_open_transaction_for_user(g.user.id) %}
-                    <form class="pull-right" method="post" action="{{url_for("request_book", id=book.id)}}">
-                        <input type="submit" value="request" class="btn btn-default"/>
-                    </form>
-                    {% endif %}
-                    </div>
-                </div>
-                <hr/>
-                {% else %}
-                No books here!
-                <a href="{{url_for("search")}}">Add a new book</a>
-                {% endfor %}
-            </div>
-        </div>
-    </div> -->
-
     <div class="col-md-4">
         {% if g.user %}
         <h2 class="title-shadow">Recent Activity</h2>
@@ -218,47 +174,6 @@
     {% endfor %}
     </div>
 
-
-
-<!-- OLD STUFF AGAIN -->
-
-   <!--  <div class="col-md-1"></div>
-
-    <div class="col-md-10">
-
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">Books To Borrow</h3>
-            </div>
-            <div class="panel-body">
-                {% for book in books|sort(attribute='title') %}
-                <div class="row">
-                    <div class="col-md-10">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <a href="{{url_for("view_book", id=book.id)}}"><img src="{{book.book_info.thumbnail_url}}"></img></a>
-                            </div>
-                            <div class="col-md-8">
-                                <strong> <a href="{{url_for("view_book", id=book.id)}}">{{book.title}}</a></strong><br/>
-
-                                <strong>From the library of <a href="{{(url_for('view_library', id=book.owner_id))}}">{{book.owner.username}}</a></strong><br/>
-
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                <hr/>
-                {% else %}
-                No books here!
-                <a href="{{url_for("search")}}">Add a new book</a>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-1"></div>
- -->
 {% endif %}
 
 
