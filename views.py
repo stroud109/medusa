@@ -186,8 +186,11 @@ def search():
 @app.route("/results")  # test on this EAN 0076783007994
 def results():  # use this page for pre-DB commit search results
     # http://domain/path?query=parameter#hash
+
     ean = request.args.get('ean')  # checks if url query params has 'ean'
-    if not ean:  # checking for truthiness rather than actual existance
+
+    if not ean or len(ean) != 13:  # checking for truthiness rather than actual existance
+        flash("This search requires a 13 digit ISBN/barcode number")
         return redirect(url_for("search"))
     # if user pushes 'confirm' button, add and commit book_info item
     # adds 'book' to book_info library
