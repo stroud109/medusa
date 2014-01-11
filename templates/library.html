@@ -52,7 +52,7 @@
         {% endif %}
         <hr/>
     </h2>
-   {% for book in owner.books|sort(attribute='title') %}
+   {% for book in sorted_books %}
    <div class="col-sm-2">
         <div class="panel panel-default book-tile">
             <div class="panel-heading">

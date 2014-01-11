@@ -6,6 +6,7 @@ import forms
 import model
 
 import json
+import re  # imports the regular expression module
 
 from flask import (
     abort,
@@ -120,9 +121,17 @@ def index():
     else:
         books = Book.query.all()
 
+    title_reg = re.compile(r'^the', re.IGNORECASE)
+
+    def comparator(book):
+        print re.sub(title_reg, '', book.title).strip()
+        return re.sub(title_reg, '', book.title).strip()
+
+    sorted_books = sorted(books, key=comparator)
+
     return render_template(
         "index.html",
-        books=books,
+        books=sorted_books,
         # transactions=transactions,
         open_user_transactions=open_user_transactions,
         open_transactions_on_users_books=open_transactions_on_users_books,
@@ -188,6 +197,13 @@ def results():  # use this page for pre-DB commit search results
     # http://domain/path?query=parameter#hash
 
     ean = request.args.get('ean')  # checks if url query params has 'ean'
+    ean = ean.replace('-', '')
+    ean = ean.strip()
+
+    try:
+        int(ean)
+    except ValueError:
+        ean = None
 
     if not ean or len(ean) != 13:  # checking for truthiness rather than actual existance
         flash("This search requires a 13 digit ISBN/barcode number")
@@ -223,9 +239,9 @@ def add_book(book_info_id):
         book_info_id=book_info_id,
     ).all()
 
-    if book:
-        flash("Looks like you already have this book in your library")
-        return redirect(url_for("view_book", id=book.id))
+    # if book:
+    #     flash("Looks like you already have this book in your library")
+    #     return redirect(url_for("view_book", id=book.id))
 
     new_book = Book(
         title=book_info.title,
@@ -575,9 +591,15 @@ def view_library(id):  # should show what books are checked out/in/borrowed
     # owner_books = db_session.query(Book).filter_by(owner_id=id).all()
     owner = User.query.get(id)
 
-    # user_requests = BookTransaction.query.filter(
-    #     BookTransaction.requester_id == owner.id,
-    # ).all()
+    owner_books = owner.books
+
+    title_reg = re.compile(r'^the', re.IGNORECASE)
+
+    def comparator(book):
+        print re.sub(title_reg, '', book.title).strip()
+        return re.sub(title_reg, '', book.title).strip()
+
+    sorted_books = sorted(owner_books, key=comparator)
 
     if not owner:
         abort(404)
@@ -595,6 +617,7 @@ def view_library(id):  # should show what books are checked out/in/borrowed
     return render_template(
         "library.html",
         owner=owner,
+        sorted_books=sorted_books,
         # user_requests=user_requests,
         current_user_requests=current_user_requests,
         past_user_requests=past_user_requests,
