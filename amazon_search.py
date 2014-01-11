@@ -1,11 +1,12 @@
-from amazonproduct import API
+import amazonproduct
 # import lxml
 
 from model import BookInfo
 
+api = amazonproduct.API(locale='us')
+
 
 def get_book_info_from_ean(ean):
-    api = API(locale='us')
     # ean = BookInfo.query.get('ean')
 
     # search by IDType: EAN
