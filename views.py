@@ -172,17 +172,14 @@ def keyword_search():
     idf_by_id = Counter()
     for result in search_results:
         freq_by_doc_id = json.loads(result.document_ids)
-        print result.token, freq_by_doc_id
         for doc_id, freq in freq_by_doc_id.items():
             idf_by_id[int(doc_id)] += math.log(float(freq) / result.num_results)
-    print idf_by_id
 
     books = Book.query.filter(
         Book.book_info_id.in_(idf_by_id.keys())
     ).all()
 
     for book in books:
-        print book.book_info_id, book.title, idf_by_id[book.book_info_id]
         book.score = idf_by_id[book.book_info_id]
 
     return render_template(
