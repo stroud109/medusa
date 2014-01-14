@@ -2,6 +2,8 @@
 
 Bookworms is a peer-to-peer physical book sharing web app with a barcode reader that uses a computer’s camera, HTML5 canvas and Amazon API. Once your books are saved to your library, you can share the books you’re really excited about with other people and not worry about losing them forever. Also, you can meet other super interesting people and arrange to borrow their books.
 
+[Check out Bookworms here.](http://fathomless-wildwood-6941.herokuapp.com)
+
 ###Barcode Reader
 ####(camera.js & barcodeReader.js)
 The barcode reader uses HTML5 canvas to take a snapshot every 50 milliseconds. There are four web workers that decode a barcode when it's flipped and not flipped, and from the right and left, respectively. (The latter two web workers are currently commented out). Once a barcode number is captured, the video screen stops rendering and the barcode number is used to query the Amazon Product API database.
