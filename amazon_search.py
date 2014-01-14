@@ -7,6 +7,9 @@ api = amazonproduct.API(locale='us')
 
 
 def get_book_info_from_ean(ean):
+    '''
+    More on Amazon Product API queries here: http://docs.aws.amazon.com/AWSECommerceService/latest/DG/ItemLookup.html
+    '''
     # ean = BookInfo.query.get('ean')
 
     # search by IDType: EAN
@@ -36,7 +39,7 @@ def get_book_info_from_ean(ean):
         number_pages = 0
     isbn = results.Items.Item.ItemAttributes.ISBN
 
-    print "YO! LOOK HERE!!"
+    print 'YO! LOOK HERE!!'
     print genre
     print type(title)
 

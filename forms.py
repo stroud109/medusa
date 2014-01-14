@@ -10,27 +10,27 @@ from wtforms import (
 
 class TextInput(widgets.TextInput):
     def __call__(self, field, **kwargs):
-        kwargs["class"] = "form-control"
-        kwargs["placeholder"] = field.name
+        kwargs['class'] = 'form-control'
+        kwargs['placeholder'] = field.name
         return super(TextInput, self).__call__(field, **kwargs)
 
 
 class PasswordInput(widgets.PasswordInput):
     def __call__(self, field, **kwargs):
-        kwargs["class"] = "form-control"
-        kwargs["placeholder"] = field.name
+        kwargs['class'] = 'form-control'
+        kwargs['placeholder'] = field.name
         return super(PasswordInput, self).__call__(field, **kwargs)
 
 
 class LoginForm(Form):
-    # email = TextField("Email", [validators.Required(), validators.Email()])
+    # email = TextField('Email', [validators.Required(), validators.Email()])
     email = TextField(
-        "Email",
+        'Email',
         [validators.Required(), validators.Email()],
         widget=TextInput(),
     )
     password = PasswordField(
-        "Password",
+        'Password',
         [validators.Required()],
         widget=PasswordInput(),
     )
@@ -38,28 +38,28 @@ class LoginForm(Form):
 
 class UserForm(Form):
     avatar_url = TextField(
-        "Avatar",
+        'Avatar',
         widget=TextInput(),
     )
     location = TextField(
-        "Location",
+        'Location',
         widget=TextInput(),
     )
 
 
 class NewUserForm(Form):
     username = TextField(
-        "Username",
+        'Username',
         [validators.Required()],
         widget=TextInput(),
     )
     email = TextField(
-        "Email",
+        'Email',
         [validators.Required(), validators.Email()],
         widget=TextInput(),
     )
     password = PasswordField(
-        "Password",
+        'Password',
         [validators.Required()],
         widget=PasswordInput(),
     )

@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% block body %}
 
 {% if g.user %}
@@ -25,10 +25,10 @@
                                 {% set transaction = book.get_open_transaction_for_user(g.user.id) %}
                             <div class="transaction-info">
                                 {% if not transaction %}
-                                    From the library of <a class="user-name" href="{{(url_for('view_library', id=book.owner_id))}}">{{book.owner.username}}</a><br/>
+                                    From the library of <a class="user-name" href="{{(url_for("view_library", id=book.owner_id))}}">{{book.owner.username}}</a><br/>
                                 {% else %}
                                     <div class="book-requested">
-                                        <em>You requested this book from <a class="user-name" href="{{(url_for('view_library', id=book.owner_id))}}">{{book.owner.username}}</a> {{transaction.date_requested|timedeltaformat}} ago</em>
+                                        <em>You requested this book from <a class="user-name" href="{{(url_for("view_library", id=book.owner_id))}}">{{book.owner.username}}</a> {{transaction.date_requested|timedeltaformat}} ago</em>
                                     </div>
                                 {% endif %}
                                 <div>
@@ -69,7 +69,7 @@
                 {% else %}
 
                 <!-- open transactions are those where g.user.id is the requester.id, and there is no date_confirmed -->
-                {% for transaction in open_user_transactions|sort(reverse=True, attribute='date_requested') %}
+                {% for transaction in open_user_transactions|sort(reverse=True, attribute="date_requested") %}
                 <div class="row">
                     <div class="col-md-8">
 
@@ -114,7 +114,7 @@
                 <h5>There are no open transactions on any of your books right now</h5>
                 {% else %}
 
-                {% for transaction in open_transactions_on_users_books|sort(attribute='date_requested') %}
+                {% for transaction in open_transactions_on_users_books|sort(attribute="date_requested") %}
                 <div class="row">
                     <div class="col-sm-8">
                         {% if transaction.date_borrowed == None %}
@@ -166,7 +166,7 @@
                     <a href="{{url_for("view_book", id=book.id)}}"><img src="{{book.book_info.thumbnail_url}}"></img></a><hr/>
                 </div>
                 <div class="transaction-info">
-                    From the library of <a href="{{(url_for('view_library', id=book.owner_id))}}">{{book.owner.username}}</a>
+                    From the library of <a href="{{(url_for("view_library", id=book.owner_id))}}">{{book.owner.username}}</a>
                 </div>
             </div>
         </div>
