@@ -10,11 +10,6 @@ def get_book_info_from_ean(ean):
     '''
     More on Amazon Product API queries here: http://docs.aws.amazon.com/AWSECommerceService/latest/DG/ItemLookup.html
     '''
-    # ean = BookInfo.query.get('ean')
-
-    # search by IDType: EAN
-    # ResponseGroup: Images
-    # ItemAttributes: Title, Author, Genre, NumberOfPages
 
     results = api.item_lookup(
         ItemId=ean,
@@ -38,10 +33,6 @@ def get_book_info_from_ean(ean):
     except AttributeError:
         number_pages = 0
     isbn = results.Items.Item.ItemAttributes.ISBN
-
-    print 'YO! LOOK HERE!!'
-    print genre
-    print type(title)
 
     book_image = api.item_lookup(
         ItemId=ean,
