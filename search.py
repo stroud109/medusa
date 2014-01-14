@@ -1,7 +1,8 @@
 
+from collections import Counter, defaultdict
 from model import SearchTerm, BookInfo, session
-
 import math
+import re
 
 import json
 
@@ -25,12 +26,25 @@ def get_tokens_from_book_info(book_info):
     for column in COLUMNS_TO_INDEX:
         # getattr is a shortcut for 'info.<attribute name>
         data = getattr(book_info, column)
-        if data:
-            lowercased_words = data.lower()
+        tokens += get_tokens_from_string(data)
 
-            for token in lowercased_words.split(' '):
-                # remove anything that does't match a word char or a number
-                token = token.replace(r'[^\w\d]', '')
+    return tokens
+
+
+def get_tokens_from_string(data):
+    '''
+    This function cleans up the tokens so formatting doesn't
+    throw off search results.
+    '''
+    tokens = []
+
+    if data:
+        lowercased_words = data.lower()
+        # remove anything that does't match a word char or a number
+        lowercased_words = re.sub(r'[^a-z0-9-]', ' ', lowercased_words)
+
+        for token in lowercased_words.split(' '):
+            if token:
                 tokens.append(token)
 
     return tokens
@@ -44,45 +58,37 @@ def recreate_index():
     http://en.wikipedia.org/wiki/Tf%E2%80%93idf
     '''
 
-    # Right now, i'm saving a list of doc IDs, including duplicates,
-    # for each search term. I think i need to save a dictionary of
-    # doc IDs and TF/IDF scores for each search term.
-    # Not sure how saving a dictionary will effect the json bit
-
     book_infos = BookInfo.query.all()
-    book_info_ids_by_token = {}
+    freq_by_id_by_token = defaultdict(Counter)
 
     for info in book_infos:
         tokens = get_tokens_from_book_info(info)
 
         for token in tokens:
-            if not token in book_info_ids_by_token:
-                book_info_ids_by_token[token] = []
-            book_info_ids_by_token[token].append(info.id)
-            # use set to avoid redundant keys
+            freq_by_id_by_token[token][info.id] += 1
 
-    # deleting all search terms before recreating index
+    # deletes all search terms before recreating index
     SearchTerm.query.delete()
 
-    for token, book_ids in book_info_ids_by_token.items():
+    for token, frequency_by_id in freq_by_id_by_token.items():
 
         search_term = SearchTerm(
             token=token,
-            num_results=len(book_ids),
-            # creates a json string from the book_ids array
-            document_ids=json.dumps(book_ids),
+            num_results=len(frequency_by_id),
+            # creates a json string from the `frequency_by_id` dict
+            document_ids=json.dumps(frequency_by_id),
         )
 
         session.add(search_term)
 
     session.commit()
 
-    return book_info_ids_by_token
-
 
 def index_new_book_info(book_info):
     '''
-    This function updates a dictionary containing all tokens for all books.
+    This function updates a dictionary containing all tokens for a book.
+    New search terms are saved to the SearchTerm table. The key is the token,
+    the value is a list of document IDs that contain the token.
     '''
 
     book_info_ids_by_token = {}
@@ -96,6 +102,7 @@ def index_new_book_info(book_info):
 
     for token, book_ids in book_info_ids_by_token.items():
 
+        # TODO: check the DB first before creating new search term
         search_term = SearchTerm(
             token=token,
             num_results=len(book_ids),
@@ -116,28 +123,11 @@ def get_term_frequency(some_document):
     and the values are the number of times the word occurs in the
     passed document.
     '''
-
-    dictionary_of_terms_for_single_document = {}
-
-    # split the words on whitespace within individual documents
-
     split_terms = some_document.split(' ')
 
-    ## alternative with py built-in, part 1
-    # term_frequency = Counter()
-
-    for term in split_terms:
-        ## alternative with Python built-in, part 2
-        # term_frequency[term] += 1
-        if term not in dictionary_of_terms_for_single_document:
-            dictionary_of_terms_for_single_document[term] = 1
-        else:
-            dictionary_of_terms_for_single_document[term] += 1
-
+    term_frequency = Counter(split_terms)
     # should yeild keys and values for search term frequencies
-    return dictionary_of_terms_for_single_document
-    ## alternative with Python built-in, part 3
-    # return term_frequency
+    return term_frequency
 
 
 def get_inverse_doc_frequency(list_of_strings, a_search_term):

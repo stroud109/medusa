@@ -1,6 +1,9 @@
+
 # System
 import json
+import math
 import re
+from collections import Counter
 from datetime import datetime
 
 # Libraries
@@ -150,9 +153,7 @@ def keyword_search():
     Bookworms library.
     '''
 
-    # Right now, sorting logic is in the template
-    # I think I need to move sorting logic to this function
-    # and sort from highest to lowest TF/IDF score
+    # TODO: move sorting logic from template to this function
 
     searched_for = request.args.get('q')
 
@@ -168,20 +169,25 @@ def keyword_search():
         SearchTerm.token.in_(tokens)
     ).all()
 
-    document_ids = []
+    idf_by_id = Counter()
     for result in search_results:
-        document_ids += json.loads(result.document_ids)
-
-    unique_ids = set(document_ids)
+        freq_by_doc_id = json.loads(result.document_ids)
+        print result.token, freq_by_doc_id
+        for doc_id, freq in freq_by_doc_id.items():
+            idf_by_id[int(doc_id)] += math.log(float(freq) / result.num_results)
+    print idf_by_id
 
     books = Book.query.filter(
-        Book.book_info_id.in_(unique_ids)
+        Book.book_info_id.in_(idf_by_id.keys())
     ).all()
+
+    for book in books:
+        print book.book_info_id, book.title, idf_by_id[book.book_info_id]
+        book.score = idf_by_id[book.book_info_id]
 
     return render_template(
         'keyword_search.html',
         searched_for=searched_for,
-        unique_ids=unique_ids,
         books=books,
     )
 

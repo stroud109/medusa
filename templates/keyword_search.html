@@ -18,7 +18,7 @@
         <strong>Results for:</strong> {{searched_for}}
         <hr/>
         {% if books %}
-        {% for book in books|sort(attribute="book_info_id") %}
+        {% for book in books|sort(attribute="score") %}
         <div class="row">
             <div class="col-md-2">
                 <div class="img-wrapper">
