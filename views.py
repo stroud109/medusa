@@ -40,7 +40,11 @@ from model import (
     session as db_session,
     User,
 )
-from search import index_new_book_info, recreate_index
+from search import (
+    get_tokens_from_string,
+    index_new_book_info,
+    recreate_index,
+)
 
 app = Flask(__name__)
 app.config.from_object(config)
@@ -157,13 +161,11 @@ def keyword_search():
 
     searched_for = request.args.get('q')
 
-    tokens = []
+    tokens = get_tokens_from_string(searched_for)
 
-    if not searched_for or searched_for == '':
+    if not tokens:
         flash('Please enter a valid search term')
         return redirect(url_for('index'))
-    else:
-        tokens = searched_for.split(' ')
 
     search_results = SearchTerm.query.filter(
         SearchTerm.token.in_(tokens)
