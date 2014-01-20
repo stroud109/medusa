@@ -52,10 +52,10 @@ def get_tokens_from_string(data):
 
 def recreate_index():
     '''
-    This function indexes the book_info table of the database
-    I'd eventually like to impliment tf-idf functionality, thus
-    I am not deduplicating the docoment_ids for each SearchTerm
-    http://en.wikipedia.org/wiki/Tf%E2%80%93idf
+    This function indexes the book_info table of the database.
+    I'm implimenting tf-idf functionality, so I save the number
+    of documents in which the term shows up, and I also save a
+    record of the specific documents that contain the term.
     '''
 
     book_infos = BookInfo.query.all()
@@ -87,8 +87,8 @@ def recreate_index():
 def index_new_book_info(book_info):
     '''
     This function updates a dictionary containing all tokens for a book.
-    New search terms are saved to the SearchTerm table. The key is the token,
-    the value is a list of document IDs that contain the token.
+    New search terms are saved to the SearchTerm table. The key is the
+    token, the value is a list of document IDs that contain the token.
     '''
 
     book_info_ids_by_token = {}
