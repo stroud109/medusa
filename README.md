@@ -1,6 +1,6 @@
 #Bookworms
 
-Bookworms is a peer-to-peer physical book sharing web app with a barcode reader that uses a computer’s camera, HTML5 canvas and Amazon API. Once your books are saved to your library, you can share the books you’re really excited about with other people and not worry about losing them forever. Also, you can meet other super interesting people and arrange to borrow their books.
+Bookworms is a peer-to-peer physical book sharing web app with a barcode reader that uses a computer’s camera, HTML5 canvas and Amazon API. Once your books are saved to your library, you can share the books you’re really excited about and not worry about losing them forever. Also, you can discover other super interesting books and arrange to borrow them.
 
 Check out Bookworms [here](http://fathomless-wildwood-6941.herokuapp.com/).
 
