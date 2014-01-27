@@ -1,7 +1,6 @@
 
 from collections import Counter, defaultdict
 from model import SearchTerm, BookInfo, session
-import math
 import re
 
 import json
@@ -115,42 +114,3 @@ def index_new_book_info(book_info):
     session.commit()
 
     return book_info_ids_by_token
-
-
-def get_term_frequency(some_document):
-    '''
-    `get_term_frequency` returns a dictionary where the keys are words
-    and the values are the number of times the word occurs in the
-    passed document.
-    '''
-    split_terms = some_document.split(' ')
-
-    term_frequency = Counter(split_terms)
-    # should yeild keys and values for search term frequencies
-    return term_frequency
-
-
-def get_inverse_doc_frequency(list_of_strings, a_search_term):
-    '''
-    `get_inverse_doc_frequency` calculates the TF/IDF score
-    for a given search term within the list of passed documents.
-
-    More on TF/IDF: http://en.wikipedia.org/wiki/Tf%E2%80%93idf
-    '''
-
-    # find num of documents in the entire database that contain a_search_term
-    list_of_docs_with_term = []
-
-    for some_doc in list_of_strings:
-        # I'm not using the full functionality of get_term_frequency
-        # Instead, I'm basically using it like a set right now
-        print 'Looking at this document: %s' % some_doc
-        term_frequency_dict = get_term_frequency(some_doc)
-        print 'Here\'s the TF dict for this document: %s' % term_frequency_dict
-
-        if a_search_term in term_frequency_dict:
-            list_of_docs_with_term.append(some_doc)
-            print 'This doc contained the search term \'%s\'' % a_search_term
-            print 'So far, these docs have term: %s' % list_of_docs_with_term
-
-    return math.log(float(len(list_of_strings)) / len(list_of_docs_with_term))

@@ -126,7 +126,6 @@ def index():
     title_reg = re.compile(r'^the', re.IGNORECASE)
 
     def comparator(book):
-        print re.sub(title_reg, '', book.title).strip()
         return re.sub(title_reg, '', book.title).strip()
 
     sorted_books = sorted(books, key=comparator)
@@ -499,7 +498,6 @@ def create_account():
     '''
 
     form = forms.NewUserForm(request.form)
-    print 'form validation', form.validate()
     if not form.validate():
         flash('Error, all fields are required')
         return render_template('register.html', form=form)
@@ -610,7 +608,6 @@ def view_library(id):
     title_reg = re.compile(r'^the', re.IGNORECASE)
 
     def comparator(book):
-        print re.sub(title_reg, '', book.title).strip()
         return re.sub(title_reg, '', book.title).strip()
 
     sorted_books = sorted(owner_books, key=comparator)
