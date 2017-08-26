@@ -31,7 +31,7 @@ There can be multiple requests on a book, which all have their own BookTransacti
 
 ##### screenshot of the barcode reader in action
 ![Alt text](screenshots/barcode_reader.png "screenshot of the barcode reader in action")
-#####screenshot of the Amazon search results page
+##### screenshot of the Amazon search results page
 ![Alt text](screenshots/search_results.png "screenshot of the Amazon search results page")
-#####screenshot of the home page
+##### screenshot of the home page
 ![Alt text](screenshots/index_page.png "screenshot of the home page")
